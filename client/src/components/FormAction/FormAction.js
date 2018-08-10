@@ -24,6 +24,7 @@ class FormAction extends Component {
         className: this.getButtonClasses(),
         disabled: this.props.disabled,
         onClick: this.handleClick,
+        onMouseLeave: this.props.onMouseLeave
       }
     );
   }
@@ -157,6 +158,7 @@ FormAction.propTypes = {
   id: React.PropTypes.string,
   name: React.PropTypes.string,
   onClick: React.PropTypes.func,
+  onMouseLeave: React.PropTypes.func,
   title: React.PropTypes.string,
   type: React.PropTypes.string,
   loading: React.PropTypes.bool,
