@@ -53,6 +53,7 @@ require('expose-loader?TreeDropdownFieldNode!components/TreeDropdownField/TreeDr
 require('expose-loader?TreeDropdownFieldMenu!components/TreeDropdownField/TreeDropdownFieldMenu');
 require('expose-loader?TreeDropdownField!components/TreeDropdownField/TreeDropdownField');
 require('expose-loader?BreadcrumbsActions!state/breadcrumbs/BreadcrumbsActions');
+require('expose-loader?MessageActions!state/messages/MessageActions');
 require('expose-loader?RecordsActionTypes!state/records/RecordsActionTypes');
 require('expose-loader?UnsavedFormsActions!state/unsavedForms/UnsavedFormsActions');
 require('expose-loader?Badge!components/Badge/Badge');
@@ -90,6 +91,7 @@ require('../legacy/LeftAndMain.TreeDropdownField');
 require('../legacy/AddToCampaignForm');
 require('../legacy/SecurityAdmin');
 require('../legacy/ModelAdmin');
+require('../legacy/Message/MessageListEntwine');
 
 // Legacy form fields
 // Fields used by core legacy UIs, or available to users

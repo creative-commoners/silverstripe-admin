@@ -18,5 +18,6 @@
     </div>
 
     <% include SilverStripe\\Admin\\BrowserWarning %>
+    <% include SilverStripe\\Admin\\Messages %>
 </body>
 </html>

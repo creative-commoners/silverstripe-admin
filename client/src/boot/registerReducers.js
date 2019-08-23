@@ -7,12 +7,12 @@ import RecordsReducer from 'state/records/RecordsReducer';
 import BreadcrumbsReducer from 'state/breadcrumbs/BreadcrumbsReducer';
 import TreeDropdownFieldReducer from 'state/treeDropdownField/TreeDropdownFieldReducer';
 import TabsReducer from 'state/tabs/TabsReducer';
+import MessageReducer from 'state/messages/MessageReducer';
 import MobileMenuReducer from 'state/mobileMenu/MobileMenuReducer';
 import UnsavedFormsReducer from 'state/unsavedForms/UnsavedFormsReducer';
 import usedOnReducer from 'state/usedOn/usedOnReducer';
 import applyFormMiddleware from 'lib/dependency-injection/applyFormMiddleware';
 import ViewModeReducer from 'state/viewMode/ViewModeReducer';
-
 
 export default (extra = {}) => {
   const FormReducer = combineReducers({
@@ -27,6 +27,7 @@ export default (extra = {}) => {
     breadcrumbs: BreadcrumbsReducer,
     treeDropdownField: TreeDropdownFieldReducer,
     tabs: TabsReducer,
+    messages: MessageReducer,
     mobileMenu: MobileMenuReducer,
     unsavedForms: UnsavedFormsReducer,
     usedOn: usedOnReducer,

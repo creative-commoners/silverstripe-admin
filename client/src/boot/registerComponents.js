@@ -43,6 +43,7 @@ import SearchToggle from 'components/Search/SearchToggle';
 import HtmlEditorField from 'components/HtmlEditorField/HtmlEditorField';
 import NumberField from 'components/NumberField/NumberField';
 import PopoverOptionSet from 'components/PopoverOptionSet/PopoverOptionSet';
+import MessageList from 'components/Message/MessageList';
 
 export default () => {
   Injector.component.registerMany({
@@ -90,5 +91,6 @@ export default () => {
     HtmlEditorField,
     NumberField,
     PopoverOptionSet,
+    MessageList,
   });
 };
