@@ -7,7 +7,7 @@ import { Outlet } from 'react-router';
  * and apply to document.body, rather than just one specific DOM element.
  */
 const App = ({ children }) => (
-  <div className="app">{children}<Outlet /></div>
+  <div className="app sboyd">{children}<Outlet /></div>
 );
 
 export default provideInjector(App);

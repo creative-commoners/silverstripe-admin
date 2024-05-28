@@ -1,1 +1,59 @@
-"use strict";(self.webpackChunksilverstripe_admin=self.webpackChunksilverstripe_admin||[]).push([[498],{2962:function(e,n,t){var i;((i=t(74692))&&i.__esModule?i:{default:i}).default.entwine("ss.ping",(function(e){e(".cms-container").entwine({PingIntervalSeconds:300,onadd:function(){this._setupPinging(),this._super()},_setupPinging:function(){var n=null,t=null,i=function(e,i){e.status<400&&0!=e.responseText||(t&&!t.closed||(t=window.open("Security/login"))||(alert("Please enable pop-ups for this site"),clearInterval(n)),t&&t.focus())};n=setInterval((function(){e.ajax({url:"Security/ping",global:!1,type:"POST",complete:i})}),1e3*this.getPingIntervalSeconds())}})}))}},function(e){var n;n=2962,e(e.s=n)}]);
+"use strict";
+(self["webpackChunksilverstripe_admin"] = self["webpackChunksilverstripe_admin"] || []).push([["LeftAndMain.Ping"],{
+
+/***/ "./client/src/legacy/LeftAndMain.Ping.js":
+/*!***********************************************!*\
+  !*** ./client/src/legacy/LeftAndMain.Ping.js ***!
+  \***********************************************/
+/***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+
+
+
+var _jquery = _interopRequireDefault(__webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js"));
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+_jquery.default.entwine('ss.ping', function ($) {
+  $('.cms-container').entwine({
+    PingIntervalSeconds: 5 * 60,
+    onadd: function () {
+      this._setupPinging();
+      this._super();
+    },
+    _setupPinging: function () {
+      var interval = null;
+      var loginPopup = null;
+      var onSessionLost = function (xmlhttp, status) {
+        if (xmlhttp.status < 400 && xmlhttp.responseText != 0) {
+          return;
+        }
+        if (!loginPopup || loginPopup.closed) {
+          loginPopup = window.open('Security/login');
+          if (!loginPopup) {
+            alert('Please enable pop-ups for this site');
+            clearInterval(interval);
+          }
+        }
+        if (loginPopup) {
+          loginPopup.focus();
+        }
+      };
+      interval = setInterval(function () {
+        $.ajax({
+          url: 'Security/ping',
+          global: false,
+          type: 'POST',
+          complete: onSessionLost
+        });
+      }, this.getPingIntervalSeconds() * 1000);
+    }
+  });
+});
+
+/***/ })
+
+},
+/******/ function(__webpack_require__) { // webpackRuntimeModules
+/******/ var __webpack_exec__ = function(moduleId) { return __webpack_require__(__webpack_require__.s = moduleId); }
+/******/ var __webpack_exports__ = (__webpack_exec__("./client/src/legacy/LeftAndMain.Ping.js"));
+/******/ }
+]);
+//# sourceMappingURL=LeftAndMain.Ping.js.map

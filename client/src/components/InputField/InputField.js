@@ -36,6 +36,10 @@ class InputField extends Component {
       onFocus: this.props.onFocus
     };
 
+    // these will stop the endless xhr requests when clicking on inputs
+    // props.onFocus = () => { console.log('i focused'); }
+    // props.onBlur = () => { console.log('i blurred'); }
+
     if (this.props.attributes && !Array.isArray(this.props.attributes)) {
       Object.assign(props, this.props.attributes);
     }

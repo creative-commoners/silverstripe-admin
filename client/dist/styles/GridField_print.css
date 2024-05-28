@@ -1,1 +1,33 @@
-h3{font-family:Arial,sans-serif}table{border-collapse:collapse;font-family:Arial,sans-serif;color:#333;font-size:12pt}table th{border-bottom:2px solid #333;padding:5px 10px;font-weight:bold;text-align:left}table th:first-child{padding-left:0px}table td{border-top:1px solid #aaa;border-bottom:1px solid #aaa;text-align:left;padding:5px 10px}table td:first-child{padding-left:0px}
+/*!*********************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[0].use[2]!./node_modules/resolve-url-loader/index.js??ruleSet[1].rules[0].use[3]!./node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[0].use[4]!./client/src/styles/legacy/GridField_print.scss ***!
+  \*********************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+h3 {
+  font-family: Arial, sans-serif;
+}
+
+table {
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  color: #333;
+  font-size: 12pt;
+}
+table th {
+  border-bottom: 2px solid #333;
+  padding: 5px 10px;
+  font-weight: bold;
+  text-align: left;
+}
+table th:first-child {
+  padding-left: 0px;
+}
+table td {
+  border-top: 1px solid #aaa;
+  border-bottom: 1px solid #aaa;
+  text-align: left;
+  padding: 5px 10px;
+}
+table td:first-child {
+  padding-left: 0px;
+}
+
+/*# sourceMappingURL=GridField_print.css.map*/

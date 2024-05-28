@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import contextType from './injectorContext';
+import injectorContextType from './injectorContextType';
 
 const provideContext = (context) => (ContextualComponent) => {
   class ContextProvider extends Component {
@@ -17,9 +17,9 @@ const provideContext = (context) => (ContextualComponent) => {
     }
   }
 
-  ContextProvider.contextTypes = contextType;
+  ContextProvider.contextTypes = injectorContextType;
 
-  ContextProvider.childContextTypes = contextType;
+  ContextProvider.childContextTypes = injectorContextType;
 
   return ContextProvider;
 };

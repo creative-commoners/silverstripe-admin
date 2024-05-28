@@ -6,7 +6,7 @@ import NotFoundComponent from 'components/NotFoundComponent/NotFoundComponent';
 import provideInjector from './provideInjector';
 import withInjector from './withInjector';
 import Injector from './Container';
-import contextType from './injectorContext';
+import injectorContextType from './injectorContextType';
 
 /**
  * Handles loading SilverStripe-centric providers
@@ -102,7 +102,7 @@ const loadComponent = (targetName, context = {}, overrideInjector) => {
     }
   }
 
-  LegacyLoader.childContextTypes = contextType;
+  LegacyLoader.childContextTypes = injectorContextType;
 
   const contextInjector = overrideInjector || provideInjector;
 

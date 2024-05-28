@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import contextType from './injectorContext';
+import injectorContextType from './injectorContextType';
 
 const defaultContext = (props, injectorContext) => injectorContext;
 
@@ -92,9 +92,9 @@ const inject = (dependencies, mapDependenciesToProps, getContext = defaultContex
       }
     }
 
-    Injector.contextTypes = contextType;
+    Injector.contextTypes = injectorContextType;
 
-    Injector.childContextTypes = contextType;
+    Injector.childContextTypes = injectorContextType;
 
     return Injector;
   }

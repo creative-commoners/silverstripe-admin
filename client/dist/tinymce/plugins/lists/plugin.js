@@ -1,1 +1,2172 @@
-!function(){"use strict";var e=tinymce.util.Tools.resolve("tinymce.PluginManager");const t=e=>t=>(e=>{const t=typeof e;return null===e?"null":"object"===t&&Array.isArray(e)?"array":"object"===t&&(n=r=e,o=(s=String).prototype,o.isPrototypeOf(n)||(null===(i=r.constructor)||void 0===i?void 0:i.name)===s.name)?"string":t;var n,o;var r,s,i})(t)===e,n=e=>t=>typeof t===e,o=t("string"),r=t("object"),s=t("array"),i=n("boolean"),l=e=>!(e=>null==e)(e),a=n("function"),d=n("number"),c=()=>{},m=e=>()=>e,u=(e,t)=>e===t;const p=e=>t=>!e(t),f=m(!1);class g{constructor(e,t){this.tag=e,this.value=t}static some(e){return new g(!0,e)}static none(){return g.singletonNone}fold(e,t){return this.tag?t(this.value):e()}isSome(){return this.tag}isNone(){return!this.tag}map(e){return this.tag?g.some(e(this.value)):g.none()}bind(e){return this.tag?e(this.value):g.none()}exists(e){return this.tag&&e(this.value)}forall(e){return!this.tag||e(this.value)}filter(e){return!this.tag||e(this.value)?this:g.none()}getOr(e){return this.tag?this.value:e}or(e){return this.tag?this:e}getOrThunk(e){return this.tag?this.value:e()}orThunk(e){return this.tag?this:e()}getOrDie(e){if(this.tag)return this.value;throw new Error(null!=e?e:"Called getOrDie on None")}static from(e){return l(e)?g.some(e):g.none()}getOrNull(){return this.tag?this.value:null}getOrUndefined(){return this.value}each(e){this.tag&&e(this.value)}toArray(){return this.tag?[this.value]:[]}toString(){return this.tag?`some(${this.value})`:"none()"}}g.singletonNone=new g(!1);const h=Array.prototype.slice,y=Array.prototype.indexOf,v=Array.prototype.push,C=(e,t)=>{return n=e,o=t,y.call(n,o)>-1;var n,o},b=(e,t)=>{for(let n=0,o=e.length;n<o;n++){if(t(e[n],n))return!0}return!1},N=(e,t)=>{const n=e.length,o=new Array(n);for(let r=0;r<n;r++){const n=e[r];o[r]=t(n,r)}return o},S=(e,t)=>{for(let n=0,o=e.length;n<o;n++){t(e[n],n)}},L=(e,t)=>{const n=[];for(let o=0,r=e.length;o<r;o++){const r=e[o];t(r,o)&&n.push(r)}return n},D=(e,t,n)=>(S(e,((e,o)=>{n=t(n,e,o)})),n),T=(e,t,n)=>{for(let o=0,r=e.length;o<r;o++){const r=e[o];if(t(r,o))return g.some(r);if(n(r,o))break}return g.none()},O=(e,t)=>T(e,t,f),x=(e,t)=>(e=>{const t=[];for(let n=0,o=e.length;n<o;++n){if(!s(e[n]))throw new Error("Arr.flatten item "+n+" was not an array, input: "+e);v.apply(t,e[n])}return t})(N(e,t)),A=e=>{const t=h.call(e,0);return t.reverse(),t},E=(e,t)=>t>=0&&t<e.length?g.some(e[t]):g.none(),w=e=>E(e,0),k=e=>E(e,e.length-1),B=(e,t)=>{const n=[],o=a(t)?e=>b(n,(n=>t(n,e))):e=>C(n,e);for(let t=0,r=e.length;t<r;t++){const r=e[t];o(r)||n.push(r)}return n},P=(e,t,n=u)=>e.exists((e=>n(e,t))),M=(e,t,n)=>e.isSome()&&t.isSome()?g.some(n(e.getOrDie(),t.getOrDie())):g.none(),I=e=>{if(null==e)throw new Error("Node cannot be null or undefined");return{dom:e}},R={fromHtml:(e,t)=>{const n=(t||document).createElement("div");if(n.innerHTML=e,!n.hasChildNodes()||n.childNodes.length>1){const t="HTML does not have a single root node";throw console.error(t,e),new Error(t)}return I(n.childNodes[0])},fromTag:(e,t)=>{const n=(t||document).createElement(e);return I(n)},fromText:(e,t)=>{const n=(t||document).createTextNode(e);return I(n)},fromDom:I,fromPoint:(e,t,n)=>g.from(e.dom.elementFromPoint(t,n)).map(I)},U=(e,t)=>{const n=e.dom;if(1!==n.nodeType)return!1;{const e=n;if(void 0!==e.matches)return e.matches(t);if(void 0!==e.msMatchesSelector)return e.msMatchesSelector(t);if(void 0!==e.webkitMatchesSelector)return e.webkitMatchesSelector(t);if(void 0!==e.mozMatchesSelector)return e.mozMatchesSelector(t);throw new Error("Browser lacks native selectors")}},$=(e,t)=>e.dom===t.dom,H=U,_="undefined"!=typeof window?window:Function("return this;")(),F=(e,t)=>((e,t)=>{let n=null!=t?t:_;for(let t=0;t<e.length&&null!=n;++t)n=n[e[t]];return n})(e.split("."),t),V=(e,t)=>{const n=((e,t)=>F(e,t))(e,t);if(null==n)throw new Error(e+" not available on this browser");return n},j=Object.getPrototypeOf,K=e=>{const t=F("ownerDocument.defaultView",e);return r(e)&&((e=>V("HTMLElement",e))(t).prototype.isPrototypeOf(e)||/^HTML\w*Element$/.test(j(e).constructor.name))},z=e=>e.dom.nodeName.toLowerCase(),Q=e=>e.dom.nodeType,W=e=>t=>Q(t)===e,q=e=>Z(e)&&K(e.dom),Z=W(1),G=W(3),J=W(9),X=W(11),Y=e=>t=>Z(t)&&z(t)===e,ee=e=>g.from(e.dom.parentNode).map(R.fromDom),te=e=>N(e.dom.childNodes,R.fromDom),ne=(e,t)=>{const n=e.dom.childNodes;return g.from(n[t]).map(R.fromDom)},oe=e=>ne(e,0),re=e=>ne(e,e.dom.childNodes.length-1),se=a(Element.prototype.attachShadow)&&a(Node.prototype.getRootNode)?e=>R.fromDom(e.dom.getRootNode()):e=>{return J(e)?e:(t=e,R.fromDom(t.dom.ownerDocument));var t},ie=e=>{const t=se(e);return X(n=t)&&l(n.dom.host)?g.some(t):g.none();var n},le=e=>R.fromDom(e.dom.host),ae=e=>{const t=G(e)?e.dom.parentNode:e.dom;if(null==t||null===t.ownerDocument)return!1;const n=t.ownerDocument;return ie(R.fromDom(t)).fold((()=>n.body.contains(t)),(o=ae,r=le,e=>o(r(e))));var o,r};var de=(e,t,n,o,r)=>e(n,o)?g.some(n):a(r)&&r(n)?g.none():t(n,o,r);const ce=(e,t,n)=>{let o=e.dom;const r=a(n)?n:f;for(;o.parentNode;){o=o.parentNode;const e=R.fromDom(o);if(t(e))return g.some(e);if(r(e))break}return g.none()},me=(e,t,n)=>de(((e,t)=>t(e)),ce,e,t,n),ue=(e,t,n)=>ce(e,(e=>U(e,t)),n),pe=e=>{return de(((e,t)=>U(e,t)),ue,e,"[contenteditable]",t);var t},fe=e=>e.dom.contentEditable,ge=(e,t)=>{ee(e).each((n=>{n.dom.insertBefore(t.dom,e.dom)}))},he=(e,t)=>{const n=(e=>g.from(e.dom.nextSibling).map(R.fromDom))(e);n.fold((()=>{ee(e).each((e=>{ye(e,t)}))}),(e=>{ge(e,t)}))},ye=(e,t)=>{e.dom.appendChild(t.dom)},ve=(e,t)=>{S(t,(t=>{ye(e,t)}))},Ce=e=>{e.dom.textContent="",S(te(e),(e=>{be(e)}))},be=e=>{const t=e.dom;null!==t.parentNode&&t.parentNode.removeChild(t)};var Ne=tinymce.util.Tools.resolve("tinymce.dom.RangeUtils"),Se=tinymce.util.Tools.resolve("tinymce.dom.TreeWalker"),Le=tinymce.util.Tools.resolve("tinymce.util.VK");const De=e=>N(e,R.fromDom),Te=Object.keys,Oe=(e,t)=>{const n=Te(e);for(let o=0,r=n.length;o<r;o++){const r=n[o];t(e[r],r)}},xe=(e,t)=>{const n={};var o;return((e,t,n,o)=>{Oe(e,((e,r)=>{(t(e,r)?n:o)(e,r)}))})(e,t,(o=n,(e,t)=>{o[t]=e}),c),n},Ae=(e,t)=>{const n=e.dom;Oe(t,((e,t)=>{((e,t,n)=>{if(!(o(n)||i(n)||d(n)))throw console.error("Invalid call to Attribute.set. Key ",t,":: Value ",n,":: Element ",e),new Error("Attribute value was not simple");e.setAttribute(t,n+"")})(n,t,e)}))},Ee=e=>D(e.dom.attributes,((e,t)=>(e[t.name]=t.value,e)),{}),we=e=>((e,t)=>R.fromDom(e.dom.cloneNode(t)))(e,!0),ke=(e,t)=>{const n=((e,t)=>{const n=R.fromTag(t),o=Ee(e);return Ae(n,o),n})(e,t);he(e,n);const o=te(e);return ve(n,o),be(e),n};var Be=tinymce.util.Tools.resolve("tinymce.dom.DOMUtils"),Pe=tinymce.util.Tools.resolve("tinymce.util.Tools");const Me=e=>t=>l(t)&&t.nodeName.toLowerCase()===e,Ie=e=>t=>l(t)&&e.test(t.nodeName),Re=e=>l(e)&&3===e.nodeType,Ue=e=>l(e)&&1===e.nodeType,$e=Ie(/^(OL|UL|DL)$/),He=Ie(/^(OL|UL)$/),_e=Me("ol"),Fe=Ie(/^(LI|DT|DD)$/),Ve=Ie(/^(DT|DD)$/),je=Ie(/^(TH|TD)$/),Ke=Me("br"),ze=(e,t)=>l(t)&&t.nodeName in e.schema.getTextBlockElements(),Qe=(e,t)=>l(e)&&e.nodeName in t,We=(e,t)=>l(t)&&t.nodeName in e.schema.getVoidElements(),qe=(e,t,n)=>{const o=e.isEmpty(t);return!(n&&e.select("span[data-mce-type=bookmark]",t).length>0)&&o},Ze=(e,t)=>e.isChildOf(t,e.getRoot()),Ge=e=>t=>t.options.get(e),Je=Ge("lists_indent_on_tab"),Xe=Ge("forced_root_block"),Ye=Ge("forced_root_block_attrs"),et=(e,t)=>{const n=e.dom,o=e.schema.getBlockElements(),r=n.createFragment(),s=Xe(e),i=Ye(e);let l,a,d=!1;for(a=n.create(s,i),Qe(t.firstChild,o)||r.appendChild(a);l=t.firstChild;){const e=l.nodeName;d||"SPAN"===e&&"bookmark"===l.getAttribute("data-mce-type")||(d=!0),Qe(l,o)?(r.appendChild(l),a=null):(a||(a=n.create(s,i),r.appendChild(a)),a.appendChild(l))}return!d&&a&&a.appendChild(n.create("br",{"data-mce-bogus":"1"})),r},tt=Be.DOM,nt=(e,t,n)=>{const o=tt.select('span[data-mce-type="bookmark"]',t),r=et(e,n),s=tt.createRng();s.setStartAfter(n),s.setEndAfter(t);const i=s.extractContents();for(let t=i.firstChild;t;t=t.firstChild)if("LI"===t.nodeName&&e.dom.isEmpty(t)){tt.remove(t);break}e.dom.isEmpty(i)||tt.insertAfter(i,t),tt.insertAfter(r,t);const l=n.parentElement;l&&qe(e.dom,l)&&(e=>{const t=e.parentNode;t&&Pe.each(o,(e=>{t.insertBefore(e,n.parentNode)})),tt.remove(e)})(l),tt.remove(n),qe(e.dom,t)&&tt.remove(t)},ot=Y("dd"),rt=Y("dt"),st=(e,t)=>{var n;ot(t)?ke(t,"dt"):rt(t)&&(n=t,g.from(n.dom.parentElement).map(R.fromDom)).each((n=>nt(e,n.dom,t.dom)))},it=e=>{rt(e)&&ke(e,"dd")},lt=(e,t)=>{if(Re(e))return{container:e,offset:t};const n=Ne.getNode(e,t);return Re(n)?{container:n,offset:t>=e.childNodes.length?n.data.length:0}:n.previousSibling&&Re(n.previousSibling)?{container:n.previousSibling,offset:n.previousSibling.data.length}:n.nextSibling&&Re(n.nextSibling)?{container:n.nextSibling,offset:0}:{container:e,offset:t}},at=e=>{const t=e.cloneRange(),n=lt(e.startContainer,e.startOffset);t.setStart(n.container,n.offset);const o=lt(e.endContainer,e.endOffset);return t.setEnd(o.container,o.offset),t},dt=["OL","UL","DL"],ct=dt.join(","),mt=(e,t)=>{const n=t||e.selection.getStart(!0);return e.dom.getParent(n,ct,gt(e,n))},ut=e=>{const t=mt(e),n=e.selection.getSelectedBlocks();return((e,t)=>l(e)&&1===t.length&&t[0]===e)(t,n)?(e=>L(e.querySelectorAll(ct),$e))(t):L(n,(e=>$e(e)&&t!==e))},pt=e=>{const t=e.selection.getSelectedBlocks();return L(((e,t)=>{const n=Pe.map(t,(t=>e.dom.getParent(t,"li,dd,dt",gt(e,t))||t));return B(n)})(e,t),Fe)},ft=(e,t)=>{const n=e.dom.getParents(t,"TD,TH");return n.length>0?n[0]:e.getBody()},gt=(e,t)=>{const n=e.dom.getParents(t,e.dom.isBlock),o=O(n,(t=>{return n=e.schema,!$e(o=t)&&!Fe(o)&&b(dt,(e=>n.isValidChild(o.nodeName,e)));var n,o}));return o.getOr(e.getBody())},ht=(e,t)=>{const n=e.dom.getParents(t,"ol,ul",gt(e,t));return k(n)},yt=e=>{const t=(e=>{const t=ht(e,e.selection.getStart()),n=L(e.selection.getSelectedBlocks(),He);return t.toArray().concat(n)})(e),n=(e=>{const t=e.selection.getStart();return e.dom.getParents(t,"ol,ul",gt(e,t))})(e);return O(n,(e=>{return t=R.fromDom(e),ee(t).exists((e=>Fe(e.dom)&&oe(e).exists((e=>!$e(e.dom)))&&re(e).exists((e=>!$e(e.dom)))));var t})).fold((()=>vt(e,t)),(e=>[e]))},vt=(e,t)=>{const n=N(t,(t=>ht(e,t).getOr(t)));return B(n)},Ct=e=>/\btox\-/.test(e.className),bt=(e,t)=>T(e,$e,je).exists((e=>e.nodeName===t&&!Ct(e))),Nt=(e,t)=>null!==t&&!e.dom.isEditable(t),St=(e,t)=>{const n=e.dom.getParent(t,"ol,ul,dl");return Nt(e,n)},Lt=(e,t)=>{const n=e.selection.getNode();return t({parents:e.dom.getParents(n),element:n}),e.on("NodeChange",t),()=>e.off("NodeChange",t)},Dt=(e,t)=>{const n=(t||document).createDocumentFragment();return S(e,(e=>{n.appendChild(e.dom)})),R.fromDom(n)},Tt=(e,t,n)=>e.dispatch("ListMutation",{action:t,element:n}),Ot=(xt=/^\s+|\s+$/g,e=>e.replace(xt,""));var xt;const At=(e,t,n)=>{if(!o(n))throw console.error("Invalid call to CSS.set. Property ",t,":: Value ",n,":: Element ",e),new Error("CSS value must be a string: "+n);(e=>void 0!==e.style&&a(e.style.getPropertyValue))(e)&&e.style.setProperty(t,n)},Et=(e,t,n)=>{const o=e.dom;At(o,t,n)},wt=e=>H(e,"OL,UL"),kt=e=>oe(e).exists(wt),Bt=e=>"listAttributes"in e,Pt=e=>"isComment"in e,Mt=e=>e.depth>0,It=e=>e.isSelected,Rt=e=>{const t=te(e),n=re(e).exists(wt)?t.slice(0,-1):t;return N(n,we)},Ut=(e,t)=>{ye(e.item,t.list)},$t=(e,t)=>{const n={list:R.fromTag(t,e),item:R.fromTag("li",e)};return ye(n.list,n.item),n},Ht=(e,t,n)=>{const o=t.slice(0,n.depth);return k(o).each((t=>{if(Bt(n)){const o=((e,t,n)=>{const o=R.fromTag("li",e);return Ae(o,t),ve(o,n),o})(e,n.itemAttributes,n.content);((e,t)=>{ye(e.list,t),e.item=t})(t,o),((e,t)=>{z(e.list)!==t.listType&&(e.list=ke(e.list,t.listType)),Ae(e.list,t.listAttributes)})(t,n)}else if((e=>"isFragment"in e)(n))ve(t.item,n.content);else{const e=R.fromHtml(`\x3c!--${n.content}--\x3e`);ye(t.list,e)}})),o},_t=(e,t,n)=>{const o=((e,t,n)=>{const o=[];for(let r=0;r<n;r++)o.push($t(e,Bt(t)?t.listType:t.parentListType));return o})(e,n,n.depth-t.length);var r;return(e=>{for(let t=1;t<e.length;t++)Ut(e[t-1],e[t])})(o),((e,t)=>{for(let t=0;t<e.length-1;t++)Et(e[t].item,"list-style-type","none");k(e).each((e=>{Bt(t)&&(Ae(e.list,t.listAttributes),Ae(e.item,t.itemAttributes)),ve(e.item,t.content)}))})(o,n),r=o,M(k(t),w(r),Ut),t.concat(o)},Ft=(e,t)=>{let n=g.none();const o=D(t,((t,o,r)=>Pt(o)?0===r?(n=g.some(o),t):Ht(e,t,o):o.depth>t.length?_t(e,t,o):Ht(e,t,o)),[]);return n.each((e=>{const t=R.fromHtml(`\x3c!--${e.content}--\x3e`);w(o).each((e=>{((e,t)=>{oe(e).fold((()=>{ye(e,t)}),(n=>{e.dom.insertBefore(t.dom,n.dom)}))})(e.list,t)}))})),w(o).map((e=>e.list))},Vt=e=>(S(e,((t,n)=>{((e,t)=>{const n=e[t].depth,o=e=>e.depth===n&&!e.dirty,r=e=>e.depth<n;return T(A(e.slice(0,t)),o,r).orThunk((()=>T(e.slice(t+1),o,r)))})(e,n).fold((()=>{t.dirty&&Bt(t)&&(e=>{e.listAttributes=xe(e.listAttributes,((e,t)=>"start"!==t))})(t)}),(e=>{return o=e,void(Bt(n=t)&&Bt(o)&&(n.listType=o.listType,n.listAttributes={...o.listAttributes}));var n,o}))})),e),jt=(e,t,n,o)=>{var r,s;if(8===Q(s=o)||"#comment"===z(s))return[{depth:e+1,content:null!==(r=o.dom.nodeValue)&&void 0!==r?r:"",dirty:!1,isSelected:!1,isComment:!0}];t.each((e=>{$(e.start,o)&&n.set(!0)}));const i=((e,t,n)=>ee(e).filter(Z).map((o=>({depth:t,dirty:!1,isSelected:n,content:Rt(e),itemAttributes:Ee(e),listAttributes:Ee(o),listType:z(o),isInPreviousLi:!1}))))(o,e,n.get());t.each((e=>{$(e.end,o)&&n.set(!1)}));const l=re(o).filter(wt).map((o=>zt(e,t,n,o))).getOr([]);return i.toArray().concat(l)},Kt=(e,t,n,o)=>oe(o).filter(wt).fold((()=>jt(e,t,n,o)),(r=>{const s=D(te(o),((o,s,i)=>{if(0===i)return o;if(H(s,"LI"))return o.concat(jt(e,t,n,s));{const t={isFragment:!0,depth:e,content:[s],isSelected:!1,dirty:!1,parentListType:z(r)};return o.concat(t)}}),[]);return zt(e,t,n,r).concat(s)})),zt=(e,t,n,o)=>x(te(o),(o=>(wt(o)?zt:Kt)(e+1,t,n,o))),Qt=(e,t)=>x(((e,t)=>{if(0===e.length)return[];{let n=t(e[0]);const o=[];let r=[];for(let s=0,i=e.length;s<i;s++){const i=e[s],l=t(i);l!==n&&(o.push(r),r=[]),n=l,r.push(i)}return 0!==r.length&&o.push(r),o}})(t,Mt),(t=>w(t).exists(Mt)?((e,t)=>{const n=Vt(t);return Ft(e.contentDocument,n).toArray()})(e,t):((e,t)=>{const n=Vt(t);return N(n,(t=>{const n=Pt(t)?Dt([R.fromHtml(`\x3c!--${t.content}--\x3e`)]):Dt(t.content);return R.fromDom(et(e,n.dom))}))})(e,t))),Wt=(e,t,n)=>{const o=((e,t)=>{const n=(e=>{let t=!1;return{get:()=>t,set:e=>{t=e}}})();return N(e,(e=>({sourceList:e,entries:zt(0,t,n,e)})))})(t,(e=>{const t=N(pt(e),R.fromDom);return M(O(t,p(kt)),O(A(t),p(kt)),((e,t)=>({start:e,end:t})))})(e));S(o,(t=>{((e,t)=>{S(L(e,It),(e=>((e,t)=>{switch(e){case"Indent":t.depth++;break;case"Outdent":t.depth--;break;case"Flatten":t.depth=0}t.dirty=!0})(t,e)))})(t.entries,n);const o=Qt(e,t.entries);var r;S(o,(t=>{Tt(e,"Indent"===n?"IndentList":"OutdentList",t.dom)})),r=t.sourceList,S(o,(e=>{ge(r,e)})),be(t.sourceList)}))},qt=(e,t)=>{const n=De(yt(e)),o=De((e=>L(pt(e),Ve))(e));let r=!1;if(n.length||o.length){const s=e.selection.getBookmark();Wt(e,n,t),((e,t,n)=>{S(n,"Indent"===t?it:t=>st(e,t))})(e,t,o),e.selection.moveToBookmark(s),e.selection.setRng(at(e.selection.getRng())),e.nodeChanged(),r=!0}return r},Zt=(e,t)=>!(e=>{const t=mt(e);return Nt(e,t)})(e)&&qt(e,t),Gt=e=>Zt(e,"Indent"),Jt=e=>Zt(e,"Outdent"),Xt=e=>Zt(e,"Flatten"),Yt=e=>"\ufeff"===e,en=(e,t)=>{return n=e,o=function(e,...t){return(...n)=>{const o=t.concat(n);return e.apply(null,o)}}($,t),ce(n,o,r).isSome();var n,o,r};var tn=tinymce.util.Tools.resolve("tinymce.dom.BookmarkManager");const nn=Be.DOM,on=e=>{const t={},n=n=>{let o=e[n?"startContainer":"endContainer"],r=e[n?"startOffset":"endOffset"];if(Ue(o)){const e=nn.create("span",{"data-mce-type":"bookmark"});o.hasChildNodes()?(r=Math.min(r,o.childNodes.length-1),n?o.insertBefore(e,o.childNodes[r]):nn.insertAfter(e,o.childNodes[r])):o.appendChild(e),o=e,r=0}t[n?"startContainer":"endContainer"]=o,t[n?"startOffset":"endOffset"]=r};return n(!0),e.collapsed||n(),t},rn=e=>{const t=t=>{let n=e[t?"startContainer":"endContainer"],o=e[t?"startOffset":"endOffset"];if(n){if(Ue(n)&&n.parentNode){const e=n;o=(e=>{var t;let n=null===(t=e.parentNode)||void 0===t?void 0:t.firstChild,o=0;for(;n;){if(n===e)return o;Ue(n)&&"bookmark"===n.getAttribute("data-mce-type")||o++,n=n.nextSibling}return-1})(n),n=n.parentNode,nn.remove(e),!n.hasChildNodes()&&nn.isBlock(n)&&n.appendChild(nn.create("br"))}e[t?"startContainer":"endContainer"]=n,e[t?"startOffset":"endOffset"]=o}};t(!0),t();const n=nn.createRng();return n.setStart(e.startContainer,e.startOffset),e.endContainer&&n.setEnd(e.endContainer,e.endOffset),at(n)},sn=e=>{switch(e){case"UL":return"ToggleUlList";case"OL":return"ToggleOlList";case"DL":return"ToggleDLList"}},ln=(e,t)=>{Pe.each(t,((t,n)=>{e.setAttribute(n,t)}))},an=(e,t,n)=>{((e,t,n)=>{const o=n["list-style-type"]?n["list-style-type"]:null;e.setStyle(t,"list-style-type",o)})(e,t,n),((e,t,n)=>{ln(t,n["list-attributes"]),Pe.each(e.select("li",t),(e=>{ln(e,n["list-item-attributes"])}))})(e,t,n)},dn=(e,t)=>l(t)&&!Qe(t,e.schema.getBlockElements()),cn=(e,t,n,o)=>{let r=t[n?"startContainer":"endContainer"];const s=t[n?"startOffset":"endOffset"];Ue(r)&&(r=r.childNodes[Math.min(s,r.childNodes.length-1)]||r),!n&&Ke(r.nextSibling)&&(r=r.nextSibling);const i=(t,n)=>{var r;const s=new Se(t,(t=>{for(;!e.dom.isBlock(t)&&t.parentNode&&o!==t;)t=t.parentNode;return t})(t)),i=n?"next":"prev";let l;for(;l=s[i]();)if(!We(e,l)&&!Yt(l.textContent)&&0!==(null===(r=l.textContent)||void 0===r?void 0:r.length))return g.some(l);return g.none()};if(n&&Re(r))if(Yt(r.textContent))r=i(r,!1).getOr(r);else for(null!==r.parentNode&&dn(e,r.parentNode)&&(r=r.parentNode);null!==r.previousSibling&&(dn(e,r.previousSibling)||Re(r.previousSibling));)r=r.previousSibling;if(!n&&Re(r))if(Yt(r.textContent))r=i(r,!0).getOr(r);else for(null!==r.parentNode&&dn(e,r.parentNode)&&(r=r.parentNode);null!==r.nextSibling&&(dn(e,r.nextSibling)||Re(r.nextSibling));)r=r.nextSibling;for(;r.parentNode!==o;){const t=r.parentNode;if(ze(e,r))return r;if(/^(TD|TH)$/.test(t.nodeName))return r;r=t}return r},mn=(e,t,n)=>{const o=e.selection.getRng();let r="LI";const s=gt(e,((e,t)=>{const n=e.selection.getStart(!0),o=cn(e,t,!0,e.getBody());return en(R.fromDom(o),R.fromDom(t.commonAncestorContainer))?t.commonAncestorContainer:n})(e,o)),i=e.dom;if("false"===i.getContentEditable(e.selection.getNode()))return;"DL"===(t=t.toUpperCase())&&(r="DT");const l=on(o),a=L(((e,t,n)=>{const o=[],r=e.dom,s=cn(e,t,!0,n),i=cn(e,t,!1,n);let l;const a=[];for(let e=s;e&&(a.push(e),e!==i);e=e.nextSibling);return Pe.each(a,(t=>{var s;if(ze(e,t))return o.push(t),void(l=null);if(r.isBlock(t)||Ke(t))return Ke(t)&&r.remove(t),void(l=null);const i=t.nextSibling;tn.isBookmarkNode(t)&&($e(i)||ze(e,i)||!i&&t.parentNode===n)?l=null:(l||(l=r.create("p"),null===(s=t.parentNode)||void 0===s||s.insertBefore(l,t),o.push(l)),l.appendChild(t))})),o})(e,o,s),e.dom.isEditable);Pe.each(a,(o=>{let s;const l=o.previousSibling,a=o.parentNode;Fe(a)||(l&&$e(l)&&l.nodeName===t&&((e,t,n)=>{const o=e.getStyle(t,"list-style-type");let r=n?n["list-style-type"]:"";return r=null===r?"":r,o===r})(i,l,n)?(s=l,o=i.rename(o,r),l.appendChild(o)):(s=i.create(t),a.insertBefore(s,o),s.appendChild(o),o=i.rename(o,r)),((e,t,n)=>{Pe.each(n,(n=>e.setStyle(t,n,"")))})(i,o,["margin","margin-right","margin-bottom","margin-left","margin-top","padding","padding-right","padding-bottom","padding-left","padding-top"]),an(i,s,n),pn(e.dom,s))})),e.selection.setRng(rn(l))},un=(e,t,n)=>{return((e,t)=>$e(e)&&e.nodeName===(null==t?void 0:t.nodeName))(t,n)&&((e,t,n)=>e.getStyle(t,"list-style-type",!0)===e.getStyle(n,"list-style-type",!0))(e,t,n)&&(o=n,t.className===o.className);var o},pn=(e,t)=>{let n,o=t.nextSibling;if(un(e,t,o)){const r=o;for(;n=r.firstChild;)t.appendChild(n);e.remove(r)}if(o=t.previousSibling,un(e,t,o)){const r=o;for(;n=r.lastChild;)t.insertBefore(n,t.firstChild);e.remove(r)}},fn=(e,t,n,o)=>{if(t.nodeName!==n){const r=e.dom.rename(t,n);an(e.dom,r,o),Tt(e,sn(n),r)}else an(e.dom,t,o),Tt(e,sn(n),t)},gn=(e,t,n,o)=>{if(t.classList.forEach(((e,n,o)=>{e.startsWith("tox-")&&(o.remove(e),0===o.length&&t.removeAttribute("class"))})),t.nodeName!==n){const r=e.dom.rename(t,n);an(e.dom,r,o),Tt(e,sn(n),r)}else an(e.dom,t,o),Tt(e,sn(n),t)},hn=e=>"list-style-type"in e,yn=(e,t,n)=>{const o=mt(e);if(St(e,o))return;const s=ut(e),i=r(n)?n:{};s.length>0?((e,t,n,o,r)=>{const s=$e(t);if(!s||t.nodeName!==o||hn(r)||Ct(t)){mn(e,o,r);const i=on(e.selection.getRng()),l=s?[t,...n]:n,a=s&&Ct(t)?gn:fn;Pe.each(l,(t=>{a(e,t,o,r)})),e.selection.setRng(rn(i))}else Xt(e)})(e,o,s,t,i):((e,t,n,o)=>{if(t!==e.getBody())if(t)if(t.nodeName!==n||hn(o)||Ct(t)){const r=on(e.selection.getRng());Ct(t)&&t.classList.forEach(((e,n,o)=>{e.startsWith("tox-")&&(o.remove(e),0===o.length&&t.removeAttribute("class"))})),an(e.dom,t,o);const s=e.dom.rename(t,n);pn(e.dom,s),e.selection.setRng(rn(r)),mn(e,n,o),Tt(e,sn(n),s)}else Xt(e);else mn(e,n,o),Tt(e,sn(n),t)})(e,o,t,i)},vn=Be.DOM,Cn=(e,t)=>{const n=Pe.grep(e.select("ol,ul",t));Pe.each(n,(t=>{((e,t)=>{const n=t.parentElement;if(n&&"LI"===n.nodeName&&n.firstChild===t){const o=n.previousSibling;o&&"LI"===o.nodeName?(o.appendChild(t),qe(e,n)&&vn.remove(n)):vn.setStyle(n,"listStyleType","none")}if($e(n)){const e=n.previousSibling;e&&"LI"===e.nodeName&&e.appendChild(t)}})(e,t)}))},bn=(e,t,n,o)=>{let r=t.startContainer;const s=t.startOffset;if(Re(r)&&(n?s<r.data.length:s>0))return r;const i=e.schema.getNonEmptyElements();Ue(r)&&(r=Ne.getNode(r,s));const l=new Se(r,o);n&&((e,t)=>!!Ke(t)&&e.isBlock(t.nextSibling)&&!Ke(t.previousSibling))(e.dom,r)&&l.next();const a=n?l.next.bind(l):l.prev2.bind(l);for(;r=a();){if("LI"===r.nodeName&&!r.hasChildNodes())return r;if(i[r.nodeName])return r;if(Re(r)&&r.data.length>0)return r}return null},Nn=(e,t)=>{const n=t.childNodes;return 1===n.length&&!$e(n[0])&&e.isBlock(n[0])},Sn=e=>g.from(e).map(R.fromDom).filter(q).exists((e=>((e,t=!1)=>ae(e)?e.dom.isContentEditable:pe(e).fold(m(t),(e=>"true"===fe(e))))(e)&&!C(["details"],z(e)))),Ln=(e,t,n)=>{let o;const r=Nn(e,n)?n.firstChild:n;if(((e,t)=>{Nn(e,t)&&Sn(t.firstChild)&&e.remove(t.firstChild,!0)})(e,t),!qe(e,t,!0))for(;o=t.firstChild;)r.appendChild(o)},Dn=(e,t,n)=>{let o;const r=t.parentNode;if(!Ze(e,t)||!Ze(e,n))return;$e(n.lastChild)&&(o=n.lastChild),r===n.lastChild&&Ke(r.previousSibling)&&e.remove(r.previousSibling);const s=n.lastChild;s&&Ke(s)&&t.hasChildNodes()&&e.remove(s),qe(e,n,!0)&&Ce(R.fromDom(n)),Ln(e,t,n),o&&n.appendChild(o);const i=((e,t)=>{const n=e.dom,o=t.dom;return n!==o&&n.contains(o)})(R.fromDom(n),R.fromDom(t))?e.getParents(t,$e,n):[];e.remove(t),S(i,(t=>{qe(e,t)&&t!==e.getRoot()&&e.remove(t)}))},Tn=(e,t,n,o)=>{const r=e.dom;if(r.isEmpty(o))((e,t,n)=>{Ce(R.fromDom(n)),Dn(e.dom,t,n),e.selection.setCursorLocation(n,0)})(e,n,o);else{const s=on(t);Dn(r,n,o),e.selection.setRng(rn(s))}},On=(e,t)=>{const n=e.dom,o=e.selection,r=o.getStart(),s=ft(e,r),i=n.getParent(o.getStart(),"LI",s);if(i){const r=i.parentElement;if(r===e.getBody()&&qe(n,r))return!0;const l=at(o.getRng()),a=n.getParent(bn(e,l,t,s),"LI",s),d=a&&(t?n.isChildOf(i,a):n.isChildOf(a,i));if(a&&a!==i&&!d)return e.undoManager.transact((()=>{var n,o;t?Tn(e,l,a,i):(null===(o=(n=i).parentNode)||void 0===o?void 0:o.firstChild)===n?Jt(e):((e,t,n,o)=>{const r=on(t);Dn(e.dom,n,o);const s=rn(r);e.selection.setRng(s)})(e,l,i,a)})),!0;if(d&&!t&&a!==i)return e.undoManager.transact((()=>{if(l.commonAncestorContainer.parentElement){const t=on(l),o=l.commonAncestorContainer.parentElement;Ln(n,l.commonAncestorContainer.parentElement,a),o.remove();const r=rn(t);e.selection.setRng(r)}})),!0;if(!a&&!t&&0===l.startOffset&&0===l.endOffset)return e.undoManager.transact((()=>{Xt(e)})),!0}return!1},xn=(e,t)=>{const n=e.dom,o=e.selection.getStart(),r=ft(e,o),s=n.getParent(o,n.isBlock,r);if(s&&n.isEmpty(s)){const o=at(e.selection.getRng()),i=n.getParent(bn(e,o,t,r),"LI",r);if(i){const l=e=>C(["td","th","caption"],z(e)),a=e=>e.dom===r;return!!((e,t,n=u)=>M(e,t,n).getOr(e.isNone()&&t.isNone()))(me(R.fromDom(i),l,a),me(R.fromDom(o.startContainer),l,a),$)&&(e.undoManager.transact((()=>{const o=i.parentNode;((e,t,n)=>{const o=e.getParent(t.parentNode,e.isBlock,n);e.remove(t),o&&e.isEmpty(o)&&e.remove(o)})(n,s,r),pn(n,o),e.selection.select(i,!0),e.selection.collapse(t)})),!0)}}return!1},An=e=>{const t=e.selection.getStart(),n=ft(e,t);return e.dom.getParent(t,"LI,DT,DD",n)||pt(e).length>0},En=(e,t)=>{const n=e.selection;return!St(e,n.getNode())&&(n.isCollapsed()?((e,t)=>On(e,t)||xn(e,t))(e,t):(e=>!!An(e)&&(e.undoManager.transact((()=>{e.execCommand("Delete"),Cn(e.dom,e.getBody())})),!0))(e))},wn=e=>{const t=A(Ot(e).split("")),n=N(t,((e,t)=>{const n=e.toUpperCase().charCodeAt(0)-"A".charCodeAt(0)+1;return Math.pow(26,t)*n}));return D(n,((e,t)=>e+t),0)},kn=e=>{if(--e<0)return"";{const t=e%26,n=Math.floor(e/26);return kn(n)+String.fromCharCode("A".charCodeAt(0)+t)}},Bn=e=>{const t=parseInt(e.start,10);return P(e.listStyleType,"upper-alpha")?kn(t):P(e.listStyleType,"lower-alpha")?kn(t).toLowerCase():e.start},Pn=e=>{const t=mt(e);_e(t)&&!St(e,t)&&e.windowManager.open({title:"List Properties",body:{type:"panel",items:[{type:"input",name:"start",label:"Start list at number",inputMode:"numeric"}]},initialData:{start:Bn({start:e.dom.getAttrib(t,"start","1"),listStyleType:g.from(e.dom.getStyle(t,"list-style-type"))})},buttons:[{type:"cancel",name:"cancel",text:"Cancel"},{type:"submit",name:"save",text:"Save",primary:!0}],onSubmit:t=>{(e=>{switch((e=>/^[0-9]+$/.test(e)?2:/^[A-Z]+$/.test(e)?0:(e=>/^[a-z]+$/.test(e))(e)?1:e.length>0?4:3)(e)){case 2:return g.some({listStyleType:g.none(),start:e});case 0:return g.some({listStyleType:g.some("upper-alpha"),start:wn(e).toString()});case 1:return g.some({listStyleType:g.some("lower-alpha"),start:wn(e).toString()});case 3:return g.some({listStyleType:g.none(),start:""});case 4:return g.none()}})(t.getData().start).each((t=>{e.execCommand("mceListUpdate",!1,{attrs:{start:"1"===t.start?"":t.start},styles:{"list-style-type":t.listStyleType.getOr("")}})})),t.close()}})},Mn=(e,t)=>()=>{const n=mt(e);return l(n)&&n.nodeName===t},In=e=>{e.addCommand("mceListProps",(()=>{Pn(e)}))},Rn=e=>{e.on("BeforeExecCommand",(t=>{const n=t.command.toLowerCase();"indent"===n?Gt(e):"outdent"===n&&Jt(e)})),e.addCommand("InsertUnorderedList",((t,n)=>{yn(e,"UL",n)})),e.addCommand("InsertOrderedList",((t,n)=>{yn(e,"OL",n)})),e.addCommand("InsertDefinitionList",((t,n)=>{yn(e,"DL",n)})),e.addCommand("RemoveList",(()=>{Xt(e)})),In(e),e.addCommand("mceListUpdate",((t,n)=>{r(n)&&((e,t)=>{const n=mt(e);null===n||St(e,n)||e.undoManager.transact((()=>{r(t.styles)&&e.dom.setStyles(n,t.styles),r(t.attrs)&&Oe(t.attrs,((t,o)=>e.dom.setAttrib(n,o,t)))}))})(e,n)})),e.addQueryStateHandler("InsertUnorderedList",Mn(e,"UL")),e.addQueryStateHandler("InsertOrderedList",Mn(e,"OL")),e.addQueryStateHandler("InsertDefinitionList",Mn(e,"DL"))};var Un=tinymce.util.Tools.resolve("tinymce.html.Node");const $n=e=>3===e.type,Hn=e=>0===e.length,_n=e=>{const t=(t,n)=>{const o=Un.create("li");S(t,(e=>o.append(e))),n?e.insert(o,n,!0):e.append(o)},n=D(e.children(),((e,n)=>$n(n)?[...e,n]:Hn(e)||$n(n)?e:(t(e,n),[])),[]);Hn(n)||t(n)},Fn=e=>{Je(e)&&(e=>{e.on("keydown",(t=>{t.keyCode!==Le.TAB||Le.metaKeyPressed(t)||e.undoManager.transact((()=>{(t.shiftKey?Jt(e):Gt(e))&&t.preventDefault()}))}))})(e),(e=>{e.on("ExecCommand",(t=>{const n=t.command.toLowerCase();"delete"!==n&&"forwarddelete"!==n||!An(e)||Cn(e.dom,e.getBody())})),e.on("keydown",(t=>{t.keyCode===Le.BACKSPACE?En(e,!1)&&t.preventDefault():t.keyCode===Le.DELETE&&En(e,!0)&&t.preventDefault()}))})(e)},Vn=(e,t)=>n=>(n.setEnabled(e.selection.isEditable()),Lt(e,(o=>{n.setActive(bt(o.parents,t)),n.setEnabled(!St(e,o.element)&&e.selection.isEditable())}))),jn=(e,t)=>n=>Lt(e,(o=>n.setEnabled(bt(o.parents,t)&&!St(e,o.element))));e.add("lists",(e=>((e=>{(0,e.options.register)("lists_indent_on_tab",{processor:"boolean",default:!0})})(e),(e=>{e.on("PreInit",(()=>{const{parser:t}=e;t.addNodeFilter("ul,ol",(e=>S(e,_n)))}))})(e),e.hasPlugin("rtc",!0)?In(e):(Fn(e),Rn(e)),(e=>{const t=t=>()=>e.execCommand(t);e.hasPlugin("advlist")||(e.ui.registry.addToggleButton("numlist",{icon:"ordered-list",active:!1,tooltip:"Numbered list",onAction:t("InsertOrderedList"),onSetup:Vn(e,"OL")}),e.ui.registry.addToggleButton("bullist",{icon:"unordered-list",active:!1,tooltip:"Bullet list",onAction:t("InsertUnorderedList"),onSetup:Vn(e,"UL")}))})(e),(e=>{const t={text:"List properties...",icon:"ordered-list",onAction:()=>e.execCommand("mceListProps"),onSetup:jn(e,"OL")};e.ui.registry.addMenuItem("listprops",t),e.ui.registry.addContextMenu("lists",{update:t=>{const n=mt(e,t);return _e(n)?["listprops"]:[]}})})(e),(e=>({backspaceDelete:t=>{En(e,t)}}))(e))))}();
+/**
+ * TinyMCE version 6.8.3 (2024-02-08)
+ */
+
+(function () {
+    'use strict';
+
+    var global$7 = tinymce.util.Tools.resolve('tinymce.PluginManager');
+
+    const hasProto = (v, constructor, predicate) => {
+      var _a;
+      if (predicate(v, constructor.prototype)) {
+        return true;
+      } else {
+        return ((_a = v.constructor) === null || _a === void 0 ? void 0 : _a.name) === constructor.name;
+      }
+    };
+    const typeOf = x => {
+      const t = typeof x;
+      if (x === null) {
+        return 'null';
+      } else if (t === 'object' && Array.isArray(x)) {
+        return 'array';
+      } else if (t === 'object' && hasProto(x, String, (o, proto) => proto.isPrototypeOf(o))) {
+        return 'string';
+      } else {
+        return t;
+      }
+    };
+    const isType$1 = type => value => typeOf(value) === type;
+    const isSimpleType = type => value => typeof value === type;
+    const isString = isType$1('string');
+    const isObject = isType$1('object');
+    const isArray = isType$1('array');
+    const isBoolean = isSimpleType('boolean');
+    const isNullable = a => a === null || a === undefined;
+    const isNonNullable = a => !isNullable(a);
+    const isFunction = isSimpleType('function');
+    const isNumber = isSimpleType('number');
+
+    const noop = () => {
+    };
+    const compose1 = (fbc, fab) => a => fbc(fab(a));
+    const constant = value => {
+      return () => {
+        return value;
+      };
+    };
+    const tripleEquals = (a, b) => {
+      return a === b;
+    };
+    function curry(fn, ...initialArgs) {
+      return (...restArgs) => {
+        const all = initialArgs.concat(restArgs);
+        return fn.apply(null, all);
+      };
+    }
+    const not = f => t => !f(t);
+    const never = constant(false);
+
+    class Optional {
+      constructor(tag, value) {
+        this.tag = tag;
+        this.value = value;
+      }
+      static some(value) {
+        return new Optional(true, value);
+      }
+      static none() {
+        return Optional.singletonNone;
+      }
+      fold(onNone, onSome) {
+        if (this.tag) {
+          return onSome(this.value);
+        } else {
+          return onNone();
+        }
+      }
+      isSome() {
+        return this.tag;
+      }
+      isNone() {
+        return !this.tag;
+      }
+      map(mapper) {
+        if (this.tag) {
+          return Optional.some(mapper(this.value));
+        } else {
+          return Optional.none();
+        }
+      }
+      bind(binder) {
+        if (this.tag) {
+          return binder(this.value);
+        } else {
+          return Optional.none();
+        }
+      }
+      exists(predicate) {
+        return this.tag && predicate(this.value);
+      }
+      forall(predicate) {
+        return !this.tag || predicate(this.value);
+      }
+      filter(predicate) {
+        if (!this.tag || predicate(this.value)) {
+          return this;
+        } else {
+          return Optional.none();
+        }
+      }
+      getOr(replacement) {
+        return this.tag ? this.value : replacement;
+      }
+      or(replacement) {
+        return this.tag ? this : replacement;
+      }
+      getOrThunk(thunk) {
+        return this.tag ? this.value : thunk();
+      }
+      orThunk(thunk) {
+        return this.tag ? this : thunk();
+      }
+      getOrDie(message) {
+        if (!this.tag) {
+          throw new Error(message !== null && message !== void 0 ? message : 'Called getOrDie on None');
+        } else {
+          return this.value;
+        }
+      }
+      static from(value) {
+        return isNonNullable(value) ? Optional.some(value) : Optional.none();
+      }
+      getOrNull() {
+        return this.tag ? this.value : null;
+      }
+      getOrUndefined() {
+        return this.value;
+      }
+      each(worker) {
+        if (this.tag) {
+          worker(this.value);
+        }
+      }
+      toArray() {
+        return this.tag ? [this.value] : [];
+      }
+      toString() {
+        return this.tag ? `some(${ this.value })` : 'none()';
+      }
+    }
+    Optional.singletonNone = new Optional(false);
+
+    const nativeSlice = Array.prototype.slice;
+    const nativeIndexOf = Array.prototype.indexOf;
+    const nativePush = Array.prototype.push;
+    const rawIndexOf = (ts, t) => nativeIndexOf.call(ts, t);
+    const contains$1 = (xs, x) => rawIndexOf(xs, x) > -1;
+    const exists = (xs, pred) => {
+      for (let i = 0, len = xs.length; i < len; i++) {
+        const x = xs[i];
+        if (pred(x, i)) {
+          return true;
+        }
+      }
+      return false;
+    };
+    const map = (xs, f) => {
+      const len = xs.length;
+      const r = new Array(len);
+      for (let i = 0; i < len; i++) {
+        const x = xs[i];
+        r[i] = f(x, i);
+      }
+      return r;
+    };
+    const each$1 = (xs, f) => {
+      for (let i = 0, len = xs.length; i < len; i++) {
+        const x = xs[i];
+        f(x, i);
+      }
+    };
+    const filter$1 = (xs, pred) => {
+      const r = [];
+      for (let i = 0, len = xs.length; i < len; i++) {
+        const x = xs[i];
+        if (pred(x, i)) {
+          r.push(x);
+        }
+      }
+      return r;
+    };
+    const groupBy = (xs, f) => {
+      if (xs.length === 0) {
+        return [];
+      } else {
+        let wasType = f(xs[0]);
+        const r = [];
+        let group = [];
+        for (let i = 0, len = xs.length; i < len; i++) {
+          const x = xs[i];
+          const type = f(x);
+          if (type !== wasType) {
+            r.push(group);
+            group = [];
+          }
+          wasType = type;
+          group.push(x);
+        }
+        if (group.length !== 0) {
+          r.push(group);
+        }
+        return r;
+      }
+    };
+    const foldl = (xs, f, acc) => {
+      each$1(xs, (x, i) => {
+        acc = f(acc, x, i);
+      });
+      return acc;
+    };
+    const findUntil = (xs, pred, until) => {
+      for (let i = 0, len = xs.length; i < len; i++) {
+        const x = xs[i];
+        if (pred(x, i)) {
+          return Optional.some(x);
+        } else if (until(x, i)) {
+          break;
+        }
+      }
+      return Optional.none();
+    };
+    const find = (xs, pred) => {
+      return findUntil(xs, pred, never);
+    };
+    const flatten = xs => {
+      const r = [];
+      for (let i = 0, len = xs.length; i < len; ++i) {
+        if (!isArray(xs[i])) {
+          throw new Error('Arr.flatten item ' + i + ' was not an array, input: ' + xs);
+        }
+        nativePush.apply(r, xs[i]);
+      }
+      return r;
+    };
+    const bind = (xs, f) => flatten(map(xs, f));
+    const reverse = xs => {
+      const r = nativeSlice.call(xs, 0);
+      r.reverse();
+      return r;
+    };
+    const get$1 = (xs, i) => i >= 0 && i < xs.length ? Optional.some(xs[i]) : Optional.none();
+    const head = xs => get$1(xs, 0);
+    const last = xs => get$1(xs, xs.length - 1);
+    const unique = (xs, comparator) => {
+      const r = [];
+      const isDuplicated = isFunction(comparator) ? x => exists(r, i => comparator(i, x)) : x => contains$1(r, x);
+      for (let i = 0, len = xs.length; i < len; i++) {
+        const x = xs[i];
+        if (!isDuplicated(x)) {
+          r.push(x);
+        }
+      }
+      return r;
+    };
+
+    const is$2 = (lhs, rhs, comparator = tripleEquals) => lhs.exists(left => comparator(left, rhs));
+    const equals = (lhs, rhs, comparator = tripleEquals) => lift2(lhs, rhs, comparator).getOr(lhs.isNone() && rhs.isNone());
+    const lift2 = (oa, ob, f) => oa.isSome() && ob.isSome() ? Optional.some(f(oa.getOrDie(), ob.getOrDie())) : Optional.none();
+
+    const COMMENT = 8;
+    const DOCUMENT = 9;
+    const DOCUMENT_FRAGMENT = 11;
+    const ELEMENT = 1;
+    const TEXT = 3;
+
+    const fromHtml = (html, scope) => {
+      const doc = scope || document;
+      const div = doc.createElement('div');
+      div.innerHTML = html;
+      if (!div.hasChildNodes() || div.childNodes.length > 1) {
+        const message = 'HTML does not have a single root node';
+        console.error(message, html);
+        throw new Error(message);
+      }
+      return fromDom$1(div.childNodes[0]);
+    };
+    const fromTag = (tag, scope) => {
+      const doc = scope || document;
+      const node = doc.createElement(tag);
+      return fromDom$1(node);
+    };
+    const fromText = (text, scope) => {
+      const doc = scope || document;
+      const node = doc.createTextNode(text);
+      return fromDom$1(node);
+    };
+    const fromDom$1 = node => {
+      if (node === null || node === undefined) {
+        throw new Error('Node cannot be null or undefined');
+      }
+      return { dom: node };
+    };
+    const fromPoint = (docElm, x, y) => Optional.from(docElm.dom.elementFromPoint(x, y)).map(fromDom$1);
+    const SugarElement = {
+      fromHtml,
+      fromTag,
+      fromText,
+      fromDom: fromDom$1,
+      fromPoint
+    };
+
+    const is$1 = (element, selector) => {
+      const dom = element.dom;
+      if (dom.nodeType !== ELEMENT) {
+        return false;
+      } else {
+        const elem = dom;
+        if (elem.matches !== undefined) {
+          return elem.matches(selector);
+        } else if (elem.msMatchesSelector !== undefined) {
+          return elem.msMatchesSelector(selector);
+        } else if (elem.webkitMatchesSelector !== undefined) {
+          return elem.webkitMatchesSelector(selector);
+        } else if (elem.mozMatchesSelector !== undefined) {
+          return elem.mozMatchesSelector(selector);
+        } else {
+          throw new Error('Browser lacks native selectors');
+        }
+      }
+    };
+
+    const eq = (e1, e2) => e1.dom === e2.dom;
+    const contains = (e1, e2) => {
+      const d1 = e1.dom;
+      const d2 = e2.dom;
+      return d1 === d2 ? false : d1.contains(d2);
+    };
+    const is = is$1;
+
+    const Global = typeof window !== 'undefined' ? window : Function('return this;')();
+
+    const path = (parts, scope) => {
+      let o = scope !== undefined && scope !== null ? scope : Global;
+      for (let i = 0; i < parts.length && o !== undefined && o !== null; ++i) {
+        o = o[parts[i]];
+      }
+      return o;
+    };
+    const resolve = (p, scope) => {
+      const parts = p.split('.');
+      return path(parts, scope);
+    };
+
+    const unsafe = (name, scope) => {
+      return resolve(name, scope);
+    };
+    const getOrDie = (name, scope) => {
+      const actual = unsafe(name, scope);
+      if (actual === undefined || actual === null) {
+        throw new Error(name + ' not available on this browser');
+      }
+      return actual;
+    };
+
+    const getPrototypeOf = Object.getPrototypeOf;
+    const sandHTMLElement = scope => {
+      return getOrDie('HTMLElement', scope);
+    };
+    const isPrototypeOf = x => {
+      const scope = resolve('ownerDocument.defaultView', x);
+      return isObject(x) && (sandHTMLElement(scope).prototype.isPrototypeOf(x) || /^HTML\w*Element$/.test(getPrototypeOf(x).constructor.name));
+    };
+
+    const name = element => {
+      const r = element.dom.nodeName;
+      return r.toLowerCase();
+    };
+    const type = element => element.dom.nodeType;
+    const isType = t => element => type(element) === t;
+    const isComment = element => type(element) === COMMENT || name(element) === '#comment';
+    const isHTMLElement = element => isElement$1(element) && isPrototypeOf(element.dom);
+    const isElement$1 = isType(ELEMENT);
+    const isText = isType(TEXT);
+    const isDocument = isType(DOCUMENT);
+    const isDocumentFragment = isType(DOCUMENT_FRAGMENT);
+    const isTag = tag => e => isElement$1(e) && name(e) === tag;
+
+    const owner = element => SugarElement.fromDom(element.dom.ownerDocument);
+    const documentOrOwner = dos => isDocument(dos) ? dos : owner(dos);
+    const parent = element => Optional.from(element.dom.parentNode).map(SugarElement.fromDom);
+    const parentElement = element => Optional.from(element.dom.parentElement).map(SugarElement.fromDom);
+    const nextSibling = element => Optional.from(element.dom.nextSibling).map(SugarElement.fromDom);
+    const children = element => map(element.dom.childNodes, SugarElement.fromDom);
+    const child = (element, index) => {
+      const cs = element.dom.childNodes;
+      return Optional.from(cs[index]).map(SugarElement.fromDom);
+    };
+    const firstChild = element => child(element, 0);
+    const lastChild = element => child(element, element.dom.childNodes.length - 1);
+
+    const isShadowRoot = dos => isDocumentFragment(dos) && isNonNullable(dos.dom.host);
+    const supported = isFunction(Element.prototype.attachShadow) && isFunction(Node.prototype.getRootNode);
+    const getRootNode = supported ? e => SugarElement.fromDom(e.dom.getRootNode()) : documentOrOwner;
+    const getShadowRoot = e => {
+      const r = getRootNode(e);
+      return isShadowRoot(r) ? Optional.some(r) : Optional.none();
+    };
+    const getShadowHost = e => SugarElement.fromDom(e.dom.host);
+
+    const inBody = element => {
+      const dom = isText(element) ? element.dom.parentNode : element.dom;
+      if (dom === undefined || dom === null || dom.ownerDocument === null) {
+        return false;
+      }
+      const doc = dom.ownerDocument;
+      return getShadowRoot(SugarElement.fromDom(dom)).fold(() => doc.body.contains(dom), compose1(inBody, getShadowHost));
+    };
+
+    var ClosestOrAncestor = (is, ancestor, scope, a, isRoot) => {
+      if (is(scope, a)) {
+        return Optional.some(scope);
+      } else if (isFunction(isRoot) && isRoot(scope)) {
+        return Optional.none();
+      } else {
+        return ancestor(scope, a, isRoot);
+      }
+    };
+
+    const ancestor$3 = (scope, predicate, isRoot) => {
+      let element = scope.dom;
+      const stop = isFunction(isRoot) ? isRoot : never;
+      while (element.parentNode) {
+        element = element.parentNode;
+        const el = SugarElement.fromDom(element);
+        if (predicate(el)) {
+          return Optional.some(el);
+        } else if (stop(el)) {
+          break;
+        }
+      }
+      return Optional.none();
+    };
+    const closest$2 = (scope, predicate, isRoot) => {
+      const is = (s, test) => test(s);
+      return ClosestOrAncestor(is, ancestor$3, scope, predicate, isRoot);
+    };
+
+    const ancestor$2 = (scope, selector, isRoot) => ancestor$3(scope, e => is$1(e, selector), isRoot);
+    const closest$1 = (scope, selector, isRoot) => {
+      const is = (element, selector) => is$1(element, selector);
+      return ClosestOrAncestor(is, ancestor$2, scope, selector, isRoot);
+    };
+
+    const closest = target => closest$1(target, '[contenteditable]');
+    const isEditable = (element, assumeEditable = false) => {
+      if (inBody(element)) {
+        return element.dom.isContentEditable;
+      } else {
+        return closest(element).fold(constant(assumeEditable), editable => getRaw(editable) === 'true');
+      }
+    };
+    const getRaw = element => element.dom.contentEditable;
+
+    const before$1 = (marker, element) => {
+      const parent$1 = parent(marker);
+      parent$1.each(v => {
+        v.dom.insertBefore(element.dom, marker.dom);
+      });
+    };
+    const after = (marker, element) => {
+      const sibling = nextSibling(marker);
+      sibling.fold(() => {
+        const parent$1 = parent(marker);
+        parent$1.each(v => {
+          append$1(v, element);
+        });
+      }, v => {
+        before$1(v, element);
+      });
+    };
+    const prepend = (parent, element) => {
+      const firstChild$1 = firstChild(parent);
+      firstChild$1.fold(() => {
+        append$1(parent, element);
+      }, v => {
+        parent.dom.insertBefore(element.dom, v.dom);
+      });
+    };
+    const append$1 = (parent, element) => {
+      parent.dom.appendChild(element.dom);
+    };
+
+    const before = (marker, elements) => {
+      each$1(elements, x => {
+        before$1(marker, x);
+      });
+    };
+    const append = (parent, elements) => {
+      each$1(elements, x => {
+        append$1(parent, x);
+      });
+    };
+
+    const empty = element => {
+      element.dom.textContent = '';
+      each$1(children(element), rogue => {
+        remove(rogue);
+      });
+    };
+    const remove = element => {
+      const dom = element.dom;
+      if (dom.parentNode !== null) {
+        dom.parentNode.removeChild(dom);
+      }
+    };
+
+    var global$6 = tinymce.util.Tools.resolve('tinymce.dom.RangeUtils');
+
+    var global$5 = tinymce.util.Tools.resolve('tinymce.dom.TreeWalker');
+
+    var global$4 = tinymce.util.Tools.resolve('tinymce.util.VK');
+
+    const fromDom = nodes => map(nodes, SugarElement.fromDom);
+
+    const keys = Object.keys;
+    const each = (obj, f) => {
+      const props = keys(obj);
+      for (let k = 0, len = props.length; k < len; k++) {
+        const i = props[k];
+        const x = obj[i];
+        f(x, i);
+      }
+    };
+    const objAcc = r => (x, i) => {
+      r[i] = x;
+    };
+    const internalFilter = (obj, pred, onTrue, onFalse) => {
+      each(obj, (x, i) => {
+        (pred(x, i) ? onTrue : onFalse)(x, i);
+      });
+    };
+    const filter = (obj, pred) => {
+      const t = {};
+      internalFilter(obj, pred, objAcc(t), noop);
+      return t;
+    };
+
+    const rawSet = (dom, key, value) => {
+      if (isString(value) || isBoolean(value) || isNumber(value)) {
+        dom.setAttribute(key, value + '');
+      } else {
+        console.error('Invalid call to Attribute.set. Key ', key, ':: Value ', value, ':: Element ', dom);
+        throw new Error('Attribute value was not simple');
+      }
+    };
+    const setAll = (element, attrs) => {
+      const dom = element.dom;
+      each(attrs, (v, k) => {
+        rawSet(dom, k, v);
+      });
+    };
+    const clone$1 = element => foldl(element.dom.attributes, (acc, attr) => {
+      acc[attr.name] = attr.value;
+      return acc;
+    }, {});
+
+    const clone = (original, isDeep) => SugarElement.fromDom(original.dom.cloneNode(isDeep));
+    const deep = original => clone(original, true);
+    const shallowAs = (original, tag) => {
+      const nu = SugarElement.fromTag(tag);
+      const attributes = clone$1(original);
+      setAll(nu, attributes);
+      return nu;
+    };
+    const mutate = (original, tag) => {
+      const nu = shallowAs(original, tag);
+      after(original, nu);
+      const children$1 = children(original);
+      append(nu, children$1);
+      remove(original);
+      return nu;
+    };
+
+    var global$3 = tinymce.util.Tools.resolve('tinymce.dom.DOMUtils');
+
+    var global$2 = tinymce.util.Tools.resolve('tinymce.util.Tools');
+
+    const matchNodeName = name => node => isNonNullable(node) && node.nodeName.toLowerCase() === name;
+    const matchNodeNames = regex => node => isNonNullable(node) && regex.test(node.nodeName);
+    const isTextNode$1 = node => isNonNullable(node) && node.nodeType === 3;
+    const isElement = node => isNonNullable(node) && node.nodeType === 1;
+    const isListNode = matchNodeNames(/^(OL|UL|DL)$/);
+    const isOlUlNode = matchNodeNames(/^(OL|UL)$/);
+    const isOlNode = matchNodeName('ol');
+    const isListItemNode = matchNodeNames(/^(LI|DT|DD)$/);
+    const isDlItemNode = matchNodeNames(/^(DT|DD)$/);
+    const isTableCellNode = matchNodeNames(/^(TH|TD)$/);
+    const isBr = matchNodeName('br');
+    const isFirstChild = node => {
+      var _a;
+      return ((_a = node.parentNode) === null || _a === void 0 ? void 0 : _a.firstChild) === node;
+    };
+    const isTextBlock = (editor, node) => isNonNullable(node) && node.nodeName in editor.schema.getTextBlockElements();
+    const isBlock = (node, blockElements) => isNonNullable(node) && node.nodeName in blockElements;
+    const isVoid = (editor, node) => isNonNullable(node) && node.nodeName in editor.schema.getVoidElements();
+    const isBogusBr = (dom, node) => {
+      if (!isBr(node)) {
+        return false;
+      }
+      return dom.isBlock(node.nextSibling) && !isBr(node.previousSibling);
+    };
+    const isEmpty$2 = (dom, elm, keepBookmarks) => {
+      const empty = dom.isEmpty(elm);
+      if (keepBookmarks && dom.select('span[data-mce-type=bookmark]', elm).length > 0) {
+        return false;
+      }
+      return empty;
+    };
+    const isChildOfBody = (dom, elm) => dom.isChildOf(elm, dom.getRoot());
+
+    const option = name => editor => editor.options.get(name);
+    const register$3 = editor => {
+      const registerOption = editor.options.register;
+      registerOption('lists_indent_on_tab', {
+        processor: 'boolean',
+        default: true
+      });
+    };
+    const shouldIndentOnTab = option('lists_indent_on_tab');
+    const getForcedRootBlock = option('forced_root_block');
+    const getForcedRootBlockAttrs = option('forced_root_block_attrs');
+
+    const createTextBlock = (editor, contentNode) => {
+      const dom = editor.dom;
+      const blockElements = editor.schema.getBlockElements();
+      const fragment = dom.createFragment();
+      const blockName = getForcedRootBlock(editor);
+      const blockAttrs = getForcedRootBlockAttrs(editor);
+      let node;
+      let textBlock;
+      let hasContentNode = false;
+      textBlock = dom.create(blockName, blockAttrs);
+      if (!isBlock(contentNode.firstChild, blockElements)) {
+        fragment.appendChild(textBlock);
+      }
+      while (node = contentNode.firstChild) {
+        const nodeName = node.nodeName;
+        if (!hasContentNode && (nodeName !== 'SPAN' || node.getAttribute('data-mce-type') !== 'bookmark')) {
+          hasContentNode = true;
+        }
+        if (isBlock(node, blockElements)) {
+          fragment.appendChild(node);
+          textBlock = null;
+        } else {
+          if (!textBlock) {
+            textBlock = dom.create(blockName, blockAttrs);
+            fragment.appendChild(textBlock);
+          }
+          textBlock.appendChild(node);
+        }
+      }
+      if (!hasContentNode && textBlock) {
+        textBlock.appendChild(dom.create('br', { 'data-mce-bogus': '1' }));
+      }
+      return fragment;
+    };
+
+    const DOM$2 = global$3.DOM;
+    const splitList = (editor, list, li) => {
+      const removeAndKeepBookmarks = targetNode => {
+        const parent = targetNode.parentNode;
+        if (parent) {
+          global$2.each(bookmarks, node => {
+            parent.insertBefore(node, li.parentNode);
+          });
+        }
+        DOM$2.remove(targetNode);
+      };
+      const bookmarks = DOM$2.select('span[data-mce-type="bookmark"]', list);
+      const newBlock = createTextBlock(editor, li);
+      const tmpRng = DOM$2.createRng();
+      tmpRng.setStartAfter(li);
+      tmpRng.setEndAfter(list);
+      const fragment = tmpRng.extractContents();
+      for (let node = fragment.firstChild; node; node = node.firstChild) {
+        if (node.nodeName === 'LI' && editor.dom.isEmpty(node)) {
+          DOM$2.remove(node);
+          break;
+        }
+      }
+      if (!editor.dom.isEmpty(fragment)) {
+        DOM$2.insertAfter(fragment, list);
+      }
+      DOM$2.insertAfter(newBlock, list);
+      const parent = li.parentElement;
+      if (parent && isEmpty$2(editor.dom, parent)) {
+        removeAndKeepBookmarks(parent);
+      }
+      DOM$2.remove(li);
+      if (isEmpty$2(editor.dom, list)) {
+        DOM$2.remove(list);
+      }
+    };
+
+    const isDescriptionDetail = isTag('dd');
+    const isDescriptionTerm = isTag('dt');
+    const outdentDlItem = (editor, item) => {
+      if (isDescriptionDetail(item)) {
+        mutate(item, 'dt');
+      } else if (isDescriptionTerm(item)) {
+        parentElement(item).each(dl => splitList(editor, dl.dom, item.dom));
+      }
+    };
+    const indentDlItem = item => {
+      if (isDescriptionTerm(item)) {
+        mutate(item, 'dd');
+      }
+    };
+    const dlIndentation = (editor, indentation, dlItems) => {
+      if (indentation === 'Indent') {
+        each$1(dlItems, indentDlItem);
+      } else {
+        each$1(dlItems, item => outdentDlItem(editor, item));
+      }
+    };
+
+    const getNormalizedPoint = (container, offset) => {
+      if (isTextNode$1(container)) {
+        return {
+          container,
+          offset
+        };
+      }
+      const node = global$6.getNode(container, offset);
+      if (isTextNode$1(node)) {
+        return {
+          container: node,
+          offset: offset >= container.childNodes.length ? node.data.length : 0
+        };
+      } else if (node.previousSibling && isTextNode$1(node.previousSibling)) {
+        return {
+          container: node.previousSibling,
+          offset: node.previousSibling.data.length
+        };
+      } else if (node.nextSibling && isTextNode$1(node.nextSibling)) {
+        return {
+          container: node.nextSibling,
+          offset: 0
+        };
+      }
+      return {
+        container,
+        offset
+      };
+    };
+    const normalizeRange = rng => {
+      const outRng = rng.cloneRange();
+      const rangeStart = getNormalizedPoint(rng.startContainer, rng.startOffset);
+      outRng.setStart(rangeStart.container, rangeStart.offset);
+      const rangeEnd = getNormalizedPoint(rng.endContainer, rng.endOffset);
+      outRng.setEnd(rangeEnd.container, rangeEnd.offset);
+      return outRng;
+    };
+
+    const listNames = [
+      'OL',
+      'UL',
+      'DL'
+    ];
+    const listSelector = listNames.join(',');
+    const getParentList = (editor, node) => {
+      const selectionStart = node || editor.selection.getStart(true);
+      return editor.dom.getParent(selectionStart, listSelector, getClosestListHost(editor, selectionStart));
+    };
+    const isParentListSelected = (parentList, selectedBlocks) => isNonNullable(parentList) && selectedBlocks.length === 1 && selectedBlocks[0] === parentList;
+    const findSubLists = parentList => filter$1(parentList.querySelectorAll(listSelector), isListNode);
+    const getSelectedSubLists = editor => {
+      const parentList = getParentList(editor);
+      const selectedBlocks = editor.selection.getSelectedBlocks();
+      if (isParentListSelected(parentList, selectedBlocks)) {
+        return findSubLists(parentList);
+      } else {
+        return filter$1(selectedBlocks, elm => {
+          return isListNode(elm) && parentList !== elm;
+        });
+      }
+    };
+    const findParentListItemsNodes = (editor, elms) => {
+      const listItemsElms = global$2.map(elms, elm => {
+        const parentLi = editor.dom.getParent(elm, 'li,dd,dt', getClosestListHost(editor, elm));
+        return parentLi ? parentLi : elm;
+      });
+      return unique(listItemsElms);
+    };
+    const getSelectedListItems = editor => {
+      const selectedBlocks = editor.selection.getSelectedBlocks();
+      return filter$1(findParentListItemsNodes(editor, selectedBlocks), isListItemNode);
+    };
+    const getSelectedDlItems = editor => filter$1(getSelectedListItems(editor), isDlItemNode);
+    const getClosestEditingHost = (editor, elm) => {
+      const parentTableCell = editor.dom.getParents(elm, 'TD,TH');
+      return parentTableCell.length > 0 ? parentTableCell[0] : editor.getBody();
+    };
+    const isListHost = (schema, node) => !isListNode(node) && !isListItemNode(node) && exists(listNames, listName => schema.isValidChild(node.nodeName, listName));
+    const getClosestListHost = (editor, elm) => {
+      const parentBlocks = editor.dom.getParents(elm, editor.dom.isBlock);
+      const parentBlock = find(parentBlocks, elm => isListHost(editor.schema, elm));
+      return parentBlock.getOr(editor.getBody());
+    };
+    const isListInsideAnLiWithFirstAndLastNotListElement = list => parent(list).exists(parent => isListItemNode(parent.dom) && firstChild(parent).exists(firstChild => !isListNode(firstChild.dom)) && lastChild(parent).exists(lastChild => !isListNode(lastChild.dom)));
+    const findLastParentListNode = (editor, elm) => {
+      const parentLists = editor.dom.getParents(elm, 'ol,ul', getClosestListHost(editor, elm));
+      return last(parentLists);
+    };
+    const getSelectedLists = editor => {
+      const firstList = findLastParentListNode(editor, editor.selection.getStart());
+      const subsequentLists = filter$1(editor.selection.getSelectedBlocks(), isOlUlNode);
+      return firstList.toArray().concat(subsequentLists);
+    };
+    const getParentLists = editor => {
+      const elm = editor.selection.getStart();
+      return editor.dom.getParents(elm, 'ol,ul', getClosestListHost(editor, elm));
+    };
+    const getSelectedListRoots = editor => {
+      const selectedLists = getSelectedLists(editor);
+      const parentLists = getParentLists(editor);
+      return find(parentLists, p => isListInsideAnLiWithFirstAndLastNotListElement(SugarElement.fromDom(p))).fold(() => getUniqueListRoots(editor, selectedLists), l => [l]);
+    };
+    const getUniqueListRoots = (editor, lists) => {
+      const listRoots = map(lists, list => findLastParentListNode(editor, list).getOr(list));
+      return unique(listRoots);
+    };
+
+    const isCustomList = list => /\btox\-/.test(list.className);
+    const inList = (parents, listName) => findUntil(parents, isListNode, isTableCellNode).exists(list => list.nodeName === listName && !isCustomList(list));
+    const isWithinNonEditable = (editor, element) => element !== null && !editor.dom.isEditable(element);
+    const selectionIsWithinNonEditableList = editor => {
+      const parentList = getParentList(editor);
+      return isWithinNonEditable(editor, parentList);
+    };
+    const isWithinNonEditableList = (editor, element) => {
+      const parentList = editor.dom.getParent(element, 'ol,ul,dl');
+      return isWithinNonEditable(editor, parentList);
+    };
+    const setNodeChangeHandler = (editor, nodeChangeHandler) => {
+      const initialNode = editor.selection.getNode();
+      nodeChangeHandler({
+        parents: editor.dom.getParents(initialNode),
+        element: initialNode
+      });
+      editor.on('NodeChange', nodeChangeHandler);
+      return () => editor.off('NodeChange', nodeChangeHandler);
+    };
+
+    const fromElements = (elements, scope) => {
+      const doc = scope || document;
+      const fragment = doc.createDocumentFragment();
+      each$1(elements, element => {
+        fragment.appendChild(element.dom);
+      });
+      return SugarElement.fromDom(fragment);
+    };
+
+    const fireListEvent = (editor, action, element) => editor.dispatch('ListMutation', {
+      action,
+      element
+    });
+
+    const blank = r => s => s.replace(r, '');
+    const trim = blank(/^\s+|\s+$/g);
+    const isNotEmpty = s => s.length > 0;
+    const isEmpty$1 = s => !isNotEmpty(s);
+
+    const isSupported = dom => dom.style !== undefined && isFunction(dom.style.getPropertyValue);
+
+    const internalSet = (dom, property, value) => {
+      if (!isString(value)) {
+        console.error('Invalid call to CSS.set. Property ', property, ':: Value ', value, ':: Element ', dom);
+        throw new Error('CSS value must be a string: ' + value);
+      }
+      if (isSupported(dom)) {
+        dom.style.setProperty(property, value);
+      }
+    };
+    const set = (element, property, value) => {
+      const dom = element.dom;
+      internalSet(dom, property, value);
+    };
+
+    const isList = el => is(el, 'OL,UL');
+    const isListItem = el => is(el, 'LI');
+    const hasFirstChildList = el => firstChild(el).exists(isList);
+    const hasLastChildList = el => lastChild(el).exists(isList);
+
+    const isEntryList = entry => 'listAttributes' in entry;
+    const isEntryComment = entry => 'isComment' in entry;
+    const isEntryFragment = entry => 'isFragment' in entry;
+    const isIndented = entry => entry.depth > 0;
+    const isSelected = entry => entry.isSelected;
+    const cloneItemContent = li => {
+      const children$1 = children(li);
+      const content = hasLastChildList(li) ? children$1.slice(0, -1) : children$1;
+      return map(content, deep);
+    };
+    const createEntry = (li, depth, isSelected) => parent(li).filter(isElement$1).map(list => ({
+      depth,
+      dirty: false,
+      isSelected,
+      content: cloneItemContent(li),
+      itemAttributes: clone$1(li),
+      listAttributes: clone$1(list),
+      listType: name(list),
+      isInPreviousLi: false
+    }));
+
+    const joinSegment = (parent, child) => {
+      append$1(parent.item, child.list);
+    };
+    const joinSegments = segments => {
+      for (let i = 1; i < segments.length; i++) {
+        joinSegment(segments[i - 1], segments[i]);
+      }
+    };
+    const appendSegments = (head$1, tail) => {
+      lift2(last(head$1), head(tail), joinSegment);
+    };
+    const createSegment = (scope, listType) => {
+      const segment = {
+        list: SugarElement.fromTag(listType, scope),
+        item: SugarElement.fromTag('li', scope)
+      };
+      append$1(segment.list, segment.item);
+      return segment;
+    };
+    const createSegments = (scope, entry, size) => {
+      const segments = [];
+      for (let i = 0; i < size; i++) {
+        segments.push(createSegment(scope, isEntryList(entry) ? entry.listType : entry.parentListType));
+      }
+      return segments;
+    };
+    const populateSegments = (segments, entry) => {
+      for (let i = 0; i < segments.length - 1; i++) {
+        set(segments[i].item, 'list-style-type', 'none');
+      }
+      last(segments).each(segment => {
+        if (isEntryList(entry)) {
+          setAll(segment.list, entry.listAttributes);
+          setAll(segment.item, entry.itemAttributes);
+        }
+        append(segment.item, entry.content);
+      });
+    };
+    const normalizeSegment = (segment, entry) => {
+      if (name(segment.list) !== entry.listType) {
+        segment.list = mutate(segment.list, entry.listType);
+      }
+      setAll(segment.list, entry.listAttributes);
+    };
+    const createItem = (scope, attr, content) => {
+      const item = SugarElement.fromTag('li', scope);
+      setAll(item, attr);
+      append(item, content);
+      return item;
+    };
+    const appendItem = (segment, item) => {
+      append$1(segment.list, item);
+      segment.item = item;
+    };
+    const writeShallow = (scope, cast, entry) => {
+      const newCast = cast.slice(0, entry.depth);
+      last(newCast).each(segment => {
+        if (isEntryList(entry)) {
+          const item = createItem(scope, entry.itemAttributes, entry.content);
+          appendItem(segment, item);
+          normalizeSegment(segment, entry);
+        } else if (isEntryFragment(entry)) {
+          append(segment.item, entry.content);
+        } else {
+          const item = SugarElement.fromHtml(`<!--${ entry.content }-->`);
+          append$1(segment.list, item);
+        }
+      });
+      return newCast;
+    };
+    const writeDeep = (scope, cast, entry) => {
+      const segments = createSegments(scope, entry, entry.depth - cast.length);
+      joinSegments(segments);
+      populateSegments(segments, entry);
+      appendSegments(cast, segments);
+      return cast.concat(segments);
+    };
+    const composeList = (scope, entries) => {
+      let firstCommentEntryOpt = Optional.none();
+      const cast = foldl(entries, (cast, entry, i) => {
+        if (!isEntryComment(entry)) {
+          return entry.depth > cast.length ? writeDeep(scope, cast, entry) : writeShallow(scope, cast, entry);
+        } else {
+          if (i === 0) {
+            firstCommentEntryOpt = Optional.some(entry);
+            return cast;
+          }
+          return writeShallow(scope, cast, entry);
+        }
+      }, []);
+      firstCommentEntryOpt.each(firstCommentEntry => {
+        const item = SugarElement.fromHtml(`<!--${ firstCommentEntry.content }-->`);
+        head(cast).each(fistCast => {
+          prepend(fistCast.list, item);
+        });
+      });
+      return head(cast).map(segment => segment.list);
+    };
+
+    const indentEntry = (indentation, entry) => {
+      switch (indentation) {
+      case 'Indent':
+        entry.depth++;
+        break;
+      case 'Outdent':
+        entry.depth--;
+        break;
+      case 'Flatten':
+        entry.depth = 0;
+      }
+      entry.dirty = true;
+    };
+
+    const cloneListProperties = (target, source) => {
+      if (isEntryList(target) && isEntryList(source)) {
+        target.listType = source.listType;
+        target.listAttributes = { ...source.listAttributes };
+      }
+    };
+    const cleanListProperties = entry => {
+      entry.listAttributes = filter(entry.listAttributes, (_value, key) => key !== 'start');
+    };
+    const closestSiblingEntry = (entries, start) => {
+      const depth = entries[start].depth;
+      const matches = entry => entry.depth === depth && !entry.dirty;
+      const until = entry => entry.depth < depth;
+      return findUntil(reverse(entries.slice(0, start)), matches, until).orThunk(() => findUntil(entries.slice(start + 1), matches, until));
+    };
+    const normalizeEntries = entries => {
+      each$1(entries, (entry, i) => {
+        closestSiblingEntry(entries, i).fold(() => {
+          if (entry.dirty && isEntryList(entry)) {
+            cleanListProperties(entry);
+          }
+        }, matchingEntry => cloneListProperties(entry, matchingEntry));
+      });
+      return entries;
+    };
+
+    const Cell = initial => {
+      let value = initial;
+      const get = () => {
+        return value;
+      };
+      const set = v => {
+        value = v;
+      };
+      return {
+        get,
+        set
+      };
+    };
+
+    const parseSingleItem = (depth, itemSelection, selectionState, item) => {
+      var _a;
+      if (isComment(item)) {
+        return [{
+            depth: depth + 1,
+            content: (_a = item.dom.nodeValue) !== null && _a !== void 0 ? _a : '',
+            dirty: false,
+            isSelected: false,
+            isComment: true
+          }];
+      }
+      itemSelection.each(selection => {
+        if (eq(selection.start, item)) {
+          selectionState.set(true);
+        }
+      });
+      const currentItemEntry = createEntry(item, depth, selectionState.get());
+      itemSelection.each(selection => {
+        if (eq(selection.end, item)) {
+          selectionState.set(false);
+        }
+      });
+      const childListEntries = lastChild(item).filter(isList).map(list => parseList(depth, itemSelection, selectionState, list)).getOr([]);
+      return currentItemEntry.toArray().concat(childListEntries);
+    };
+    const parseItem = (depth, itemSelection, selectionState, item) => firstChild(item).filter(isList).fold(() => parseSingleItem(depth, itemSelection, selectionState, item), list => {
+      const parsedSiblings = foldl(children(item), (acc, liChild, i) => {
+        if (i === 0) {
+          return acc;
+        } else {
+          if (isListItem(liChild)) {
+            return acc.concat(parseSingleItem(depth, itemSelection, selectionState, liChild));
+          } else {
+            const fragment = {
+              isFragment: true,
+              depth,
+              content: [liChild],
+              isSelected: false,
+              dirty: false,
+              parentListType: name(list)
+            };
+            return acc.concat(fragment);
+          }
+        }
+      }, []);
+      return parseList(depth, itemSelection, selectionState, list).concat(parsedSiblings);
+    });
+    const parseList = (depth, itemSelection, selectionState, list) => bind(children(list), element => {
+      const parser = isList(element) ? parseList : parseItem;
+      const newDepth = depth + 1;
+      return parser(newDepth, itemSelection, selectionState, element);
+    });
+    const parseLists = (lists, itemSelection) => {
+      const selectionState = Cell(false);
+      const initialDepth = 0;
+      return map(lists, list => ({
+        sourceList: list,
+        entries: parseList(initialDepth, itemSelection, selectionState, list)
+      }));
+    };
+
+    const outdentedComposer = (editor, entries) => {
+      const normalizedEntries = normalizeEntries(entries);
+      return map(normalizedEntries, entry => {
+        const content = !isEntryComment(entry) ? fromElements(entry.content) : fromElements([SugarElement.fromHtml(`<!--${ entry.content }-->`)]);
+        return SugarElement.fromDom(createTextBlock(editor, content.dom));
+      });
+    };
+    const indentedComposer = (editor, entries) => {
+      const normalizedEntries = normalizeEntries(entries);
+      return composeList(editor.contentDocument, normalizedEntries).toArray();
+    };
+    const composeEntries = (editor, entries) => bind(groupBy(entries, isIndented), entries => {
+      const groupIsIndented = head(entries).exists(isIndented);
+      return groupIsIndented ? indentedComposer(editor, entries) : outdentedComposer(editor, entries);
+    });
+    const indentSelectedEntries = (entries, indentation) => {
+      each$1(filter$1(entries, isSelected), entry => indentEntry(indentation, entry));
+    };
+    const getItemSelection = editor => {
+      const selectedListItems = map(getSelectedListItems(editor), SugarElement.fromDom);
+      return lift2(find(selectedListItems, not(hasFirstChildList)), find(reverse(selectedListItems), not(hasFirstChildList)), (start, end) => ({
+        start,
+        end
+      }));
+    };
+    const listIndentation = (editor, lists, indentation) => {
+      const entrySets = parseLists(lists, getItemSelection(editor));
+      each$1(entrySets, entrySet => {
+        indentSelectedEntries(entrySet.entries, indentation);
+        const composedLists = composeEntries(editor, entrySet.entries);
+        each$1(composedLists, composedList => {
+          fireListEvent(editor, indentation === 'Indent' ? 'IndentList' : 'OutdentList', composedList.dom);
+        });
+        before(entrySet.sourceList, composedLists);
+        remove(entrySet.sourceList);
+      });
+    };
+
+    const selectionIndentation = (editor, indentation) => {
+      const lists = fromDom(getSelectedListRoots(editor));
+      const dlItems = fromDom(getSelectedDlItems(editor));
+      let isHandled = false;
+      if (lists.length || dlItems.length) {
+        const bookmark = editor.selection.getBookmark();
+        listIndentation(editor, lists, indentation);
+        dlIndentation(editor, indentation, dlItems);
+        editor.selection.moveToBookmark(bookmark);
+        editor.selection.setRng(normalizeRange(editor.selection.getRng()));
+        editor.nodeChanged();
+        isHandled = true;
+      }
+      return isHandled;
+    };
+    const handleIndentation = (editor, indentation) => !selectionIsWithinNonEditableList(editor) && selectionIndentation(editor, indentation);
+    const indentListSelection = editor => handleIndentation(editor, 'Indent');
+    const outdentListSelection = editor => handleIndentation(editor, 'Outdent');
+    const flattenListSelection = editor => handleIndentation(editor, 'Flatten');
+
+    const zeroWidth = '\uFEFF';
+    const isZwsp = char => char === zeroWidth;
+
+    const ancestor$1 = (scope, predicate, isRoot) => ancestor$3(scope, predicate, isRoot).isSome();
+
+    const ancestor = (element, target) => ancestor$1(element, curry(eq, target));
+
+    var global$1 = tinymce.util.Tools.resolve('tinymce.dom.BookmarkManager');
+
+    const DOM$1 = global$3.DOM;
+    const createBookmark = rng => {
+      const bookmark = {};
+      const setupEndPoint = start => {
+        let container = rng[start ? 'startContainer' : 'endContainer'];
+        let offset = rng[start ? 'startOffset' : 'endOffset'];
+        if (isElement(container)) {
+          const offsetNode = DOM$1.create('span', { 'data-mce-type': 'bookmark' });
+          if (container.hasChildNodes()) {
+            offset = Math.min(offset, container.childNodes.length - 1);
+            if (start) {
+              container.insertBefore(offsetNode, container.childNodes[offset]);
+            } else {
+              DOM$1.insertAfter(offsetNode, container.childNodes[offset]);
+            }
+          } else {
+            container.appendChild(offsetNode);
+          }
+          container = offsetNode;
+          offset = 0;
+        }
+        bookmark[start ? 'startContainer' : 'endContainer'] = container;
+        bookmark[start ? 'startOffset' : 'endOffset'] = offset;
+      };
+      setupEndPoint(true);
+      if (!rng.collapsed) {
+        setupEndPoint();
+      }
+      return bookmark;
+    };
+    const resolveBookmark = bookmark => {
+      const restoreEndPoint = start => {
+        const nodeIndex = container => {
+          var _a;
+          let node = (_a = container.parentNode) === null || _a === void 0 ? void 0 : _a.firstChild;
+          let idx = 0;
+          while (node) {
+            if (node === container) {
+              return idx;
+            }
+            if (!isElement(node) || node.getAttribute('data-mce-type') !== 'bookmark') {
+              idx++;
+            }
+            node = node.nextSibling;
+          }
+          return -1;
+        };
+        let container = bookmark[start ? 'startContainer' : 'endContainer'];
+        let offset = bookmark[start ? 'startOffset' : 'endOffset'];
+        if (!container) {
+          return;
+        }
+        if (isElement(container) && container.parentNode) {
+          const node = container;
+          offset = nodeIndex(container);
+          container = container.parentNode;
+          DOM$1.remove(node);
+          if (!container.hasChildNodes() && DOM$1.isBlock(container)) {
+            container.appendChild(DOM$1.create('br'));
+          }
+        }
+        bookmark[start ? 'startContainer' : 'endContainer'] = container;
+        bookmark[start ? 'startOffset' : 'endOffset'] = offset;
+      };
+      restoreEndPoint(true);
+      restoreEndPoint();
+      const rng = DOM$1.createRng();
+      rng.setStart(bookmark.startContainer, bookmark.startOffset);
+      if (bookmark.endContainer) {
+        rng.setEnd(bookmark.endContainer, bookmark.endOffset);
+      }
+      return normalizeRange(rng);
+    };
+
+    const listToggleActionFromListName = listName => {
+      switch (listName) {
+      case 'UL':
+        return 'ToggleUlList';
+      case 'OL':
+        return 'ToggleOlList';
+      case 'DL':
+        return 'ToggleDLList';
+      }
+    };
+
+    const updateListStyle = (dom, el, detail) => {
+      const type = detail['list-style-type'] ? detail['list-style-type'] : null;
+      dom.setStyle(el, 'list-style-type', type);
+    };
+    const setAttribs = (elm, attrs) => {
+      global$2.each(attrs, (value, key) => {
+        elm.setAttribute(key, value);
+      });
+    };
+    const updateListAttrs = (dom, el, detail) => {
+      setAttribs(el, detail['list-attributes']);
+      global$2.each(dom.select('li', el), li => {
+        setAttribs(li, detail['list-item-attributes']);
+      });
+    };
+    const updateListWithDetails = (dom, el, detail) => {
+      updateListStyle(dom, el, detail);
+      updateListAttrs(dom, el, detail);
+    };
+    const removeStyles = (dom, element, styles) => {
+      global$2.each(styles, style => dom.setStyle(element, style, ''));
+    };
+    const isInline = (editor, node) => isNonNullable(node) && !isBlock(node, editor.schema.getBlockElements());
+    const getEndPointNode = (editor, rng, start, root) => {
+      let container = rng[start ? 'startContainer' : 'endContainer'];
+      const offset = rng[start ? 'startOffset' : 'endOffset'];
+      if (isElement(container)) {
+        container = container.childNodes[Math.min(offset, container.childNodes.length - 1)] || container;
+      }
+      if (!start && isBr(container.nextSibling)) {
+        container = container.nextSibling;
+      }
+      const findBlockAncestor = node => {
+        while (!editor.dom.isBlock(node) && node.parentNode && root !== node) {
+          node = node.parentNode;
+        }
+        return node;
+      };
+      const findBetterContainer = (container, forward) => {
+        var _a;
+        const walker = new global$5(container, findBlockAncestor(container));
+        const dir = forward ? 'next' : 'prev';
+        let node;
+        while (node = walker[dir]()) {
+          if (!(isVoid(editor, node) || isZwsp(node.textContent) || ((_a = node.textContent) === null || _a === void 0 ? void 0 : _a.length) === 0)) {
+            return Optional.some(node);
+          }
+        }
+        return Optional.none();
+      };
+      if (start && isTextNode$1(container)) {
+        if (isZwsp(container.textContent)) {
+          container = findBetterContainer(container, false).getOr(container);
+        } else {
+          if (container.parentNode !== null && isInline(editor, container.parentNode)) {
+            container = container.parentNode;
+          }
+          while (container.previousSibling !== null && (isInline(editor, container.previousSibling) || isTextNode$1(container.previousSibling))) {
+            container = container.previousSibling;
+          }
+        }
+      }
+      if (!start && isTextNode$1(container)) {
+        if (isZwsp(container.textContent)) {
+          container = findBetterContainer(container, true).getOr(container);
+        } else {
+          if (container.parentNode !== null && isInline(editor, container.parentNode)) {
+            container = container.parentNode;
+          }
+          while (container.nextSibling !== null && (isInline(editor, container.nextSibling) || isTextNode$1(container.nextSibling))) {
+            container = container.nextSibling;
+          }
+        }
+      }
+      while (container.parentNode !== root) {
+        const parent = container.parentNode;
+        if (isTextBlock(editor, container)) {
+          return container;
+        }
+        if (/^(TD|TH)$/.test(parent.nodeName)) {
+          return container;
+        }
+        container = parent;
+      }
+      return container;
+    };
+    const getSelectedTextBlocks = (editor, rng, root) => {
+      const textBlocks = [];
+      const dom = editor.dom;
+      const startNode = getEndPointNode(editor, rng, true, root);
+      const endNode = getEndPointNode(editor, rng, false, root);
+      let block;
+      const siblings = [];
+      for (let node = startNode; node; node = node.nextSibling) {
+        siblings.push(node);
+        if (node === endNode) {
+          break;
+        }
+      }
+      global$2.each(siblings, node => {
+        var _a;
+        if (isTextBlock(editor, node)) {
+          textBlocks.push(node);
+          block = null;
+          return;
+        }
+        if (dom.isBlock(node) || isBr(node)) {
+          if (isBr(node)) {
+            dom.remove(node);
+          }
+          block = null;
+          return;
+        }
+        const nextSibling = node.nextSibling;
+        if (global$1.isBookmarkNode(node)) {
+          if (isListNode(nextSibling) || isTextBlock(editor, nextSibling) || !nextSibling && node.parentNode === root) {
+            block = null;
+            return;
+          }
+        }
+        if (!block) {
+          block = dom.create('p');
+          (_a = node.parentNode) === null || _a === void 0 ? void 0 : _a.insertBefore(block, node);
+          textBlocks.push(block);
+        }
+        block.appendChild(node);
+      });
+      return textBlocks;
+    };
+    const hasCompatibleStyle = (dom, sib, detail) => {
+      const sibStyle = dom.getStyle(sib, 'list-style-type');
+      let detailStyle = detail ? detail['list-style-type'] : '';
+      detailStyle = detailStyle === null ? '' : detailStyle;
+      return sibStyle === detailStyle;
+    };
+    const getRootSearchStart = (editor, range) => {
+      const start = editor.selection.getStart(true);
+      const startPoint = getEndPointNode(editor, range, true, editor.getBody());
+      if (ancestor(SugarElement.fromDom(startPoint), SugarElement.fromDom(range.commonAncestorContainer))) {
+        return range.commonAncestorContainer;
+      } else {
+        return start;
+      }
+    };
+    const applyList = (editor, listName, detail) => {
+      const rng = editor.selection.getRng();
+      let listItemName = 'LI';
+      const root = getClosestListHost(editor, getRootSearchStart(editor, rng));
+      const dom = editor.dom;
+      if (dom.getContentEditable(editor.selection.getNode()) === 'false') {
+        return;
+      }
+      listName = listName.toUpperCase();
+      if (listName === 'DL') {
+        listItemName = 'DT';
+      }
+      const bookmark = createBookmark(rng);
+      const selectedTextBlocks = filter$1(getSelectedTextBlocks(editor, rng, root), editor.dom.isEditable);
+      global$2.each(selectedTextBlocks, block => {
+        let listBlock;
+        const sibling = block.previousSibling;
+        const parent = block.parentNode;
+        if (!isListItemNode(parent)) {
+          if (sibling && isListNode(sibling) && sibling.nodeName === listName && hasCompatibleStyle(dom, sibling, detail)) {
+            listBlock = sibling;
+            block = dom.rename(block, listItemName);
+            sibling.appendChild(block);
+          } else {
+            listBlock = dom.create(listName);
+            parent.insertBefore(listBlock, block);
+            listBlock.appendChild(block);
+            block = dom.rename(block, listItemName);
+          }
+          removeStyles(dom, block, [
+            'margin',
+            'margin-right',
+            'margin-bottom',
+            'margin-left',
+            'margin-top',
+            'padding',
+            'padding-right',
+            'padding-bottom',
+            'padding-left',
+            'padding-top'
+          ]);
+          updateListWithDetails(dom, listBlock, detail);
+          mergeWithAdjacentLists(editor.dom, listBlock);
+        }
+      });
+      editor.selection.setRng(resolveBookmark(bookmark));
+    };
+    const isValidLists = (list1, list2) => {
+      return isListNode(list1) && list1.nodeName === (list2 === null || list2 === void 0 ? void 0 : list2.nodeName);
+    };
+    const hasSameListStyle = (dom, list1, list2) => {
+      const targetStyle = dom.getStyle(list1, 'list-style-type', true);
+      const style = dom.getStyle(list2, 'list-style-type', true);
+      return targetStyle === style;
+    };
+    const hasSameClasses = (elm1, elm2) => {
+      return elm1.className === elm2.className;
+    };
+    const shouldMerge = (dom, list1, list2) => {
+      return isValidLists(list1, list2) && hasSameListStyle(dom, list1, list2) && hasSameClasses(list1, list2);
+    };
+    const mergeWithAdjacentLists = (dom, listBlock) => {
+      let node;
+      let sibling = listBlock.nextSibling;
+      if (shouldMerge(dom, listBlock, sibling)) {
+        const liSibling = sibling;
+        while (node = liSibling.firstChild) {
+          listBlock.appendChild(node);
+        }
+        dom.remove(liSibling);
+      }
+      sibling = listBlock.previousSibling;
+      if (shouldMerge(dom, listBlock, sibling)) {
+        const liSibling = sibling;
+        while (node = liSibling.lastChild) {
+          listBlock.insertBefore(node, listBlock.firstChild);
+        }
+        dom.remove(liSibling);
+      }
+    };
+    const updateList$1 = (editor, list, listName, detail) => {
+      if (list.nodeName !== listName) {
+        const newList = editor.dom.rename(list, listName);
+        updateListWithDetails(editor.dom, newList, detail);
+        fireListEvent(editor, listToggleActionFromListName(listName), newList);
+      } else {
+        updateListWithDetails(editor.dom, list, detail);
+        fireListEvent(editor, listToggleActionFromListName(listName), list);
+      }
+    };
+    const updateCustomList = (editor, list, listName, detail) => {
+      list.classList.forEach((cls, _, classList) => {
+        if (cls.startsWith('tox-')) {
+          classList.remove(cls);
+          if (classList.length === 0) {
+            list.removeAttribute('class');
+          }
+        }
+      });
+      if (list.nodeName !== listName) {
+        const newList = editor.dom.rename(list, listName);
+        updateListWithDetails(editor.dom, newList, detail);
+        fireListEvent(editor, listToggleActionFromListName(listName), newList);
+      } else {
+        updateListWithDetails(editor.dom, list, detail);
+        fireListEvent(editor, listToggleActionFromListName(listName), list);
+      }
+    };
+    const toggleMultipleLists = (editor, parentList, lists, listName, detail) => {
+      const parentIsList = isListNode(parentList);
+      if (parentIsList && parentList.nodeName === listName && !hasListStyleDetail(detail) && !isCustomList(parentList)) {
+        flattenListSelection(editor);
+      } else {
+        applyList(editor, listName, detail);
+        const bookmark = createBookmark(editor.selection.getRng());
+        const allLists = parentIsList ? [
+          parentList,
+          ...lists
+        ] : lists;
+        const updateFunction = parentIsList && isCustomList(parentList) ? updateCustomList : updateList$1;
+        global$2.each(allLists, elm => {
+          updateFunction(editor, elm, listName, detail);
+        });
+        editor.selection.setRng(resolveBookmark(bookmark));
+      }
+    };
+    const hasListStyleDetail = detail => {
+      return 'list-style-type' in detail;
+    };
+    const toggleSingleList = (editor, parentList, listName, detail) => {
+      if (parentList === editor.getBody()) {
+        return;
+      }
+      if (parentList) {
+        if (parentList.nodeName === listName && !hasListStyleDetail(detail) && !isCustomList(parentList)) {
+          flattenListSelection(editor);
+        } else {
+          const bookmark = createBookmark(editor.selection.getRng());
+          if (isCustomList(parentList)) {
+            parentList.classList.forEach((cls, _, classList) => {
+              if (cls.startsWith('tox-')) {
+                classList.remove(cls);
+                if (classList.length === 0) {
+                  parentList.removeAttribute('class');
+                }
+              }
+            });
+          }
+          updateListWithDetails(editor.dom, parentList, detail);
+          const newList = editor.dom.rename(parentList, listName);
+          mergeWithAdjacentLists(editor.dom, newList);
+          editor.selection.setRng(resolveBookmark(bookmark));
+          applyList(editor, listName, detail);
+          fireListEvent(editor, listToggleActionFromListName(listName), newList);
+        }
+      } else {
+        applyList(editor, listName, detail);
+        fireListEvent(editor, listToggleActionFromListName(listName), parentList);
+      }
+    };
+    const toggleList = (editor, listName, _detail) => {
+      const parentList = getParentList(editor);
+      if (isWithinNonEditableList(editor, parentList)) {
+        return;
+      }
+      const selectedSubLists = getSelectedSubLists(editor);
+      const detail = isObject(_detail) ? _detail : {};
+      if (selectedSubLists.length > 0) {
+        toggleMultipleLists(editor, parentList, selectedSubLists, listName, detail);
+      } else {
+        toggleSingleList(editor, parentList, listName, detail);
+      }
+    };
+
+    const DOM = global$3.DOM;
+    const normalizeList = (dom, list) => {
+      const parentNode = list.parentElement;
+      if (parentNode && parentNode.nodeName === 'LI' && parentNode.firstChild === list) {
+        const sibling = parentNode.previousSibling;
+        if (sibling && sibling.nodeName === 'LI') {
+          sibling.appendChild(list);
+          if (isEmpty$2(dom, parentNode)) {
+            DOM.remove(parentNode);
+          }
+        } else {
+          DOM.setStyle(parentNode, 'listStyleType', 'none');
+        }
+      }
+      if (isListNode(parentNode)) {
+        const sibling = parentNode.previousSibling;
+        if (sibling && sibling.nodeName === 'LI') {
+          sibling.appendChild(list);
+        }
+      }
+    };
+    const normalizeLists = (dom, element) => {
+      const lists = global$2.grep(dom.select('ol,ul', element));
+      global$2.each(lists, list => {
+        normalizeList(dom, list);
+      });
+    };
+
+    const findNextCaretContainer = (editor, rng, isForward, root) => {
+      let node = rng.startContainer;
+      const offset = rng.startOffset;
+      if (isTextNode$1(node) && (isForward ? offset < node.data.length : offset > 0)) {
+        return node;
+      }
+      const nonEmptyBlocks = editor.schema.getNonEmptyElements();
+      if (isElement(node)) {
+        node = global$6.getNode(node, offset);
+      }
+      const walker = new global$5(node, root);
+      if (isForward) {
+        if (isBogusBr(editor.dom, node)) {
+          walker.next();
+        }
+      }
+      const walkFn = isForward ? walker.next.bind(walker) : walker.prev2.bind(walker);
+      while (node = walkFn()) {
+        if (node.nodeName === 'LI' && !node.hasChildNodes()) {
+          return node;
+        }
+        if (nonEmptyBlocks[node.nodeName]) {
+          return node;
+        }
+        if (isTextNode$1(node) && node.data.length > 0) {
+          return node;
+        }
+      }
+      return null;
+    };
+    const hasOnlyOneBlockChild = (dom, elm) => {
+      const childNodes = elm.childNodes;
+      return childNodes.length === 1 && !isListNode(childNodes[0]) && dom.isBlock(childNodes[0]);
+    };
+    const isUnwrappable = node => Optional.from(node).map(SugarElement.fromDom).filter(isHTMLElement).exists(el => isEditable(el) && !contains$1(['details'], name(el)));
+    const unwrapSingleBlockChild = (dom, elm) => {
+      if (hasOnlyOneBlockChild(dom, elm) && isUnwrappable(elm.firstChild)) {
+        dom.remove(elm.firstChild, true);
+      }
+    };
+    const moveChildren = (dom, fromElm, toElm) => {
+      let node;
+      const targetElm = hasOnlyOneBlockChild(dom, toElm) ? toElm.firstChild : toElm;
+      unwrapSingleBlockChild(dom, fromElm);
+      if (!isEmpty$2(dom, fromElm, true)) {
+        while (node = fromElm.firstChild) {
+          targetElm.appendChild(node);
+        }
+      }
+    };
+    const mergeLiElements = (dom, fromElm, toElm) => {
+      let listNode;
+      const ul = fromElm.parentNode;
+      if (!isChildOfBody(dom, fromElm) || !isChildOfBody(dom, toElm)) {
+        return;
+      }
+      if (isListNode(toElm.lastChild)) {
+        listNode = toElm.lastChild;
+      }
+      if (ul === toElm.lastChild) {
+        if (isBr(ul.previousSibling)) {
+          dom.remove(ul.previousSibling);
+        }
+      }
+      const node = toElm.lastChild;
+      if (node && isBr(node) && fromElm.hasChildNodes()) {
+        dom.remove(node);
+      }
+      if (isEmpty$2(dom, toElm, true)) {
+        empty(SugarElement.fromDom(toElm));
+      }
+      moveChildren(dom, fromElm, toElm);
+      if (listNode) {
+        toElm.appendChild(listNode);
+      }
+      const contains$1 = contains(SugarElement.fromDom(toElm), SugarElement.fromDom(fromElm));
+      const nestedLists = contains$1 ? dom.getParents(fromElm, isListNode, toElm) : [];
+      dom.remove(fromElm);
+      each$1(nestedLists, list => {
+        if (isEmpty$2(dom, list) && list !== dom.getRoot()) {
+          dom.remove(list);
+        }
+      });
+    };
+    const mergeIntoEmptyLi = (editor, fromLi, toLi) => {
+      empty(SugarElement.fromDom(toLi));
+      mergeLiElements(editor.dom, fromLi, toLi);
+      editor.selection.setCursorLocation(toLi, 0);
+    };
+    const mergeForward = (editor, rng, fromLi, toLi) => {
+      const dom = editor.dom;
+      if (dom.isEmpty(toLi)) {
+        mergeIntoEmptyLi(editor, fromLi, toLi);
+      } else {
+        const bookmark = createBookmark(rng);
+        mergeLiElements(dom, fromLi, toLi);
+        editor.selection.setRng(resolveBookmark(bookmark));
+      }
+    };
+    const mergeBackward = (editor, rng, fromLi, toLi) => {
+      const bookmark = createBookmark(rng);
+      mergeLiElements(editor.dom, fromLi, toLi);
+      const resolvedBookmark = resolveBookmark(bookmark);
+      editor.selection.setRng(resolvedBookmark);
+    };
+    const backspaceDeleteFromListToListCaret = (editor, isForward) => {
+      const dom = editor.dom, selection = editor.selection;
+      const selectionStartElm = selection.getStart();
+      const root = getClosestEditingHost(editor, selectionStartElm);
+      const li = dom.getParent(selection.getStart(), 'LI', root);
+      if (li) {
+        const ul = li.parentElement;
+        if (ul === editor.getBody() && isEmpty$2(dom, ul)) {
+          return true;
+        }
+        const rng = normalizeRange(selection.getRng());
+        const otherLi = dom.getParent(findNextCaretContainer(editor, rng, isForward, root), 'LI', root);
+        const willMergeParentIntoChild = otherLi && (isForward ? dom.isChildOf(li, otherLi) : dom.isChildOf(otherLi, li));
+        if (otherLi && otherLi !== li && !willMergeParentIntoChild) {
+          editor.undoManager.transact(() => {
+            if (isForward) {
+              mergeForward(editor, rng, otherLi, li);
+            } else {
+              if (isFirstChild(li)) {
+                outdentListSelection(editor);
+              } else {
+                mergeBackward(editor, rng, li, otherLi);
+              }
+            }
+          });
+          return true;
+        } else if (willMergeParentIntoChild && !isForward && otherLi !== li) {
+          editor.undoManager.transact(() => {
+            if (rng.commonAncestorContainer.parentElement) {
+              const bookmark = createBookmark(rng);
+              const oldParentElRef = rng.commonAncestorContainer.parentElement;
+              moveChildren(dom, rng.commonAncestorContainer.parentElement, otherLi);
+              oldParentElRef.remove();
+              const resolvedBookmark = resolveBookmark(bookmark);
+              editor.selection.setRng(resolvedBookmark);
+            }
+          });
+          return true;
+        } else if (!otherLi) {
+          if (!isForward && rng.startOffset === 0 && rng.endOffset === 0) {
+            editor.undoManager.transact(() => {
+              flattenListSelection(editor);
+            });
+            return true;
+          }
+        }
+      }
+      return false;
+    };
+    const removeBlock = (dom, block, root) => {
+      const parentBlock = dom.getParent(block.parentNode, dom.isBlock, root);
+      dom.remove(block);
+      if (parentBlock && dom.isEmpty(parentBlock)) {
+        dom.remove(parentBlock);
+      }
+    };
+    const backspaceDeleteIntoListCaret = (editor, isForward) => {
+      const dom = editor.dom;
+      const selectionStartElm = editor.selection.getStart();
+      const root = getClosestEditingHost(editor, selectionStartElm);
+      const block = dom.getParent(selectionStartElm, dom.isBlock, root);
+      if (block && dom.isEmpty(block)) {
+        const rng = normalizeRange(editor.selection.getRng());
+        const otherLi = dom.getParent(findNextCaretContainer(editor, rng, isForward, root), 'LI', root);
+        if (otherLi) {
+          const findValidElement = element => contains$1([
+            'td',
+            'th',
+            'caption'
+          ], name(element));
+          const findRoot = node => node.dom === root;
+          const otherLiCell = closest$2(SugarElement.fromDom(otherLi), findValidElement, findRoot);
+          const caretCell = closest$2(SugarElement.fromDom(rng.startContainer), findValidElement, findRoot);
+          if (!equals(otherLiCell, caretCell, eq)) {
+            return false;
+          }
+          editor.undoManager.transact(() => {
+            const parentNode = otherLi.parentNode;
+            removeBlock(dom, block, root);
+            mergeWithAdjacentLists(dom, parentNode);
+            editor.selection.select(otherLi, true);
+            editor.selection.collapse(isForward);
+          });
+          return true;
+        }
+      }
+      return false;
+    };
+    const backspaceDeleteCaret = (editor, isForward) => {
+      return backspaceDeleteFromListToListCaret(editor, isForward) || backspaceDeleteIntoListCaret(editor, isForward);
+    };
+    const hasListSelection = editor => {
+      const selectionStartElm = editor.selection.getStart();
+      const root = getClosestEditingHost(editor, selectionStartElm);
+      const startListParent = editor.dom.getParent(selectionStartElm, 'LI,DT,DD', root);
+      return startListParent || getSelectedListItems(editor).length > 0;
+    };
+    const backspaceDeleteRange = editor => {
+      if (hasListSelection(editor)) {
+        editor.undoManager.transact(() => {
+          editor.execCommand('Delete');
+          normalizeLists(editor.dom, editor.getBody());
+        });
+        return true;
+      }
+      return false;
+    };
+    const backspaceDelete = (editor, isForward) => {
+      const selection = editor.selection;
+      return !isWithinNonEditableList(editor, selection.getNode()) && (selection.isCollapsed() ? backspaceDeleteCaret(editor, isForward) : backspaceDeleteRange(editor));
+    };
+    const setup$2 = editor => {
+      editor.on('ExecCommand', e => {
+        const cmd = e.command.toLowerCase();
+        if ((cmd === 'delete' || cmd === 'forwarddelete') && hasListSelection(editor)) {
+          normalizeLists(editor.dom, editor.getBody());
+        }
+      });
+      editor.on('keydown', e => {
+        if (e.keyCode === global$4.BACKSPACE) {
+          if (backspaceDelete(editor, false)) {
+            e.preventDefault();
+          }
+        } else if (e.keyCode === global$4.DELETE) {
+          if (backspaceDelete(editor, true)) {
+            e.preventDefault();
+          }
+        }
+      });
+    };
+
+    const get = editor => ({
+      backspaceDelete: isForward => {
+        backspaceDelete(editor, isForward);
+      }
+    });
+
+    const updateList = (editor, update) => {
+      const parentList = getParentList(editor);
+      if (parentList === null || isWithinNonEditableList(editor, parentList)) {
+        return;
+      }
+      editor.undoManager.transact(() => {
+        if (isObject(update.styles)) {
+          editor.dom.setStyles(parentList, update.styles);
+        }
+        if (isObject(update.attrs)) {
+          each(update.attrs, (v, k) => editor.dom.setAttrib(parentList, k, v));
+        }
+      });
+    };
+
+    const parseAlphabeticBase26 = str => {
+      const chars = reverse(trim(str).split(''));
+      const values = map(chars, (char, i) => {
+        const charValue = char.toUpperCase().charCodeAt(0) - 'A'.charCodeAt(0) + 1;
+        return Math.pow(26, i) * charValue;
+      });
+      return foldl(values, (sum, v) => sum + v, 0);
+    };
+    const composeAlphabeticBase26 = value => {
+      value--;
+      if (value < 0) {
+        return '';
+      } else {
+        const remainder = value % 26;
+        const quotient = Math.floor(value / 26);
+        const rest = composeAlphabeticBase26(quotient);
+        const char = String.fromCharCode('A'.charCodeAt(0) + remainder);
+        return rest + char;
+      }
+    };
+    const isUppercase = str => /^[A-Z]+$/.test(str);
+    const isLowercase = str => /^[a-z]+$/.test(str);
+    const isNumeric = str => /^[0-9]+$/.test(str);
+    const deduceListType = start => {
+      if (isNumeric(start)) {
+        return 2;
+      } else if (isUppercase(start)) {
+        return 0;
+      } else if (isLowercase(start)) {
+        return 1;
+      } else if (isEmpty$1(start)) {
+        return 3;
+      } else {
+        return 4;
+      }
+    };
+    const parseStartValue = start => {
+      switch (deduceListType(start)) {
+      case 2:
+        return Optional.some({
+          listStyleType: Optional.none(),
+          start
+        });
+      case 0:
+        return Optional.some({
+          listStyleType: Optional.some('upper-alpha'),
+          start: parseAlphabeticBase26(start).toString()
+        });
+      case 1:
+        return Optional.some({
+          listStyleType: Optional.some('lower-alpha'),
+          start: parseAlphabeticBase26(start).toString()
+        });
+      case 3:
+        return Optional.some({
+          listStyleType: Optional.none(),
+          start: ''
+        });
+      case 4:
+        return Optional.none();
+      }
+    };
+    const parseDetail = detail => {
+      const start = parseInt(detail.start, 10);
+      if (is$2(detail.listStyleType, 'upper-alpha')) {
+        return composeAlphabeticBase26(start);
+      } else if (is$2(detail.listStyleType, 'lower-alpha')) {
+        return composeAlphabeticBase26(start).toLowerCase();
+      } else {
+        return detail.start;
+      }
+    };
+
+    const open = editor => {
+      const currentList = getParentList(editor);
+      if (!isOlNode(currentList) || isWithinNonEditableList(editor, currentList)) {
+        return;
+      }
+      editor.windowManager.open({
+        title: 'List Properties',
+        body: {
+          type: 'panel',
+          items: [{
+              type: 'input',
+              name: 'start',
+              label: 'Start list at number',
+              inputMode: 'numeric'
+            }]
+        },
+        initialData: {
+          start: parseDetail({
+            start: editor.dom.getAttrib(currentList, 'start', '1'),
+            listStyleType: Optional.from(editor.dom.getStyle(currentList, 'list-style-type'))
+          })
+        },
+        buttons: [
+          {
+            type: 'cancel',
+            name: 'cancel',
+            text: 'Cancel'
+          },
+          {
+            type: 'submit',
+            name: 'save',
+            text: 'Save',
+            primary: true
+          }
+        ],
+        onSubmit: api => {
+          const data = api.getData();
+          parseStartValue(data.start).each(detail => {
+            editor.execCommand('mceListUpdate', false, {
+              attrs: { start: detail.start === '1' ? '' : detail.start },
+              styles: { 'list-style-type': detail.listStyleType.getOr('') }
+            });
+          });
+          api.close();
+        }
+      });
+    };
+
+    const queryListCommandState = (editor, listName) => () => {
+      const parentList = getParentList(editor);
+      return isNonNullable(parentList) && parentList.nodeName === listName;
+    };
+    const registerDialog = editor => {
+      editor.addCommand('mceListProps', () => {
+        open(editor);
+      });
+    };
+    const register$2 = editor => {
+      editor.on('BeforeExecCommand', e => {
+        const cmd = e.command.toLowerCase();
+        if (cmd === 'indent') {
+          indentListSelection(editor);
+        } else if (cmd === 'outdent') {
+          outdentListSelection(editor);
+        }
+      });
+      editor.addCommand('InsertUnorderedList', (ui, detail) => {
+        toggleList(editor, 'UL', detail);
+      });
+      editor.addCommand('InsertOrderedList', (ui, detail) => {
+        toggleList(editor, 'OL', detail);
+      });
+      editor.addCommand('InsertDefinitionList', (ui, detail) => {
+        toggleList(editor, 'DL', detail);
+      });
+      editor.addCommand('RemoveList', () => {
+        flattenListSelection(editor);
+      });
+      registerDialog(editor);
+      editor.addCommand('mceListUpdate', (ui, detail) => {
+        if (isObject(detail)) {
+          updateList(editor, detail);
+        }
+      });
+      editor.addQueryStateHandler('InsertUnorderedList', queryListCommandState(editor, 'UL'));
+      editor.addQueryStateHandler('InsertOrderedList', queryListCommandState(editor, 'OL'));
+      editor.addQueryStateHandler('InsertDefinitionList', queryListCommandState(editor, 'DL'));
+    };
+
+    var global = tinymce.util.Tools.resolve('tinymce.html.Node');
+
+    const isTextNode = node => node.type === 3;
+    const isEmpty = nodeBuffer => nodeBuffer.length === 0;
+    const wrapInvalidChildren = list => {
+      const insertListItem = (buffer, refNode) => {
+        const li = global.create('li');
+        each$1(buffer, node => li.append(node));
+        if (refNode) {
+          list.insert(li, refNode, true);
+        } else {
+          list.append(li);
+        }
+      };
+      const reducer = (buffer, node) => {
+        if (isTextNode(node)) {
+          return [
+            ...buffer,
+            node
+          ];
+        } else if (!isEmpty(buffer) && !isTextNode(node)) {
+          insertListItem(buffer, node);
+          return [];
+        } else {
+          return buffer;
+        }
+      };
+      const restBuffer = foldl(list.children(), reducer, []);
+      if (!isEmpty(restBuffer)) {
+        insertListItem(restBuffer);
+      }
+    };
+    const setup$1 = editor => {
+      editor.on('PreInit', () => {
+        const {parser} = editor;
+        parser.addNodeFilter('ul,ol', nodes => each$1(nodes, wrapInvalidChildren));
+      });
+    };
+
+    const setupTabKey = editor => {
+      editor.on('keydown', e => {
+        if (e.keyCode !== global$4.TAB || global$4.metaKeyPressed(e)) {
+          return;
+        }
+        editor.undoManager.transact(() => {
+          if (e.shiftKey ? outdentListSelection(editor) : indentListSelection(editor)) {
+            e.preventDefault();
+          }
+        });
+      });
+    };
+    const setup = editor => {
+      if (shouldIndentOnTab(editor)) {
+        setupTabKey(editor);
+      }
+      setup$2(editor);
+    };
+
+    const setupToggleButtonHandler = (editor, listName) => api => {
+      const toggleButtonHandler = e => {
+        api.setActive(inList(e.parents, listName));
+        api.setEnabled(!isWithinNonEditableList(editor, e.element) && editor.selection.isEditable());
+      };
+      api.setEnabled(editor.selection.isEditable());
+      return setNodeChangeHandler(editor, toggleButtonHandler);
+    };
+    const register$1 = editor => {
+      const exec = command => () => editor.execCommand(command);
+      if (!editor.hasPlugin('advlist')) {
+        editor.ui.registry.addToggleButton('numlist', {
+          icon: 'ordered-list',
+          active: false,
+          tooltip: 'Numbered list',
+          onAction: exec('InsertOrderedList'),
+          onSetup: setupToggleButtonHandler(editor, 'OL')
+        });
+        editor.ui.registry.addToggleButton('bullist', {
+          icon: 'unordered-list',
+          active: false,
+          tooltip: 'Bullet list',
+          onAction: exec('InsertUnorderedList'),
+          onSetup: setupToggleButtonHandler(editor, 'UL')
+        });
+      }
+    };
+
+    const setupMenuButtonHandler = (editor, listName) => api => {
+      const menuButtonHandler = e => api.setEnabled(inList(e.parents, listName) && !isWithinNonEditableList(editor, e.element));
+      return setNodeChangeHandler(editor, menuButtonHandler);
+    };
+    const register = editor => {
+      const listProperties = {
+        text: 'List properties...',
+        icon: 'ordered-list',
+        onAction: () => editor.execCommand('mceListProps'),
+        onSetup: setupMenuButtonHandler(editor, 'OL')
+      };
+      editor.ui.registry.addMenuItem('listprops', listProperties);
+      editor.ui.registry.addContextMenu('lists', {
+        update: node => {
+          const parentList = getParentList(editor, node);
+          return isOlNode(parentList) ? ['listprops'] : [];
+        }
+      });
+    };
+
+    var Plugin = () => {
+      global$7.add('lists', editor => {
+        register$3(editor);
+        setup$1(editor);
+        if (!editor.hasPlugin('rtc', true)) {
+          setup(editor);
+          register$2(editor);
+        } else {
+          registerDialog(editor);
+        }
+        register$1(editor);
+        register(editor);
+        return get(editor);
+      });
+    };
+
+    Plugin();
+
+})();

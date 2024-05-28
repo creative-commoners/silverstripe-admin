@@ -1,7 +1,12 @@
 import React, { Component } from 'react';
 import Injector from './Container';
-import injectorContext from './injectorContext';
+import injectorContextType from './injectorContextType';
+import InjectorContext from './InjectorContext';
 
+/**
+ * This provides injector for both legacy class components via childContext
+ * as well as functional components via <InjectorContext.Provider>
+ */
 function provideInjector(Injectable, injectorContainer = Injector) {
   class InjectorProvider extends Component {
     getChildContext() {
@@ -17,11 +22,14 @@ function provideInjector(Injectable, injectorContainer = Injector) {
     }
 
     render() {
-      return <Injectable {...this.props} />;
+      const value = this.getChildContext();
+      return <InjectorContext.Provider value={value}>
+        <Injectable {...this.props} />
+      </InjectorContext.Provider>;
     }
   }
 
-  InjectorProvider.childContextTypes = injectorContext;
+  InjectorProvider.childContextTypes = injectorContextType;
 
   return InjectorProvider;
 }

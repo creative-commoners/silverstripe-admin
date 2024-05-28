@@ -1,1 +1,567 @@
-!function(){"use strict";var e=tinymce.util.Tools.resolve("tinymce.PluginManager");const t=e=>t=>(e=>{const t=typeof e;return null===e?"null":"object"===t&&Array.isArray(e)?"array":"object"===t&&(a=r=e,n=(s=String).prototype,n.isPrototypeOf(a)||(null===(l=r.constructor)||void 0===l?void 0:l.name)===s.name)?"string":t;var a,n;var r,s,l})(t)===e,a=t("string"),n=t("object"),r=t("array"),s=(l="function",e=>typeof e===l);var l;const o=(c=!1,()=>c);var c;var i=tinymce.util.Tools.resolve("tinymce.util.Tools");const u=e=>t=>t.options.get(e),m=e=>{const t=e.options.register;t("template_cdate_classes",{processor:"string",default:"cdate"}),t("template_mdate_classes",{processor:"string",default:"mdate"}),t("template_selected_content_classes",{processor:"string",default:"selcontent"}),t("template_preview_replace_values",{processor:"object"}),t("template_replace_values",{processor:"object"}),t("templates",{processor:e=>a(e)||((e,t)=>{if(r(e)){for(let a=0,n=e.length;a<n;++a)if(!t(e[a]))return!1;return!0}return!1})(e,n)||s(e),default:[]}),t("template_cdate_format",{processor:"string",default:e.translate("%Y-%m-%d")}),t("template_mdate_format",{processor:"string",default:e.translate("%Y-%m-%d")})},p=u("template_cdate_classes"),d=u("template_mdate_classes"),h=u("template_selected_content_classes"),g=u("template_preview_replace_values"),v=u("template_replace_values"),y=u("templates"),f=u("template_cdate_format"),b=u("template_mdate_format"),_=u("content_style"),M=u("content_css_cors"),T=u("body_class"),S=(e,t)=>{if((e=""+e).length<t)for(let a=0;a<t-e.length;a++)e="0"+e;return e},x=(e,t,a=new Date)=>{const n="Sun Mon Tue Wed Thu Fri Sat Sun".split(" "),r="Sunday Monday Tuesday Wednesday Thursday Friday Saturday Sunday".split(" "),s="Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split(" "),l="January February March April May June July August September October November December".split(" ");return t=(t=(t=(t=(t=(t=(t=(t=(t=(t=(t=(t=(t=(t=(t=(t=t.replace("%D","%m/%d/%Y")).replace("%r","%I:%M:%S %p")).replace("%Y",""+a.getFullYear())).replace("%y",""+a.getYear())).replace("%m",S(a.getMonth()+1,2))).replace("%d",S(a.getDate(),2))).replace("%H",""+S(a.getHours(),2))).replace("%M",""+S(a.getMinutes(),2))).replace("%S",""+S(a.getSeconds(),2))).replace("%I",""+((a.getHours()+11)%12+1))).replace("%p",a.getHours()<12?"AM":"PM")).replace("%B",""+e.translate(l[a.getMonth()]))).replace("%b",""+e.translate(s[a.getMonth()]))).replace("%A",""+e.translate(r[a.getDay()]))).replace("%a",""+e.translate(n[a.getDay()]))).replace("%%","%")};class C{constructor(e,t){this.tag=e,this.value=t}static some(e){return new C(!0,e)}static none(){return C.singletonNone}fold(e,t){return this.tag?t(this.value):e()}isSome(){return this.tag}isNone(){return!this.tag}map(e){return this.tag?C.some(e(this.value)):C.none()}bind(e){return this.tag?e(this.value):C.none()}exists(e){return this.tag&&e(this.value)}forall(e){return!this.tag||e(this.value)}filter(e){return!this.tag||e(this.value)?this:C.none()}getOr(e){return this.tag?this.value:e}or(e){return this.tag?this:e}getOrThunk(e){return this.tag?this.value:e()}orThunk(e){return this.tag?this:e()}getOrDie(e){if(this.tag)return this.value;throw new Error(null!=e?e:"Called getOrDie on None")}static from(e){return(e=>null==e)(e)?C.none():C.some(e)}getOrNull(){return this.tag?this.value:null}getOrUndefined(){return this.value}each(e){this.tag&&e(this.value)}toArray(){return this.tag?[this.value]:[]}toString(){return this.tag?`some(${this.value})`:"none()"}}C.singletonNone=new C(!1);const w=(e,t)=>((e,t,a)=>{for(let n=0,r=e.length;n<r;n++){const r=e[n];if(t(r,n))return C.some(r);if(a(r,n))break}return C.none()})(e,t,o),O=Object.hasOwnProperty,A=(e,t)=>O.call(e,t);var D=tinymce.util.Tools.resolve("tinymce.html.Serializer");const N={'"':"&quot;","<":"&lt;",">":"&gt;","&":"&amp;","'":"&#039;"},I=e=>e.replace(/["'<>&]/g,(e=>{return(t=N,a=e,A(t,a)?C.from(t[a]):C.none()).getOr(e);var t,a})),E=(e,t,a)=>((e,t)=>{for(let a=0,n=e.length;a<n;a++)if(t(e[a],a))return!0;return!1})(a.split(/\s+/),(a=>e.hasClass(t,a))),k=(e,t)=>D({validate:!0},e.schema).serialize(e.parser.parse(t,{insert:!0})),P=(e,t)=>(i.each(t,((t,a)=>{s(t)&&(t=t(a)),e=e.replace(new RegExp("\\{\\$"+(a.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"\\}"),"g"),t)})),e),H=(e,t)=>{const a=e.dom,n=v(e);i.each(a.select("*",t),(e=>{i.each(n,((t,n)=>{a.hasClass(e,n)&&s(t)&&t(e)}))}))},L=(e,t,a)=>{const n=e.dom,r=e.selection.getContent();a=P(a,v(e));let s=n.create("div",{},k(e,a));const l=n.select(".mceTmpl",s);l&&l.length>0&&(s=n.create("div"),s.appendChild(l[0].cloneNode(!0))),i.each(n.select("*",s),(t=>{E(n,t,p(e))&&(t.innerHTML=x(e,f(e))),E(n,t,d(e))&&(t.innerHTML=x(e,b(e))),E(n,t,h(e))&&(t.innerHTML=r)})),H(e,s),e.execCommand("mceInsertContent",!1,s.innerHTML),e.addVisual()};var j=tinymce.util.Tools.resolve("tinymce.Env");const Y=(e,t)=>{const a=e=>((e,t)=>{const a=e.length,n=new Array(a);for(let r=0;r<a;r++){const a=e[r];n[r]=t(a,r)}return n})(e,(e=>({text:e.text,value:e.text}))),n=(e,t)=>w(e,(e=>e.text===t)),r=t=>{e.windowManager.alert("Could not load the specified template.",(()=>t.focus("template")))},s=e=>e.value.url.fold((()=>Promise.resolve(e.value.content.getOr(""))),(e=>fetch(e).then((e=>e.ok?e.text():Promise.reject())))),l=(e,t)=>(a,l)=>{if("template"===l.name){const l=a.getData().template;n(e,l).each((e=>{a.block("Loading..."),s(e).then((n=>{t(a,e,n)})).catch((()=>{t(a,e,""),a.setEnabled("save",!1),r(a)}))}))}},o=t=>a=>{const l=a.getData();n(t,l.template).each((t=>{s(t).then((t=>{e.execCommand("mceInsertTemplate",!1,t),a.close()})).catch((()=>{a.setEnabled("save",!1),r(a)}))}))};(()=>{if(!t||0===t.length){const t=e.translate("No templates defined.");return e.notificationManager.open({text:t,type:"info"}),C.none()}return C.from(i.map(t,((e,t)=>{const a=e=>void 0!==e.url;return{selected:0===t,text:e.title,value:{url:a(e)?C.from(e.url):C.none(),content:a(e)?C.none():C.from(e.content),description:e.description}}})))})().each((t=>{const n=a(t),c=(e,a)=>({title:"Insert Template",size:"large",body:{type:"panel",items:e},initialData:a,buttons:[{type:"cancel",name:"cancel",text:"Cancel"},{type:"submit",name:"save",text:"Save",primary:!0}],onSubmit:o(t),onChange:l(t,u)}),u=(t,a,r)=>{const s=((e,t)=>{var a;let n=k(e,t);if(-1===t.indexOf("<html>")){let t="";const r=null!==(a=_(e))&&void 0!==a?a:"",s=M(e)?' crossorigin="anonymous"':"";i.each(e.contentCSS,(a=>{t+='<link type="text/css" rel="stylesheet" href="'+e.documentBaseURI.toAbsolute(a)+'"'+s+">"})),r&&(t+='<style type="text/css">'+r+"</style>");const l=T(e),o=e.dom.encode,c='<script>document.addEventListener && document.addEventListener("click", function(e) {for (var elm = e.target; elm; elm = elm.parentNode) {if (elm.nodeName === "A" && !('+(j.os.isMacOS()||j.os.isiOS()?"e.metaKey":"e.ctrlKey && !e.altKey")+")) {e.preventDefault();}}}, false);<\/script> ",u=e.getBody().dir,m=u?' dir="'+o(u)+'"':"";n='<!DOCTYPE html><html><head><base href="'+o(e.documentBaseURI.getURI())+'">'+t+c+'</head><body class="'+o(l)+'"'+m+">"+n+"</body></html>"}return P(n,g(e))})(e,r),l=[{type:"listbox",name:"template",label:"Templates",items:n},{type:"htmlpanel",html:`<p aria-live="polite">${I(a.value.description)}</p>`},{label:"Preview",type:"iframe",name:"preview",sandboxed:!1,transparent:!1}],o={template:a.text,preview:s};t.unblock(),t.redial(c(l,o)),t.focus("template")},m=e.windowManager.open(c([],{template:"",preview:""}));m.block("Loading..."),s(t[0]).then((e=>{u(m,t[0],e)})).catch((()=>{u(m,t[0],""),m.setEnabled("save",!1),r(m)}))}))},J=e=>{e.addCommand("mceInsertTemplate",function(e,...t){return(...a)=>{const n=t.concat(a);return e.apply(null,n)}}(L,e)),e.addCommand("mceTemplate",((e,t)=>()=>{const n=y(e);s(n)?n(t):a(n)?fetch(n).then((e=>{e.ok&&e.json().then(t)})):t(n)})(e,(e=>t=>{Y(e,t)})(e)))},B=e=>t=>{const a=()=>{t.setEnabled(e.selection.isEditable())};return e.on("NodeChange",a),a(),()=>{e.off("NodeChange",a)}};e.add("template",(e=>{m(e),(e=>{const t=()=>e.execCommand("mceTemplate");e.ui.registry.addButton("template",{icon:"template",tooltip:"Insert template",onSetup:B(e),onAction:t}),e.ui.registry.addMenuItem("template",{icon:"template",text:"Insert template...",onSetup:B(e),onAction:t})})(e),J(e),(e=>{e.on("PreProcess",(t=>{const a=e.dom,n=b(e);i.each(a.select("div",t.node),(t=>{a.hasClass(t,"mceTmpl")&&(i.each(a.select("*",t),(t=>{E(a,t,d(e))&&(t.innerHTML=x(e,n))})),H(e,t))}))}))})(e)}))}();
+/**
+ * TinyMCE version 6.8.3 (2024-02-08)
+ */
+
+(function () {
+    'use strict';
+
+    var global$3 = tinymce.util.Tools.resolve('tinymce.PluginManager');
+
+    const hasProto = (v, constructor, predicate) => {
+      var _a;
+      if (predicate(v, constructor.prototype)) {
+        return true;
+      } else {
+        return ((_a = v.constructor) === null || _a === void 0 ? void 0 : _a.name) === constructor.name;
+      }
+    };
+    const typeOf = x => {
+      const t = typeof x;
+      if (x === null) {
+        return 'null';
+      } else if (t === 'object' && Array.isArray(x)) {
+        return 'array';
+      } else if (t === 'object' && hasProto(x, String, (o, proto) => proto.isPrototypeOf(o))) {
+        return 'string';
+      } else {
+        return t;
+      }
+    };
+    const isType = type => value => typeOf(value) === type;
+    const isSimpleType = type => value => typeof value === type;
+    const isString = isType('string');
+    const isObject = isType('object');
+    const isArray = isType('array');
+    const isNullable = a => a === null || a === undefined;
+    const isNonNullable = a => !isNullable(a);
+    const isFunction = isSimpleType('function');
+    const isArrayOf = (value, pred) => {
+      if (isArray(value)) {
+        for (let i = 0, len = value.length; i < len; ++i) {
+          if (!pred(value[i])) {
+            return false;
+          }
+        }
+        return true;
+      }
+      return false;
+    };
+
+    const constant = value => {
+      return () => {
+        return value;
+      };
+    };
+    function curry(fn, ...initialArgs) {
+      return (...restArgs) => {
+        const all = initialArgs.concat(restArgs);
+        return fn.apply(null, all);
+      };
+    }
+    const never = constant(false);
+
+    const escape = text => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+    var global$2 = tinymce.util.Tools.resolve('tinymce.util.Tools');
+
+    const option = name => editor => editor.options.get(name);
+    const register$2 = editor => {
+      const registerOption = editor.options.register;
+      registerOption('template_cdate_classes', {
+        processor: 'string',
+        default: 'cdate'
+      });
+      registerOption('template_mdate_classes', {
+        processor: 'string',
+        default: 'mdate'
+      });
+      registerOption('template_selected_content_classes', {
+        processor: 'string',
+        default: 'selcontent'
+      });
+      registerOption('template_preview_replace_values', { processor: 'object' });
+      registerOption('template_replace_values', { processor: 'object' });
+      registerOption('templates', {
+        processor: value => isString(value) || isArrayOf(value, isObject) || isFunction(value),
+        default: []
+      });
+      registerOption('template_cdate_format', {
+        processor: 'string',
+        default: editor.translate('%Y-%m-%d')
+      });
+      registerOption('template_mdate_format', {
+        processor: 'string',
+        default: editor.translate('%Y-%m-%d')
+      });
+    };
+    const getCreationDateClasses = option('template_cdate_classes');
+    const getModificationDateClasses = option('template_mdate_classes');
+    const getSelectedContentClasses = option('template_selected_content_classes');
+    const getPreviewReplaceValues = option('template_preview_replace_values');
+    const getTemplateReplaceValues = option('template_replace_values');
+    const getTemplates = option('templates');
+    const getCdateFormat = option('template_cdate_format');
+    const getMdateFormat = option('template_mdate_format');
+    const getContentStyle = option('content_style');
+    const shouldUseContentCssCors = option('content_css_cors');
+    const getBodyClass = option('body_class');
+
+    const addZeros = (value, len) => {
+      value = '' + value;
+      if (value.length < len) {
+        for (let i = 0; i < len - value.length; i++) {
+          value = '0' + value;
+        }
+      }
+      return value;
+    };
+    const getDateTime = (editor, fmt, date = new Date()) => {
+      const daysShort = 'Sun Mon Tue Wed Thu Fri Sat Sun'.split(' ');
+      const daysLong = 'Sunday Monday Tuesday Wednesday Thursday Friday Saturday Sunday'.split(' ');
+      const monthsShort = 'Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec'.split(' ');
+      const monthsLong = 'January February March April May June July August September October November December'.split(' ');
+      fmt = fmt.replace('%D', '%m/%d/%Y');
+      fmt = fmt.replace('%r', '%I:%M:%S %p');
+      fmt = fmt.replace('%Y', '' + date.getFullYear());
+      fmt = fmt.replace('%y', '' + date.getYear());
+      fmt = fmt.replace('%m', addZeros(date.getMonth() + 1, 2));
+      fmt = fmt.replace('%d', addZeros(date.getDate(), 2));
+      fmt = fmt.replace('%H', '' + addZeros(date.getHours(), 2));
+      fmt = fmt.replace('%M', '' + addZeros(date.getMinutes(), 2));
+      fmt = fmt.replace('%S', '' + addZeros(date.getSeconds(), 2));
+      fmt = fmt.replace('%I', '' + ((date.getHours() + 11) % 12 + 1));
+      fmt = fmt.replace('%p', '' + (date.getHours() < 12 ? 'AM' : 'PM'));
+      fmt = fmt.replace('%B', '' + editor.translate(monthsLong[date.getMonth()]));
+      fmt = fmt.replace('%b', '' + editor.translate(monthsShort[date.getMonth()]));
+      fmt = fmt.replace('%A', '' + editor.translate(daysLong[date.getDay()]));
+      fmt = fmt.replace('%a', '' + editor.translate(daysShort[date.getDay()]));
+      fmt = fmt.replace('%%', '%');
+      return fmt;
+    };
+
+    class Optional {
+      constructor(tag, value) {
+        this.tag = tag;
+        this.value = value;
+      }
+      static some(value) {
+        return new Optional(true, value);
+      }
+      static none() {
+        return Optional.singletonNone;
+      }
+      fold(onNone, onSome) {
+        if (this.tag) {
+          return onSome(this.value);
+        } else {
+          return onNone();
+        }
+      }
+      isSome() {
+        return this.tag;
+      }
+      isNone() {
+        return !this.tag;
+      }
+      map(mapper) {
+        if (this.tag) {
+          return Optional.some(mapper(this.value));
+        } else {
+          return Optional.none();
+        }
+      }
+      bind(binder) {
+        if (this.tag) {
+          return binder(this.value);
+        } else {
+          return Optional.none();
+        }
+      }
+      exists(predicate) {
+        return this.tag && predicate(this.value);
+      }
+      forall(predicate) {
+        return !this.tag || predicate(this.value);
+      }
+      filter(predicate) {
+        if (!this.tag || predicate(this.value)) {
+          return this;
+        } else {
+          return Optional.none();
+        }
+      }
+      getOr(replacement) {
+        return this.tag ? this.value : replacement;
+      }
+      or(replacement) {
+        return this.tag ? this : replacement;
+      }
+      getOrThunk(thunk) {
+        return this.tag ? this.value : thunk();
+      }
+      orThunk(thunk) {
+        return this.tag ? this : thunk();
+      }
+      getOrDie(message) {
+        if (!this.tag) {
+          throw new Error(message !== null && message !== void 0 ? message : 'Called getOrDie on None');
+        } else {
+          return this.value;
+        }
+      }
+      static from(value) {
+        return isNonNullable(value) ? Optional.some(value) : Optional.none();
+      }
+      getOrNull() {
+        return this.tag ? this.value : null;
+      }
+      getOrUndefined() {
+        return this.value;
+      }
+      each(worker) {
+        if (this.tag) {
+          worker(this.value);
+        }
+      }
+      toArray() {
+        return this.tag ? [this.value] : [];
+      }
+      toString() {
+        return this.tag ? `some(${ this.value })` : 'none()';
+      }
+    }
+    Optional.singletonNone = new Optional(false);
+
+    const exists = (xs, pred) => {
+      for (let i = 0, len = xs.length; i < len; i++) {
+        const x = xs[i];
+        if (pred(x, i)) {
+          return true;
+        }
+      }
+      return false;
+    };
+    const map = (xs, f) => {
+      const len = xs.length;
+      const r = new Array(len);
+      for (let i = 0; i < len; i++) {
+        const x = xs[i];
+        r[i] = f(x, i);
+      }
+      return r;
+    };
+    const findUntil = (xs, pred, until) => {
+      for (let i = 0, len = xs.length; i < len; i++) {
+        const x = xs[i];
+        if (pred(x, i)) {
+          return Optional.some(x);
+        } else if (until(x, i)) {
+          break;
+        }
+      }
+      return Optional.none();
+    };
+    const find = (xs, pred) => {
+      return findUntil(xs, pred, never);
+    };
+
+    const hasOwnProperty = Object.hasOwnProperty;
+    const get = (obj, key) => {
+      return has(obj, key) ? Optional.from(obj[key]) : Optional.none();
+    };
+    const has = (obj, key) => hasOwnProperty.call(obj, key);
+
+    var global$1 = tinymce.util.Tools.resolve('tinymce.html.Serializer');
+
+    const entitiesAttr = {
+      '"': '&quot;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '&': '&amp;',
+      '\'': '&#039;'
+    };
+    const htmlEscape = html => html.replace(/["'<>&]/g, match => get(entitiesAttr, match).getOr(match));
+    const hasAnyClasses = (dom, n, classes) => exists(classes.split(/\s+/), c => dom.hasClass(n, c));
+    const parseAndSerialize = (editor, html) => global$1({ validate: true }, editor.schema).serialize(editor.parser.parse(html, { insert: true }));
+
+    const createTemplateList = (editor, callback) => {
+      return () => {
+        const templateList = getTemplates(editor);
+        if (isFunction(templateList)) {
+          templateList(callback);
+        } else if (isString(templateList)) {
+          fetch(templateList).then(res => {
+            if (res.ok) {
+              res.json().then(callback);
+            }
+          });
+        } else {
+          callback(templateList);
+        }
+      };
+    };
+    const replaceTemplateValues = (html, templateValues) => {
+      global$2.each(templateValues, (v, k) => {
+        if (isFunction(v)) {
+          v = v(k);
+        }
+        html = html.replace(new RegExp('\\{\\$' + escape(k) + '\\}', 'g'), v);
+      });
+      return html;
+    };
+    const replaceVals = (editor, scope) => {
+      const dom = editor.dom, vl = getTemplateReplaceValues(editor);
+      global$2.each(dom.select('*', scope), e => {
+        global$2.each(vl, (v, k) => {
+          if (dom.hasClass(e, k)) {
+            if (isFunction(v)) {
+              v(e);
+            }
+          }
+        });
+      });
+    };
+    const insertTemplate = (editor, _ui, html) => {
+      const dom = editor.dom;
+      const sel = editor.selection.getContent();
+      html = replaceTemplateValues(html, getTemplateReplaceValues(editor));
+      let el = dom.create('div', {}, parseAndSerialize(editor, html));
+      const n = dom.select('.mceTmpl', el);
+      if (n && n.length > 0) {
+        el = dom.create('div');
+        el.appendChild(n[0].cloneNode(true));
+      }
+      global$2.each(dom.select('*', el), n => {
+        if (hasAnyClasses(dom, n, getCreationDateClasses(editor))) {
+          n.innerHTML = getDateTime(editor, getCdateFormat(editor));
+        }
+        if (hasAnyClasses(dom, n, getModificationDateClasses(editor))) {
+          n.innerHTML = getDateTime(editor, getMdateFormat(editor));
+        }
+        if (hasAnyClasses(dom, n, getSelectedContentClasses(editor))) {
+          n.innerHTML = sel;
+        }
+      });
+      replaceVals(editor, el);
+      editor.execCommand('mceInsertContent', false, el.innerHTML);
+      editor.addVisual();
+    };
+
+    var global = tinymce.util.Tools.resolve('tinymce.Env');
+
+    const getPreviewContent = (editor, html) => {
+      var _a;
+      let previewHtml = parseAndSerialize(editor, html);
+      if (html.indexOf('<html>') === -1) {
+        let contentCssEntries = '';
+        const contentStyle = (_a = getContentStyle(editor)) !== null && _a !== void 0 ? _a : '';
+        const cors = shouldUseContentCssCors(editor) ? ' crossorigin="anonymous"' : '';
+        global$2.each(editor.contentCSS, url => {
+          contentCssEntries += '<link type="text/css" rel="stylesheet" href="' + editor.documentBaseURI.toAbsolute(url) + '"' + cors + '>';
+        });
+        if (contentStyle) {
+          contentCssEntries += '<style type="text/css">' + contentStyle + '</style>';
+        }
+        const bodyClass = getBodyClass(editor);
+        const encode = editor.dom.encode;
+        const isMetaKeyPressed = global.os.isMacOS() || global.os.isiOS() ? 'e.metaKey' : 'e.ctrlKey && !e.altKey';
+        const preventClicksOnLinksScript = '<script>' + 'document.addEventListener && document.addEventListener("click", function(e) {' + 'for (var elm = e.target; elm; elm = elm.parentNode) {' + 'if (elm.nodeName === "A" && !(' + isMetaKeyPressed + ')) {' + 'e.preventDefault();' + '}' + '}' + '}, false);' + '</script> ';
+        const directionality = editor.getBody().dir;
+        const dirAttr = directionality ? ' dir="' + encode(directionality) + '"' : '';
+        previewHtml = '<!DOCTYPE html>' + '<html>' + '<head>' + '<base href="' + encode(editor.documentBaseURI.getURI()) + '">' + contentCssEntries + preventClicksOnLinksScript + '</head>' + '<body class="' + encode(bodyClass) + '"' + dirAttr + '>' + previewHtml + '</body>' + '</html>';
+      }
+      return replaceTemplateValues(previewHtml, getPreviewReplaceValues(editor));
+    };
+    const open = (editor, templateList) => {
+      const createTemplates = () => {
+        if (!templateList || templateList.length === 0) {
+          const message = editor.translate('No templates defined.');
+          editor.notificationManager.open({
+            text: message,
+            type: 'info'
+          });
+          return Optional.none();
+        }
+        return Optional.from(global$2.map(templateList, (template, index) => {
+          const isUrlTemplate = t => t.url !== undefined;
+          return {
+            selected: index === 0,
+            text: template.title,
+            value: {
+              url: isUrlTemplate(template) ? Optional.from(template.url) : Optional.none(),
+              content: !isUrlTemplate(template) ? Optional.from(template.content) : Optional.none(),
+              description: template.description
+            }
+          };
+        }));
+      };
+      const createSelectBoxItems = templates => map(templates, t => ({
+        text: t.text,
+        value: t.text
+      }));
+      const findTemplate = (templates, templateTitle) => find(templates, t => t.text === templateTitle);
+      const loadFailedAlert = api => {
+        editor.windowManager.alert('Could not load the specified template.', () => api.focus('template'));
+      };
+      const getTemplateContent = t => t.value.url.fold(() => Promise.resolve(t.value.content.getOr('')), url => fetch(url).then(res => res.ok ? res.text() : Promise.reject()));
+      const onChange = (templates, updateDialog) => (api, change) => {
+        if (change.name === 'template') {
+          const newTemplateTitle = api.getData().template;
+          findTemplate(templates, newTemplateTitle).each(t => {
+            api.block('Loading...');
+            getTemplateContent(t).then(previewHtml => {
+              updateDialog(api, t, previewHtml);
+            }).catch(() => {
+              updateDialog(api, t, '');
+              api.setEnabled('save', false);
+              loadFailedAlert(api);
+            });
+          });
+        }
+      };
+      const onSubmit = templates => api => {
+        const data = api.getData();
+        findTemplate(templates, data.template).each(t => {
+          getTemplateContent(t).then(previewHtml => {
+            editor.execCommand('mceInsertTemplate', false, previewHtml);
+            api.close();
+          }).catch(() => {
+            api.setEnabled('save', false);
+            loadFailedAlert(api);
+          });
+        });
+      };
+      const openDialog = templates => {
+        const selectBoxItems = createSelectBoxItems(templates);
+        const buildDialogSpec = (bodyItems, initialData) => ({
+          title: 'Insert Template',
+          size: 'large',
+          body: {
+            type: 'panel',
+            items: bodyItems
+          },
+          initialData,
+          buttons: [
+            {
+              type: 'cancel',
+              name: 'cancel',
+              text: 'Cancel'
+            },
+            {
+              type: 'submit',
+              name: 'save',
+              text: 'Save',
+              primary: true
+            }
+          ],
+          onSubmit: onSubmit(templates),
+          onChange: onChange(templates, updateDialog)
+        });
+        const updateDialog = (dialogApi, template, previewHtml) => {
+          const content = getPreviewContent(editor, previewHtml);
+          const bodyItems = [
+            {
+              type: 'listbox',
+              name: 'template',
+              label: 'Templates',
+              items: selectBoxItems
+            },
+            {
+              type: 'htmlpanel',
+              html: `<p aria-live="polite">${ htmlEscape(template.value.description) }</p>`
+            },
+            {
+              label: 'Preview',
+              type: 'iframe',
+              name: 'preview',
+              sandboxed: false,
+              transparent: false
+            }
+          ];
+          const initialData = {
+            template: template.text,
+            preview: content
+          };
+          dialogApi.unblock();
+          dialogApi.redial(buildDialogSpec(bodyItems, initialData));
+          dialogApi.focus('template');
+        };
+        const dialogApi = editor.windowManager.open(buildDialogSpec([], {
+          template: '',
+          preview: ''
+        }));
+        dialogApi.block('Loading...');
+        getTemplateContent(templates[0]).then(previewHtml => {
+          updateDialog(dialogApi, templates[0], previewHtml);
+        }).catch(() => {
+          updateDialog(dialogApi, templates[0], '');
+          dialogApi.setEnabled('save', false);
+          loadFailedAlert(dialogApi);
+        });
+      };
+      const optTemplates = createTemplates();
+      optTemplates.each(openDialog);
+    };
+
+    const showDialog = editor => templates => {
+      open(editor, templates);
+    };
+    const register$1 = editor => {
+      editor.addCommand('mceInsertTemplate', curry(insertTemplate, editor));
+      editor.addCommand('mceTemplate', createTemplateList(editor, showDialog(editor)));
+    };
+
+    const setup = editor => {
+      editor.on('PreProcess', o => {
+        const dom = editor.dom, dateFormat = getMdateFormat(editor);
+        global$2.each(dom.select('div', o.node), e => {
+          if (dom.hasClass(e, 'mceTmpl')) {
+            global$2.each(dom.select('*', e), e => {
+              if (hasAnyClasses(dom, e, getModificationDateClasses(editor))) {
+                e.innerHTML = getDateTime(editor, dateFormat);
+              }
+            });
+            replaceVals(editor, e);
+          }
+        });
+      });
+    };
+
+    const onSetupEditable = editor => api => {
+      const nodeChanged = () => {
+        api.setEnabled(editor.selection.isEditable());
+      };
+      editor.on('NodeChange', nodeChanged);
+      nodeChanged();
+      return () => {
+        editor.off('NodeChange', nodeChanged);
+      };
+    };
+    const register = editor => {
+      const onAction = () => editor.execCommand('mceTemplate');
+      editor.ui.registry.addButton('template', {
+        icon: 'template',
+        tooltip: 'Insert template',
+        onSetup: onSetupEditable(editor),
+        onAction
+      });
+      editor.ui.registry.addMenuItem('template', {
+        icon: 'template',
+        text: 'Insert template...',
+        onSetup: onSetupEditable(editor),
+        onAction
+      });
+    };
+
+    var Plugin = () => {
+      global$3.add('template', editor => {
+        register$2(editor);
+        register(editor);
+        register$1(editor);
+        setup(editor);
+      });
+    };
+
+    Plugin();
+
+})();

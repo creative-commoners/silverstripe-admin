@@ -1,1 +1,3462 @@
-!function(){"use strict";var e=tinymce.util.Tools.resolve("tinymce.PluginManager");const t=e=>t=>(e=>{const t=typeof e;return null===e?"null":"object"===t&&Array.isArray(e)?"array":"object"===t&&(o=n=e,l=(r=String).prototype,l.isPrototypeOf(o)||(null===(a=n.constructor)||void 0===a?void 0:a.name)===r.name)?"string":t;var o,l;var n,r,a})(t)===e,o=e=>t=>typeof t===e,l=t("string"),n=t("array"),r=o("boolean"),a=(s=void 0,e=>s===e);var s;const c=e=>!(e=>null==e)(e),i=o("function"),m=o("number"),d=()=>{},u=e=>()=>e,p=e=>e,b=(e,t)=>e===t;function g(e,...t){return(...o)=>{const l=t.concat(o);return e.apply(null,l)}}const h=e=>{e()},f=u(!1),y=u(!0);class w{constructor(e,t){this.tag=e,this.value=t}static some(e){return new w(!0,e)}static none(){return w.singletonNone}fold(e,t){return this.tag?t(this.value):e()}isSome(){return this.tag}isNone(){return!this.tag}map(e){return this.tag?w.some(e(this.value)):w.none()}bind(e){return this.tag?e(this.value):w.none()}exists(e){return this.tag&&e(this.value)}forall(e){return!this.tag||e(this.value)}filter(e){return!this.tag||e(this.value)?this:w.none()}getOr(e){return this.tag?this.value:e}or(e){return this.tag?this:e}getOrThunk(e){return this.tag?this.value:e()}orThunk(e){return this.tag?this:e()}getOrDie(e){if(this.tag)return this.value;throw new Error(null!=e?e:"Called getOrDie on None")}static from(e){return c(e)?w.some(e):w.none()}getOrNull(){return this.tag?this.value:null}getOrUndefined(){return this.value}each(e){this.tag&&e(this.value)}toArray(){return this.tag?[this.value]:[]}toString(){return this.tag?`some(${this.value})`:"none()"}}w.singletonNone=new w(!1);const S=Object.keys,C=Object.hasOwnProperty,v=(e,t)=>{const o=S(e);for(let l=0,n=o.length;l<n;l++){const n=o[l];t(e[n],n)}},T=(e,t)=>{const o={};var l;return((e,t,o,l)=>{v(e,((e,n)=>{(t(e,n)?o:l)(e,n)}))})(e,t,(l=o,(e,t)=>{l[t]=e}),d),o},x=e=>((e,t)=>{const o=[];return v(e,((e,l)=>{o.push(t(e,l))})),o})(e,p),A=e=>S(e).length,R=(e,t)=>O(e,t)?w.from(e[t]):w.none(),O=(e,t)=>C.call(e,t),_=(e,t)=>O(e,t)&&void 0!==e[t]&&null!==e[t],D=Array.prototype.indexOf,N=Array.prototype.push,I=(e,t)=>((e,t)=>D.call(e,t))(e,t)>-1,M=(e,t)=>{for(let o=0,l=e.length;o<l;o++){if(t(e[o],o))return!0}return!1},P=(e,t)=>{const o=[];for(let l=0;l<e;l++)o.push(t(l));return o},k=(e,t)=>{const o=e.length,l=new Array(o);for(let n=0;n<o;n++){const o=e[n];l[n]=t(o,n)}return l},E=(e,t)=>{for(let o=0,l=e.length;o<l;o++){t(e[o],o)}},B=(e,t)=>{const o=[];for(let l=0,n=e.length;l<n;l++){const n=e[l];t(n,l)&&o.push(n)}return o},F=(e,t,o)=>(E(e,((e,l)=>{o=t(o,e,l)})),o),q=(e,t)=>((e,t,o)=>{for(let l=0,n=e.length;l<n;l++){const n=e[l];if(t(n,l))return w.some(n);if(o(n,l))break}return w.none()})(e,t,f),L=(e,t)=>(e=>{const t=[];for(let o=0,l=e.length;o<l;++o){if(!n(e[o]))throw new Error("Arr.flatten item "+o+" was not an array, input: "+e);N.apply(t,e[o])}return t})(k(e,t)),H=(e,t)=>{for(let o=0,l=e.length;o<l;++o){if(!0!==t(e[o],o))return!1}return!0},j=(e,t)=>t>=0&&t<e.length?w.some(e[t]):w.none(),V=(e,t)=>{for(let o=0;o<e.length;o++){const l=t(e[o],o);if(l.isSome())return l}return w.none()},$=e=>{if(null==e)throw new Error("Node cannot be null or undefined");return{dom:e}},W={fromHtml:(e,t)=>{const o=(t||document).createElement("div");if(o.innerHTML=e,!o.hasChildNodes()||o.childNodes.length>1){const t="HTML does not have a single root node";throw console.error(t,e),new Error(t)}return $(o.childNodes[0])},fromTag:(e,t)=>{const o=(t||document).createElement(e);return $(o)},fromText:(e,t)=>{const o=(t||document).createTextNode(e);return $(o)},fromDom:$,fromPoint:(e,t,o)=>w.from(e.dom.elementFromPoint(t,o)).map($)},z=(e,t)=>{const o=e.dom;if(1!==o.nodeType)return!1;{const e=o;if(void 0!==e.matches)return e.matches(t);if(void 0!==e.msMatchesSelector)return e.msMatchesSelector(t);if(void 0!==e.webkitMatchesSelector)return e.webkitMatchesSelector(t);if(void 0!==e.mozMatchesSelector)return e.mozMatchesSelector(t);throw new Error("Browser lacks native selectors")}},U=e=>1!==e.nodeType&&9!==e.nodeType&&11!==e.nodeType||0===e.childElementCount,G=(e,t)=>e.dom===t.dom,K=z;"undefined"!=typeof window?window:Function("return this;")();const J=e=>e.dom.nodeName.toLowerCase(),Q=e=>e.dom.nodeType,X=e=>t=>Q(t)===e,Y=e=>8===Q(e)||"#comment"===J(e),Z=X(1),ee=X(3),te=X(9),oe=X(11),le=e=>t=>Z(t)&&J(t)===e,ne=e=>{return te(e)?e:(t=e,W.fromDom(t.dom.ownerDocument));var t},re=e=>w.from(e.dom.parentNode).map(W.fromDom),ae=(e,t)=>{const o=i(t)?t:f;let l=e.dom;const n=[];for(;null!==l.parentNode&&void 0!==l.parentNode;){const e=l.parentNode,t=W.fromDom(e);if(n.push(t),!0===o(t))break;l=e}return n},se=e=>w.from(e.dom.previousSibling).map(W.fromDom),ce=e=>w.from(e.dom.nextSibling).map(W.fromDom),ie=e=>k(e.dom.childNodes,W.fromDom),me=e=>((e,t)=>{const o=e.dom.childNodes;return w.from(o[t]).map(W.fromDom)})(e,0),de=i(Element.prototype.attachShadow)&&i(Node.prototype.getRootNode)?e=>W.fromDom(e.dom.getRootNode()):ne,ue=e=>{const t=de(e);return oe(o=t)&&c(o.dom.host)?w.some(t):w.none();var o},pe=e=>W.fromDom(e.dom.host),be=e=>{const t=ee(e)?e.dom.parentNode:e.dom;if(null==t||null===t.ownerDocument)return!1;const o=t.ownerDocument;return ue(W.fromDom(t)).fold((()=>o.body.contains(t)),(l=be,n=pe,e=>l(n(e))));var l,n};var ge=(e,t,o,l,n)=>e(o,l)?w.some(o):i(n)&&n(o)?w.none():t(o,l,n);const he=(e,t,o)=>{let l=e.dom;const n=i(o)?o:f;for(;l.parentNode;){l=l.parentNode;const e=W.fromDom(l);if(t(e))return w.some(e);if(n(e))break}return w.none()},fe=(e,t,o)=>he(e,(e=>z(e,t)),o),ye=(e,t)=>((e,t)=>q(e.dom.childNodes,(e=>t(W.fromDom(e)))).map(W.fromDom))(e,(e=>z(e,t))),we=(e,t)=>((e,t)=>{const o=void 0===t?document:t.dom;return U(o)?w.none():w.from(o.querySelector(e)).map(W.fromDom)})(t,e),Se=(e,t,o)=>ge(((e,t)=>z(e,t)),fe,e,t,o),Ce=(e,t=!1)=>{return be(e)?e.dom.isContentEditable:(o=e,Se(o,"[contenteditable]")).fold(u(t),(e=>"true"===ve(e)));var o},ve=e=>e.dom.contentEditable,Te=e=>t=>G(t,(e=>W.fromDom(e.getBody()))(e)),xe=e=>/^\d+(\.\d+)?$/.test(e)?e+"px":e,Ae=e=>W.fromDom(e.selection.getStart()),Re=e=>{return(t=e,o=le("table"),ge(((e,t)=>t(e)),he,t,o,l)).forall(Ce);var t,o,l},Oe=(e,t)=>{let o=[];return E(ie(e),(e=>{t(e)&&(o=o.concat([e])),o=o.concat(Oe(e,t))})),o},_e=(e,t)=>((e,t)=>B(ie(e),t))(e,(e=>z(e,t))),De=(e,t)=>((e,t)=>{const o=void 0===t?document:t.dom;return U(o)?[]:k(o.querySelectorAll(e),W.fromDom)})(t,e),Ne=(e,t,o)=>{if(!(l(o)||r(o)||m(o)))throw console.error("Invalid call to Attribute.set. Key ",t,":: Value ",o,":: Element ",e),new Error("Attribute value was not simple");e.setAttribute(t,o+"")},Ie=(e,t,o)=>{Ne(e.dom,t,o)},Me=(e,t)=>{const o=e.dom.getAttribute(t);return null===o?void 0:o},Pe=(e,t)=>w.from(Me(e,t)),ke=(e,t)=>{e.dom.removeAttribute(t)},Ee=(e,t,o=b)=>e.exists((e=>o(e,t))),Be=(e,t,o)=>e.isSome()&&t.isSome()?w.some(o(e.getOrDie(),t.getOrDie())):w.none(),Fe=(e,t)=>((e,t,o)=>""===t||e.length>=t.length&&e.substr(o,o+t.length)===t)(e,t,0),qe=(Le=/^\s+|\s+$/g,e=>e.replace(Le,""));var Le;const He=e=>e.length>0,je=(e,t=10)=>{const o=parseInt(e,t);return isNaN(o)?w.none():w.some(o)},Ve=e=>void 0!==e.style&&i(e.style.getPropertyValue),$e=(e,t,o)=>{((e,t,o)=>{if(!l(o))throw console.error("Invalid call to CSS.set. Property ",t,":: Value ",o,":: Element ",e),new Error("CSS value must be a string: "+o);Ve(e)&&e.style.setProperty(t,o)})(e.dom,t,o)},We=(e,t)=>{const o=e.dom,l=window.getComputedStyle(o).getPropertyValue(t);return""!==l||be(e)?l:ze(o,t)},ze=(e,t)=>Ve(e)?e.style.getPropertyValue(t):"",Ue=(e,t)=>{const o=e.dom,l=ze(o,t);return w.from(l).filter((e=>e.length>0))},Ge=(e,t)=>{((e,t)=>{Ve(e)&&e.style.removeProperty(t)})(e.dom,t),Ee(Pe(e,"style").map(qe),"")&&ke(e,"style")},Ke=(e,t,o=0)=>Pe(e,t).map((e=>parseInt(e,10))).getOr(o),Je=(e,t)=>Qe(e,t,y),Qe=(e,t,o)=>L(ie(e),(e=>z(e,t)?o(e)?[e]:[]:Qe(e,t,o))),Xe=["tfoot","thead","tbody","colgroup"],Ye=(e,t,o)=>({element:e,rowspan:t,colspan:o}),Ze=(e,t,o)=>({element:e,cells:t,section:o}),et=(e,t)=>((e,t,o=f)=>o(t)?w.none():I(e,J(t))?w.some(t):fe(t,e.join(","),(e=>z(e,"table")||o(e))))(["td","th"],e,t),tt=(e,t)=>Se(e,"table",t),ot=e=>Je(e,"tr"),lt=e=>tt(e).fold(u([]),(e=>_e(e,"colgroup"))),nt=(e,t)=>k(e,(e=>{if("colgroup"===J(e)){const t=k((e=>z(e,"colgroup")?_e(e,"col"):L(lt(e),(e=>_e(e,"col"))))(e),(e=>{const t=Ke(e,"span",1);return Ye(e,1,t)}));return Ze(e,t,"colgroup")}{const o=k((e=>Je(e,"th,td"))(e),(e=>{const t=Ke(e,"rowspan",1),o=Ke(e,"colspan",1);return Ye(e,t,o)}));return Ze(e,o,t(e))}})),rt=e=>re(e).map((e=>{const t=J(e);return(e=>I(Xe,e))(t)?t:"tbody"})).getOr("tbody"),at=e=>Pe(e,"data-snooker-locked-cols").bind((e=>w.from(e.match(/\d+/g)))).map((e=>((e,t)=>{const o={};for(let l=0,n=e.length;l<n;l++){const n=e[l];o[String(n)]=t(n,l)}return o})(e,y))),st=(e,t)=>e+","+t,ct=(e,t)=>{const o=L(e.all,(e=>e.cells));return B(o,t)},it=e=>{const t={},o=[];var l;const n=(l=e,j(l,0)).map((e=>e.element)).bind(tt).bind(at).getOr({});let r=0,a=0,s=0;const{pass:c,fail:i}=((e,t)=>{const o=[],l=[];for(let n=0,r=e.length;n<r;n++){const r=e[n];(t(r,n)?o:l).push(r)}return{pass:o,fail:l}})(e,(e=>"colgroup"===e.section));E(i,(e=>{const l=[];E(e.cells,(e=>{let o=0;for(;void 0!==t[st(s,o)];)o++;const r=_(n,o.toString()),c=((e,t,o,l,n,r)=>({element:e,rowspan:t,colspan:o,row:l,column:n,isLocked:r}))(e.element,e.rowspan,e.colspan,s,o,r);for(let l=0;l<e.colspan;l++)for(let n=0;n<e.rowspan;n++){const e=o+l,r=st(s+n,e);t[r]=c,a=Math.max(a,e+1)}l.push(c)})),r++,o.push(Ze(e.element,l,e.section)),s++}));const{columns:m,colgroups:d}=(e=>j(e,e.length-1))(c).map((e=>{const t=(e=>{const t={};let o=0;return E(e.cells,(e=>{const l=e.colspan;P(l,(n=>{const r=o+n;t[r]=((e,t,o)=>({element:e,colspan:t,column:o}))(e.element,l,r)})),o+=l})),t})(e),o=((e,t)=>({element:e,columns:t}))(e.element,x(t));return{colgroups:[o],columns:t}})).getOrThunk((()=>({colgroups:[],columns:{}}))),u=((e,t)=>({rows:e,columns:t}))(r,a);return{grid:u,access:t,all:o,columns:m,colgroups:d}},mt=e=>{const t=(e=>{const t=ot(e),o=[...lt(e),...t];return nt(o,rt)})(e);return it(t)},dt=(e,t,o)=>w.from(e.access[st(t,o)]),ut=(e,t,o)=>{const l=ct(e,(e=>o(t,e.element)));return l.length>0?w.some(l[0]):w.none()},pt=e=>L(e.all,(e=>e.cells)),bt=(e,t)=>w.from(e.columns[t]);var gt=tinymce.util.Tools.resolve("tinymce.util.Tools");const ht=(e,t,o)=>{const l=e.select("td,th",t);let n;for(let t=0;t<l.length;t++){const r=e.getStyle(l[t],o);if(a(n)&&(n=r),n!==r)return""}return n},ft=(e,t,o)=>{gt.each("left center right".split(" "),(l=>{l!==o&&e.formatter.remove("align"+l,{},t)})),o&&e.formatter.apply("align"+o,{},t)},yt=(e,t,o)=>{e.dispatch("TableModified",{...o,table:t})},wt=(e,t)=>(e=>{const t=parseFloat(e);return isNaN(t)?w.none():w.some(t)})(e).getOr(t),St=(e,t,o)=>wt(We(e,t),o),Ct=(e,t)=>{const o=e.dom,l=o.getBoundingClientRect().width||o.offsetWidth;return"border-box"===t?l:((e,t,o,l)=>t-St(e,`padding-${o}`,0)-St(e,`padding-${l}`,0)-St(e,`border-${o}-width`,0)-St(e,`border-${l}-width`,0))(e,l,"left","right")},vt=e=>Ct(e,"content-box");var Tt=tinymce.util.Tools.resolve("tinymce.Env");const xt=P(5,(e=>{const t=`${e+1}px`;return{title:t,value:t}})),At=k(["Solid","Dotted","Dashed","Double","Groove","Ridge","Inset","Outset","None","Hidden"],(e=>({title:e,value:e.toLowerCase()}))),Rt="100%",Ot=e=>{var t;const o=e.dom,l=null!==(t=o.getParent(e.selection.getStart(),o.isBlock))&&void 0!==t?t:e.getBody();return vt(W.fromDom(l))+"px"},_t=e=>t=>t.options.get(e),Dt=_t("table_sizing_mode"),Nt=_t("table_border_widths"),It=_t("table_border_styles"),Mt=_t("table_cell_advtab"),Pt=_t("table_row_advtab"),kt=_t("table_advtab"),Et=_t("table_appearance_options"),Bt=_t("table_grid"),Ft=_t("table_style_by_css"),qt=_t("table_cell_class_list"),Lt=_t("table_row_class_list"),Ht=_t("table_class_list"),jt=_t("table_toolbar"),Vt=_t("table_background_color_map"),$t=_t("table_border_color_map"),Wt=e=>"fixed"===Dt(e),zt=e=>"responsive"===Dt(e),Ut=e=>{const t=e.options,o=t.get("table_default_styles");return t.isSet("table_default_styles")?o:((e,t)=>zt(e)||!Ft(e)?t:Wt(e)?{...t,width:Ot(e)}:{...t,width:Rt})(e,o)},Gt=e=>{const t=e.options,o=t.get("table_default_attributes");return t.isSet("table_default_attributes")?o:((e,t)=>zt(e)||Ft(e)?t:Wt(e)?{...t,width:Ot(e)}:{...t,width:Rt})(e,o)},Kt=(e,t)=>t.column>=e.startCol&&t.column+t.colspan-1<=e.finishCol&&t.row>=e.startRow&&t.row+t.rowspan-1<=e.finishRow,Jt=(e,t,o)=>{const l=ut(e,t,G),n=ut(e,o,G);return l.bind((e=>n.map((t=>{return o=e,l=t,n=Math.min(o.row,l.row),r=Math.min(o.column,l.column),a=Math.max(o.row+o.rowspan-1,l.row+l.rowspan-1),s=Math.max(o.column+o.colspan-1,l.column+l.colspan-1),{startRow:n,startCol:r,finishRow:a,finishCol:s};var o,l,n,r,a,s}))))},Qt=(e,t,o)=>Jt(e,t,o).bind((t=>((e,t)=>{let o=!0;const l=g(Kt,t);for(let n=t.startRow;n<=t.finishRow;n++)for(let r=t.startCol;r<=t.finishCol;r++)o=o&&dt(e,n,r).exists(l);return o?w.some(t):w.none()})(e,t))),Xt=mt,Yt=(e,t)=>{re(e).each((o=>{o.dom.insertBefore(t.dom,e.dom)}))},Zt=(e,t)=>{ce(e).fold((()=>{re(e).each((e=>{to(e,t)}))}),(e=>{Yt(e,t)}))},eo=(e,t)=>{me(e).fold((()=>{to(e,t)}),(o=>{e.dom.insertBefore(t.dom,o.dom)}))},to=(e,t)=>{e.dom.appendChild(t.dom)},oo=(e,t)=>{Yt(e,t),to(t,e)},lo=(e,t)=>{E(t,((o,l)=>{const n=0===l?e:t[l-1];Zt(n,o)}))},no=(e,t)=>{E(t,(t=>{to(e,t)}))},ro=e=>{const t=e.dom;null!==t.parentNode&&t.parentNode.removeChild(t)},ao=e=>{const t=ie(e);t.length>0&&lo(e,t),ro(e)},so=((e,t)=>{const o=t=>e(t)?w.from(t.dom.nodeValue):w.none();return{get:l=>{if(!e(l))throw new Error("Can only get "+t+" value of a "+t+" node");return o(l).getOr("")},getOption:o,set:(o,l)=>{if(!e(o))throw new Error("Can only set raw "+t+" value of a "+t+" node");o.dom.nodeValue=l}}})(ee,"text"),co=e=>so.get(e),io=(e,t)=>so.set(e,t);var mo=["body","p","div","article","aside","figcaption","figure","footer","header","nav","section","ol","ul","li","table","thead","tbody","tfoot","caption","tr","td","th","h1","h2","h3","h4","h5","h6","blockquote","pre","address"];const uo=(e,t,o,l)=>{const n=t(e,o);return r=(o,l)=>{const n=t(e,l);return po(e,o,n)},a=n,((e,t)=>{for(let o=e.length-1;o>=0;o--)t(e[o],o)})(l,((e,t)=>{a=r(a,e,t)})),a;var r,a},po=(e,t,o)=>t.bind((t=>o.filter(g(e.eq,t)))),bo=(e,t,o)=>o.length>0?((e,t,o,l)=>l(e,t,o[0],o.slice(1)))(e,t,o,uo):w.none(),go={up:u({selector:fe,closest:Se,predicate:he,all:ae}),down:u({selector:De,predicate:Oe}),styles:u({get:We,getRaw:Ue,set:$e,remove:Ge}),attrs:u({get:Me,set:Ie,remove:ke,copyTo:(e,t)=>{((e,t)=>{const o=e.dom;v(t,((e,t)=>{Ne(o,t,e)}))})(t,F(e.dom.attributes,((e,t)=>(e[t.name]=t.value,e)),{}))}}),insert:u({before:Yt,after:Zt,afterAll:lo,append:to,appendAll:no,prepend:eo,wrap:oo}),remove:u({unwrap:ao,remove:ro}),create:u({nu:W.fromTag,clone:e=>W.fromDom(e.dom.cloneNode(!1)),text:W.fromText}),query:u({comparePosition:(e,t)=>e.dom.compareDocumentPosition(t.dom),prevSibling:se,nextSibling:ce}),property:u({children:ie,name:J,parent:re,document:e=>ne(e).dom,isText:ee,isComment:Y,isElement:Z,isSpecial:e=>{const t=J(e);return I(["script","noscript","iframe","noframes","noembed","title","style","textarea","xmp"],t)},getLanguage:e=>Z(e)?Pe(e,"lang"):w.none(),getText:co,setText:io,isBoundary:e=>!!Z(e)&&("body"===J(e)||I(mo,J(e))),isEmptyTag:e=>!!Z(e)&&I(["br","img","hr","input"],J(e)),isNonEditable:e=>Z(e)&&"false"===Me(e,"contenteditable")}),eq:G,is:K},ho=e=>fe(e,"table"),fo=(e,t,o)=>we(e,t).bind((t=>we(e,o).bind((e=>{return(o=ho,l=[t,e],bo(go,((e,t)=>o(t)),l)).map((o=>({first:t,last:e,table:o})));var o,l})))),yo=(e,t)=>((e,t)=>{const o=De(e,t);return o.length>0?w.some(o):w.none()})(e,t),wo=(e,t,o)=>fo(e,t,o).bind((t=>{const o=t=>G(e,t),l="thead,tfoot,tbody,table",n=fe(t.first,l,o),r=fe(t.last,l,o);return n.bind((e=>r.bind((o=>G(e,o)?((e,t,o)=>{const l=Xt(e);return Qt(l,t,o)})(t.table,t.first,t.last):w.none()))))})),So=e=>k(e,W.fromDom),Co="data-mce-selected",vo="data-mce-first-selected",To="data-mce-last-selected",xo={selected:Co,selectedSelector:"td["+Co+"],th["+Co+"]",firstSelected:vo,firstSelectedSelector:"td["+vo+"],th["+vo+"]",lastSelected:To,lastSelectedSelector:"td["+To+"],th["+To+"]"},Ao=e=>(t,o)=>{const l=J(t),n="col"===l||"colgroup"===l?tt(r=t).bind((e=>yo(e,xo.firstSelectedSelector))).fold(u(r),(e=>e[0])):t;var r;return Se(n,e,o)},Ro=Ao("th,td,caption"),Oo=Ao("th,td"),_o=e=>So(e.model.table.getSelectedCells()),Do=(e,t)=>{const o=Oo(e),l=o.bind((e=>tt(e))).map((e=>ot(e)));return Be(o,l,((e,o)=>B(o,(o=>M(So(o.dom.cells),(o=>"1"===Me(o,t)||G(o,e))))))).getOr([])},No=[{text:"None",value:""},{text:"Top",value:"top"},{text:"Middle",value:"middle"},{text:"Bottom",value:"bottom"}],Io=/^#?([a-f\d])([a-f\d])([a-f\d])$/i,Mo=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i,Po=e=>{return(t=e,o="#",Fe(t,o)?((e,t)=>e.substring(t))(t,o.length):t).toUpperCase();var t,o},ko=e=>(e=>Io.test(e)||Mo.test(e))(e)?w.some({value:Po(e)}):w.none(),Eo=e=>{const t=e.toString(16);return(1===t.length?"0"+t:t).toUpperCase()},Bo=e=>(e=>({value:Po(e)}))(Eo(e.red)+Eo(e.green)+Eo(e.blue)),Fo=/^\s*rgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)\s*$/i,qo=/^\s*rgba\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d?(?:\.\d+)?)\s*\)\s*$/i,Lo=(e,t,o,l)=>({red:e,green:t,blue:o,alpha:l}),Ho=(e,t,o,l)=>{const n=parseInt(e,10),r=parseInt(t,10),a=parseInt(o,10),s=parseFloat(l);return Lo(n,r,a,s)},jo=e=>{if("transparent"===e)return w.some(Lo(0,0,0,0));const t=Fo.exec(e);if(null!==t)return w.some(Ho(t[1],t[2],t[3],"1"));const o=qo.exec(e);return null!==o?w.some(Ho(o[1],o[2],o[3],o[4])):w.none()},Vo=e=>{let t=e;return{get:()=>t,set:e=>{t=e}}},$o=()=>(e=>{const t=Vo(w.none()),o=()=>t.get().each(e);return{clear:()=>{o(),t.set(w.none())},isSet:()=>t.get().isSome(),get:()=>t.get(),set:e=>{o(),t.set(w.some(e))}}})((e=>e.unbind())),Wo=(e,t,o)=>l=>{const n=$o(),r=!He(o);const a=()=>{const a=_o(e),s=l=>e.formatter.match(t,{value:o},l.dom,r);r?(l.setActive(!M(a,s)),n.set(e.formatter.formatChanged(t,(e=>l.setActive(!e)),!0))):(l.setActive(H(a,s)),n.set(e.formatter.formatChanged(t,l.setActive,!1,{value:o})))};return e.initialized?a():e.on("init",a),n.clear},zo=e=>_(e,"menu"),Uo=e=>k(e,(e=>{const t=e.text||e.title||"";return zo(e)?{text:t,items:Uo(e.menu)}:{text:t,value:e.value}})),Go=(e,t,o,l)=>k(t,(t=>{const n=t.text||t.title;return zo(t)?{type:"nestedmenuitem",text:n,getSubmenuItems:()=>Go(e,t.menu,o,l)}:{text:n,type:"togglemenuitem",onAction:()=>l(t.value),onSetup:Wo(e,o,t.value)}})),Ko=(e,t)=>o=>{e.execCommand("mceTableApplyCellStyle",!1,{[t]:o})},Jo=e=>L(e,(e=>zo(e)?[{...e,menu:Jo(e.menu)}]:He(e.value)?[e]:[])),Qo=(e,t,o,l)=>n=>n(Go(e,t,o,l)),Xo=(e,t,o)=>{const l=k(t,(e=>{return{text:e.title,value:"#"+(t=e.value,ko(t).orThunk((()=>jo(t).map(Bo))).getOrThunk((()=>{const e=document.createElement("canvas");e.height=1,e.width=1;const o=e.getContext("2d");o.clearRect(0,0,e.width,e.height),o.fillStyle="#FFFFFF",o.fillStyle=t,o.fillRect(0,0,1,1);const l=o.getImageData(0,0,1,1).data,n=l[0],r=l[1],a=l[2],s=l[3];return Bo(Lo(n,r,a,s))}))).value,type:"choiceitem"};var t}));return[{type:"fancymenuitem",fancytype:"colorswatch",initData:{colors:l.length>0?l:void 0,allowCustomColors:!1},onAction:t=>{const l="remove"===t.value?"":t.value;e.execCommand("mceTableApplyCellStyle",!1,{[o]:l})}}]},Yo=e=>()=>{const t="header"===e.queryCommandValue("mceTableRowType")?"body":"header";e.execCommand("mceTableRowType",!1,{type:t})},Zo=e=>()=>{const t="th"===e.queryCommandValue("mceTableColType")?"td":"th";e.execCommand("mceTableColType",!1,{type:t})},el=[{name:"width",type:"input",label:"Width"},{name:"height",type:"input",label:"Height"},{name:"celltype",type:"listbox",label:"Cell type",items:[{text:"Cell",value:"td"},{text:"Header cell",value:"th"}]},{name:"scope",type:"listbox",label:"Scope",items:[{text:"None",value:""},{text:"Row",value:"row"},{text:"Column",value:"col"},{text:"Row group",value:"rowgroup"},{text:"Column group",value:"colgroup"}]},{name:"halign",type:"listbox",label:"Horizontal align",items:[{text:"None",value:""},{text:"Left",value:"left"},{text:"Center",value:"center"},{text:"Right",value:"right"}]},{name:"valign",type:"listbox",label:"Vertical align",items:No}],tl=e=>el.concat((e=>{const t=Uo(qt(e));return t.length>0?w.some({name:"class",type:"listbox",label:"Class",items:t}):w.none()})(e).toArray()),ol=(e,t)=>{const o=[{name:"borderstyle",type:"listbox",label:"Border style",items:[{text:"Select...",value:""}].concat(Uo(It(e)))},{name:"bordercolor",type:"colorinput",label:"Border color"},{name:"backgroundcolor",type:"colorinput",label:"Background color"}];return{title:"Advanced",name:"advanced",items:"cell"===t?[{name:"borderwidth",type:"input",label:"Border width"}].concat(o):o}},ll=(e,t)=>{const o=e.dom;return{setAttrib:(e,l)=>{o.setAttrib(t,e,l)},setStyle:(e,l)=>{o.setStyle(t,e,l)},setFormat:(o,l)=>{""===l?e.formatter.remove(o,{value:null},t,!0):e.formatter.apply(o,{value:l},t)}}},nl=le("th"),rl=(e,t)=>e&&t?"sectionCells":e?"section":"cells",al=e=>{const t=B(e,(e=>nl(e.element)));return 0===t.length?w.some("td"):t.length===e.length?w.some("th"):w.none()},sl=e=>{const t=k(e,(e=>(e=>{const t="thead"===e.section,o=Ee(al(e.cells),"th");return"tfoot"===e.section?{type:"footer"}:t||o?{type:"header",subType:rl(t,o)}:{type:"body"}})(e).type)),o=I(t,"header"),l=I(t,"footer");if(o||l){const e=I(t,"body");return!o||e||l?o||e||!l?w.none():w.some("footer"):w.some("header")}return w.some("body")},cl=(e,t)=>V(e.all,(e=>q(e.cells,(e=>G(t,e.element))))),il=(e,t,o)=>{const l=(e=>{const t=[],o=e=>{t.push(e)};for(let t=0;t<e.length;t++)e[t].each(o);return t})(k(t.selection,(t=>et(t).bind((t=>cl(e,t))).filter(o))));return n=l.length>0,r=l,n?w.some(r):w.none();var n,r},ml=(e,t)=>il(e,t,y),dl=(e,t)=>H(t,(t=>((e,t)=>cl(e,t).exists((e=>!e.isLocked)))(e,t))),ul=(e,t)=>((e,t)=>t.mergable)(0,t).filter((t=>dl(e,t.cells))),pl=(e,t)=>((e,t)=>t.unmergable)(0,t).filter((t=>dl(e,t))),bl=e=>{if(!n(e))throw new Error("cases must be an array");if(0===e.length)throw new Error("there must be at least one case");const t=[],o={};return E(e,((l,r)=>{const a=S(l);if(1!==a.length)throw new Error("one and only one name per case");const s=a[0],c=l[s];if(void 0!==o[s])throw new Error("duplicate key detected:"+s);if("cata"===s)throw new Error("cannot have a case named cata (sorry)");if(!n(c))throw new Error("case arguments must be an array");t.push(s),o[s]=(...o)=>{const l=o.length;if(l!==c.length)throw new Error("Wrong number of arguments to case "+s+". Expected "+c.length+" ("+c+"), got "+l);return{fold:(...t)=>{if(t.length!==e.length)throw new Error("Wrong number of arguments to fold. Expected "+e.length+", got "+t.length);return t[r].apply(null,o)},match:e=>{const l=S(e);if(t.length!==l.length)throw new Error("Wrong number of arguments to match. Expected: "+t.join(",")+"\nActual: "+l.join(","));if(!H(t,(e=>I(l,e))))throw new Error("Not all branches were specified when using match. Specified: "+l.join(", ")+"\nRequired: "+t.join(", "));return e[s].apply(null,o)},log:e=>{console.log(e,{constructors:t,constructor:s,params:o})}}}})),o},gl=(bl([{none:[]},{only:["index"]},{left:["index","next"]},{middle:["prev","index","next"]},{right:["prev","index"]}]),(e,t)=>{const o=mt(e);return ml(o,t).bind((e=>{const t=e[e.length-1],l=e[0].row,n=t.row+t.rowspan,r=o.all.slice(l,n);return sl(r)})).getOr("")}),hl=e=>{return Fe(e,"rgb")?jo(t=e).map(Bo).map((e=>"#"+e.value)).getOr(t):e;var t},fl=e=>{const t=W.fromDom(e);return{borderwidth:Ue(t,"border-width").getOr(""),borderstyle:Ue(t,"border-style").getOr(""),bordercolor:Ue(t,"border-color").map(hl).getOr(""),backgroundcolor:Ue(t,"background-color").map(hl).getOr("")}},yl=e=>{const t=e[0],o=e.slice(1);return E(o,(e=>{E(S(t),(o=>{v(e,((e,l)=>{const n=t[o];""!==n&&o===l&&n!==e&&(t[o]="")}))}))})),t},wl=(e,t,o,l)=>q(e,(e=>!a(o.formatter.matchNode(l,t+e)))).getOr(""),Sl=g(wl,["left","center","right"],"align"),Cl=g(wl,["top","middle","bottom"],"valign"),vl=e=>tt(W.fromDom(e)).map((t=>{const o={selection:So(e.cells)};return gl(t,o)})).getOr(""),Tl=(e,t)=>{const o=mt(e),l=pt(o),n=B(l,(e=>M(t,(t=>G(e.element,t)))));return k(n,(e=>({element:e.element.dom,column:bt(o,e.column).map((e=>e.element.dom))})))},xl=(e,t,o,l)=>{const n=1===t.length;E(t,(t=>{const r=t.element,a=n?y:l,s=ll(e,r);((e,t,o,l)=>{l("scope")&&e.setAttrib("scope",o.scope),l("class")&&e.setAttrib("class",o.class),l("height")&&e.setStyle("height",xe(o.height)),l("width")&&t.setStyle("width",xe(o.width))})(s,t.column.map((t=>ll(e,t))).getOr(s),o,a),Mt(e)&&((e,t,o)=>{o("backgroundcolor")&&e.setFormat("tablecellbackgroundcolor",t.backgroundcolor),o("bordercolor")&&e.setFormat("tablecellbordercolor",t.bordercolor),o("borderstyle")&&e.setFormat("tablecellborderstyle",t.borderstyle),o("borderwidth")&&e.setFormat("tablecellborderwidth",xe(t.borderwidth))})(s,o,a),l("halign")&&ft(e,r,o.halign),l("valign")&&((e,t,o)=>{gt.each("top middle bottom".split(" "),(l=>{l!==o&&e.formatter.remove("valign"+l,{},t)})),o&&e.formatter.apply("valign"+o,{},t)})(e,r,o.valign)}))},Al=(e,t,o,l)=>{const n=l.getData();l.close(),e.undoManager.transact((()=>{((e,t,o,l)=>{const n=T(l,((e,t)=>o[t]!==e));A(n)>0&&t.length>=1&&tt(t[0]).each((o=>{const r=Tl(o,t),a=A(T(n,((e,t)=>"scope"!==t&&"celltype"!==t)))>0,s=O(n,"celltype");(a||O(n,"scope"))&&xl(e,r,l,g(O,n)),s&&((e,t)=>{e.execCommand("mceTableCellType",!1,{type:t.celltype,no_events:!0})})(e,l),yt(e,o.dom,{structure:s,style:a})}))})(e,t,o,n),e.focus()}))},Rl=(e,t)=>{const o=tt(t[0]).map((o=>k(Tl(o,t),(t=>((e,t,o,l)=>{const n=e.dom,r=(e,t)=>n.getStyle(e,t)||n.getAttrib(e,t);return{width:r(l.getOr(t),"width"),height:r(t,"height"),scope:n.getAttrib(t,"scope"),celltype:(a=t,a.nodeName.toLowerCase()),class:n.getAttrib(t,"class",""),halign:Sl(e,t),valign:Cl(e,t),...o?fl(t):{}};var a})(e,t.element,Mt(e),t.column)))));return yl(o.getOrDie())},Ol=e=>{const t=_o(e);if(0===t.length)return;const o=Rl(e,t),l={type:"tabpanel",tabs:[{title:"General",name:"general",items:tl(e)},ol(e,"cell")]},n={type:"panel",items:[{type:"grid",columns:2,items:tl(e)}]};e.windowManager.open({title:"Cell Properties",size:"normal",body:Mt(e)?l:n,buttons:[{type:"cancel",name:"cancel",text:"Cancel"},{type:"submit",name:"save",text:"Save",primary:!0}],initialData:o,onSubmit:g(Al,e,t,o)})},_l=[{type:"listbox",name:"type",label:"Row type",items:[{text:"Header",value:"header"},{text:"Body",value:"body"},{text:"Footer",value:"footer"}]},{type:"listbox",name:"align",label:"Alignment",items:[{text:"None",value:""},{text:"Left",value:"left"},{text:"Center",value:"center"},{text:"Right",value:"right"}]},{label:"Height",name:"height",type:"input"}],Dl=e=>_l.concat((e=>{const t=Uo(Lt(e));return t.length>0?w.some({name:"class",type:"listbox",label:"Class",items:t}):w.none()})(e).toArray()),Nl=(e,t,o,l)=>{const n=1===t.length?y:l;E(t,(t=>{const r=ll(e,t);((e,t,o)=>{o("class")&&e.setAttrib("class",t.class),o("height")&&e.setStyle("height",xe(t.height))})(r,o,n),Pt(e)&&((e,t,o)=>{o("backgroundcolor")&&e.setStyle("background-color",t.backgroundcolor),o("bordercolor")&&e.setStyle("border-color",t.bordercolor),o("borderstyle")&&e.setStyle("border-style",t.borderstyle)})(r,o,n),l("align")&&ft(e,t,o.align)}))},Il=(e,t,o,l)=>{const n=l.getData();l.close(),e.undoManager.transact((()=>{((e,t,o,l)=>{const n=T(l,((e,t)=>o[t]!==e));if(A(n)>0){const o=O(n,"type"),r=!o||A(n)>1;r&&Nl(e,t,l,g(O,n)),o&&((e,t)=>{e.execCommand("mceTableRowType",!1,{type:t.type,no_events:!0})})(e,l),tt(W.fromDom(t[0])).each((t=>yt(e,t.dom,{structure:o,style:r})))}})(e,t,o,n),e.focus()}))},Ml=e=>{const t=Do(Ae(e),xo.selected);if(0===t.length)return;const o=k(t,(t=>((e,t,o)=>{const l=e.dom;return{height:l.getStyle(t,"height")||l.getAttrib(t,"height"),class:l.getAttrib(t,"class",""),type:vl(t),align:Sl(e,t),...o?fl(t):{}}})(e,t.dom,Pt(e)))),l=yl(o),n={type:"tabpanel",tabs:[{title:"General",name:"general",items:Dl(e)},ol(e,"row")]},r={type:"panel",items:[{type:"grid",columns:2,items:Dl(e)}]};e.windowManager.open({title:"Row Properties",size:"normal",body:Pt(e)?n:r,buttons:[{type:"cancel",name:"cancel",text:"Cancel"},{type:"submit",name:"save",text:"Save",primary:!0}],initialData:l,onSubmit:g(Il,e,k(t,(e=>e.dom)),l)})},Pl=(e,t,o)=>{const l=o?[{type:"input",name:"cols",label:"Cols",inputMode:"numeric"},{type:"input",name:"rows",label:"Rows",inputMode:"numeric"}]:[],n=Et(e)?[{type:"input",name:"cellspacing",label:"Cell spacing",inputMode:"numeric"},{type:"input",name:"cellpadding",label:"Cell padding",inputMode:"numeric"},{type:"input",name:"border",label:"Border width"},{type:"label",label:"Caption",items:[{type:"checkbox",name:"caption",label:"Show caption"}]}]:[],r=t.length>0?[{type:"listbox",name:"class",label:"Class",items:t}]:[];return l.concat([{type:"input",name:"width",label:"Width"},{type:"input",name:"height",label:"Height"}]).concat(n).concat([{type:"listbox",name:"align",label:"Alignment",items:[{text:"None",value:""},{text:"Left",value:"left"},{text:"Center",value:"center"},{text:"Right",value:"right"}]}]).concat(r)},kl=(e,t,o,n)=>{if("TD"===t.tagName||"TH"===t.tagName)l(o)&&c(n)?e.setStyle(t,o,n):e.setStyles(t,o);else if(t.children)for(let l=0;l<t.children.length;l++)kl(e,t.children[l],o,n)},El=(e,t,o,l)=>{const n=e.dom,r={},s={},c=Ft(e),i=kt(e);if(a(o.class)||(r.class=o.class),s.height=xe(o.height),c?s.width=xe(o.width):n.getAttrib(t,"width")&&(r.width=(e=>e?e.replace(/px$/,""):"")(o.width)),c?(s["border-width"]=xe(o.border),s["border-spacing"]=xe(o.cellspacing)):(r.border=o.border,r.cellpadding=o.cellpadding,r.cellspacing=o.cellspacing),c&&t.children){const e={};if(l.border&&(e["border-width"]=xe(o.border)),l.cellpadding&&(e.padding=xe(o.cellpadding)),i&&l.bordercolor&&(e["border-color"]=o.bordercolor),!(e=>{for(const t in e)if(C.call(e,t))return!1;return!0})(e))for(let o=0;o<t.children.length;o++)kl(n,t.children[o],e)}if(i){const e=o;s["background-color"]=e.backgroundcolor,s["border-color"]=e.bordercolor,s["border-style"]=e.borderstyle}n.setStyles(t,{...Ut(e),...s}),n.setAttribs(t,{...Gt(e),...r})},Bl=(e,t,o,l)=>{const n=e.dom,r=l.getData(),a=T(r,((e,t)=>o[t]!==e));l.close(),""===r.class&&delete r.class,e.undoManager.transact((()=>{if(!t){const o=je(r.cols).getOr(1),l=je(r.rows).getOr(1);e.execCommand("mceInsertTable",!1,{rows:l,columns:o}),t=Oo(Ae(e),Te(e)).bind((t=>tt(t,Te(e)))).map((e=>e.dom)).getOrDie()}if(A(a)>0){const o={border:O(a,"border"),bordercolor:O(a,"bordercolor"),cellpadding:O(a,"cellpadding")};El(e,t,r,o);const l=n.select("caption",t)[0];(l&&!r.caption||!l&&r.caption)&&e.execCommand("mceTableToggleCaption"),ft(e,t,r.align)}if(e.focus(),e.addVisual(),A(a)>0){const o=O(a,"caption"),l=!o||A(a)>1;yt(e,t,{structure:o,style:l})}}))},Fl=(e,t)=>{const o=e.dom;let l,n=((e,t)=>{const o=Ut(e),l=Gt(e),n=t?{borderstyle:R(o,"border-style").getOr(""),bordercolor:hl(R(o,"border-color").getOr("")),backgroundcolor:hl(R(o,"background-color").getOr(""))}:{};return{height:"",width:"100%",cellspacing:"",cellpadding:"",caption:!1,class:"",align:"",border:"",...o,...l,...n,...(()=>{const t=o["border-width"];return Ft(e)&&t?{border:t}:R(l,"border").fold((()=>({})),(e=>({border:e})))})(),...{...R(o,"border-spacing").or(R(l,"cellspacing")).fold((()=>({})),(e=>({cellspacing:e}))),...R(o,"border-padding").or(R(l,"cellpadding")).fold((()=>({})),(e=>({cellpadding:e})))}}})(e,kt(e));t?(n.cols="1",n.rows="1",kt(e)&&(n.borderstyle="",n.bordercolor="",n.backgroundcolor="")):(l=o.getParent(e.selection.getStart(),"table",e.getBody()),l?n=((e,t,o)=>{const l=e.dom,n=Ft(e)?l.getStyle(t,"border-spacing")||l.getAttrib(t,"cellspacing"):l.getAttrib(t,"cellspacing")||l.getStyle(t,"border-spacing"),r=Ft(e)?ht(l,t,"padding")||l.getAttrib(t,"cellpadding"):l.getAttrib(t,"cellpadding")||ht(l,t,"padding");return{width:l.getStyle(t,"width")||l.getAttrib(t,"width"),height:l.getStyle(t,"height")||l.getAttrib(t,"height"),cellspacing:null!=n?n:"",cellpadding:null!=r?r:"",border:((t,o)=>{const l=Ue(W.fromDom(o),"border-width");return Ft(e)&&l.isSome()?l.getOr(""):t.getAttrib(o,"border")||ht(e.dom,o,"border-width")||ht(e.dom,o,"border")||""})(l,t),caption:!!l.select("caption",t)[0],class:l.getAttrib(t,"class",""),align:Sl(e,t),...o?fl(t):{}}})(e,l,kt(e)):kt(e)&&(n.borderstyle="",n.bordercolor="",n.backgroundcolor=""));const r=Uo(Ht(e));r.length>0&&n.class&&(n.class=n.class.replace(/\s*mce\-item\-table\s*/g,""));const a={type:"grid",columns:2,items:Pl(e,r,t)},s=kt(e)?{type:"tabpanel",tabs:[{title:"General",name:"general",items:[a]},ol(e,"table")]}:{type:"panel",items:[a]};e.windowManager.open({title:"Table Properties",size:"normal",body:s,onSubmit:g(Bl,e,l,n),buttons:[{type:"cancel",name:"cancel",text:"Cancel"},{type:"submit",name:"save",text:"Save",primary:!0}],initialData:n})},ql=e=>{v({mceTableProps:g(Fl,e,!1),mceTableRowProps:g(Ml,e),mceTableCellProps:g(Ol,e),mceInsertTableDialog:g(Fl,e,!0)},((t,o)=>e.addCommand(o,(()=>{return o=t,void(Re(Ae(e))&&o());var o}))))},Ll=p,Hl=e=>{const t=(e,t)=>Pe(e,t).exists((e=>parseInt(e,10)>1));return e.length>0&&H(e,(e=>t(e,"rowspan")||t(e,"colspan")))?w.some(e):w.none()},jl=(e,t,o)=>t.length<=1?w.none():wo(e,o.firstSelectedSelector,o.lastSelectedSelector).map((e=>({bounds:e,cells:t}))),Vl=e=>{const t=Vo(w.none()),o=Vo([]);let l=w.none();const n=le("caption"),r=e=>l.forall((t=>!t[e])),a=()=>Ro((e=>W.fromDom(e.selection.getEnd()))(e),Te(e)),s=()=>Ro(Ae(e),Te(e)).bind((t=>{return o=Be(tt(t),a().bind(tt),((o,l)=>G(o,l)?n(t)?w.some((e=>({element:e,mergable:w.none(),unmergable:w.none(),selection:[e]}))(t)):w.some(((e,t,o)=>({element:o,mergable:jl(t,e,xo),unmergable:Hl(e),selection:Ll(e)}))(_o(e),o,t)):w.none())),o.bind(p);var o})),c=e=>tt(e.element).map((t=>{const o=mt(t),l=ml(o,e).getOr([]),n=F(l,((e,t)=>(t.isLocked&&(e.onAny=!0,0===t.column?e.onFirst=!0:t.column+t.colspan>=o.grid.columns&&(e.onLast=!0)),e)),{onAny:!1,onFirst:!1,onLast:!1});return{mergeable:ul(o,e).isSome(),unmergeable:pl(o,e).isSome(),locked:n}})),i=()=>{t.set((e=>{let t,o=!1;return(...l)=>(o||(o=!0,t=e.apply(null,l)),t)})(s)()),l=t.get().bind(c),E(o.get(),h)},m=e=>(e(),o.set(o.get().concat([e])),()=>{o.set(B(o.get(),(t=>t!==e)))}),d=(o,l)=>m((()=>t.get().fold((()=>{o.setEnabled(!1)}),(t=>{o.setEnabled(!l(t)&&e.selection.isEditable())})))),u=(o,l,n)=>m((()=>t.get().fold((()=>{o.setEnabled(!1),o.setActive(!1)}),(t=>{o.setEnabled(!l(t)&&e.selection.isEditable()),o.setActive(n(t))})))),b=e=>l.exists((t=>t.locked[e])),g=(t,o)=>l=>u(l,(e=>n(e.element)),(()=>e.queryCommandValue(t)===o)),y=g("mceTableRowType","header"),S=g("mceTableColType","th");return e.on("NodeChange ExecCommand TableSelectorChange",i),{onSetupTable:e=>d(e,(e=>!1)),onSetupCellOrRow:e=>d(e,(e=>n(e.element))),onSetupColumn:e=>t=>d(t,(t=>n(t.element)||b(e))),onSetupPasteable:e=>t=>d(t,(t=>n(t.element)||e().isNone())),onSetupPasteableColumn:(e,t)=>o=>d(o,(o=>n(o.element)||e().isNone()||b(t))),onSetupMergeable:e=>d(e,(e=>r("mergeable"))),onSetupUnmergeable:e=>d(e,(e=>r("unmergeable"))),resetTargets:i,onSetupTableWithCaption:t=>u(t,f,(t=>tt(t.element,Te(e)).exists((e=>ye(e,"caption").isSome())))),onSetupTableRowHeaders:y,onSetupTableColumnHeaders:S,targets:t.get}};var $l=tinymce.util.Tools.resolve("tinymce.FakeClipboard");const Wl="x-tinymce/dom-table-",zl=Wl+"rows",Ul=Wl+"columns",Gl=e=>{var t;const o=null!==(t=$l.read())&&void 0!==t?t:[];return V(o,(t=>w.from(t.getType(e))))},Kl=()=>Gl(zl),Jl=()=>Gl(Ul),Ql=e=>t=>{const o=()=>{t.setEnabled(e.selection.isEditable())};return e.on("NodeChange",o),o(),()=>{e.off("NodeChange",o)}},Xl=e=>t=>{const o=()=>{t.setEnabled(e.selection.isEditable())};return e.on("NodeChange",o),o(),()=>{e.off("NodeChange",o)}},Yl=e=>{const t=Vl(e);(e=>{const t=e.options.register;t("table_border_widths",{processor:"object[]",default:xt}),t("table_border_styles",{processor:"object[]",default:At}),t("table_cell_advtab",{processor:"boolean",default:!0}),t("table_row_advtab",{processor:"boolean",default:!0}),t("table_advtab",{processor:"boolean",default:!0}),t("table_appearance_options",{processor:"boolean",default:!0}),t("table_grid",{processor:"boolean",default:!Tt.deviceType.isTouch()}),t("table_cell_class_list",{processor:"object[]",default:[]}),t("table_row_class_list",{processor:"object[]",default:[]}),t("table_class_list",{processor:"object[]",default:[]}),t("table_toolbar",{processor:"string",default:"tableprops tabledelete | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol"}),t("table_background_color_map",{processor:"object[]",default:[]}),t("table_border_color_map",{processor:"object[]",default:[]})})(e),ql(e),((e,t)=>{const o=t=>()=>e.execCommand(t),l=(t,l)=>!!e.queryCommandSupported(l.command)&&(e.ui.registry.addMenuItem(t,{...l,onAction:i(l.onAction)?l.onAction:o(l.command)}),!0),n=(t,l)=>{e.queryCommandSupported(l.command)&&e.ui.registry.addToggleMenuItem(t,{...l,onAction:i(l.onAction)?l.onAction:o(l.command)})},r=t=>{e.execCommand("mceInsertTable",!1,{rows:t.numRows,columns:t.numColumns})},a=[l("tableinsertrowbefore",{text:"Insert row before",icon:"table-insert-row-above",command:"mceTableInsertRowBefore",onSetup:t.onSetupCellOrRow}),l("tableinsertrowafter",{text:"Insert row after",icon:"table-insert-row-after",command:"mceTableInsertRowAfter",onSetup:t.onSetupCellOrRow}),l("tabledeleterow",{text:"Delete row",icon:"table-delete-row",command:"mceTableDeleteRow",onSetup:t.onSetupCellOrRow}),l("tablerowprops",{text:"Row properties",icon:"table-row-properties",command:"mceTableRowProps",onSetup:t.onSetupCellOrRow}),l("tablecutrow",{text:"Cut row",icon:"cut-row",command:"mceTableCutRow",onSetup:t.onSetupCellOrRow}),l("tablecopyrow",{text:"Copy row",icon:"duplicate-row",command:"mceTableCopyRow",onSetup:t.onSetupCellOrRow}),l("tablepasterowbefore",{text:"Paste row before",icon:"paste-row-before",command:"mceTablePasteRowBefore",onSetup:t.onSetupPasteable(Kl)}),l("tablepasterowafter",{text:"Paste row after",icon:"paste-row-after",command:"mceTablePasteRowAfter",onSetup:t.onSetupPasteable(Kl)})],s=[l("tableinsertcolumnbefore",{text:"Insert column before",icon:"table-insert-column-before",command:"mceTableInsertColBefore",onSetup:t.onSetupColumn("onFirst")}),l("tableinsertcolumnafter",{text:"Insert column after",icon:"table-insert-column-after",command:"mceTableInsertColAfter",onSetup:t.onSetupColumn("onLast")}),l("tabledeletecolumn",{text:"Delete column",icon:"table-delete-column",command:"mceTableDeleteCol",onSetup:t.onSetupColumn("onAny")}),l("tablecutcolumn",{text:"Cut column",icon:"cut-column",command:"mceTableCutCol",onSetup:t.onSetupColumn("onAny")}),l("tablecopycolumn",{text:"Copy column",icon:"duplicate-column",command:"mceTableCopyCol",onSetup:t.onSetupColumn("onAny")}),l("tablepastecolumnbefore",{text:"Paste column before",icon:"paste-column-before",command:"mceTablePasteColBefore",onSetup:t.onSetupPasteableColumn(Jl,"onFirst")}),l("tablepastecolumnafter",{text:"Paste column after",icon:"paste-column-after",command:"mceTablePasteColAfter",onSetup:t.onSetupPasteableColumn(Jl,"onLast")})],c=[l("tablecellprops",{text:"Cell properties",icon:"table-cell-properties",command:"mceTableCellProps",onSetup:t.onSetupCellOrRow}),l("tablemergecells",{text:"Merge cells",icon:"table-merge-cells",command:"mceTableMergeCells",onSetup:t.onSetupMergeable}),l("tablesplitcells",{text:"Split cell",icon:"table-split-cells",command:"mceTableSplitCells",onSetup:t.onSetupUnmergeable})];Bt(e)?e.ui.registry.addNestedMenuItem("inserttable",{text:"Table",icon:"table",getSubmenuItems:()=>[{type:"fancymenuitem",fancytype:"inserttable",onAction:r}],onSetup:Xl(e)}):e.ui.registry.addMenuItem("inserttable",{text:"Table",icon:"table",onAction:o("mceInsertTableDialog"),onSetup:Xl(e)}),e.ui.registry.addMenuItem("inserttabledialog",{text:"Insert table",icon:"table",onAction:o("mceInsertTableDialog"),onSetup:Xl(e)}),l("tableprops",{text:"Table properties",onSetup:t.onSetupTable,command:"mceTableProps"}),l("deletetable",{text:"Delete table",icon:"table-delete-table",onSetup:t.onSetupTable,command:"mceTableDelete"}),I(a,!0)&&e.ui.registry.addNestedMenuItem("row",{type:"nestedmenuitem",text:"Row",getSubmenuItems:u("tableinsertrowbefore tableinsertrowafter tabledeleterow tablerowprops | tablecutrow tablecopyrow tablepasterowbefore tablepasterowafter")}),I(s,!0)&&e.ui.registry.addNestedMenuItem("column",{type:"nestedmenuitem",text:"Column",getSubmenuItems:u("tableinsertcolumnbefore tableinsertcolumnafter tabledeletecolumn | tablecutcolumn tablecopycolumn tablepastecolumnbefore tablepastecolumnafter")}),I(c,!0)&&e.ui.registry.addNestedMenuItem("cell",{type:"nestedmenuitem",text:"Cell",getSubmenuItems:u("tablecellprops tablemergecells tablesplitcells")}),e.ui.registry.addContextMenu("table",{update:()=>(t.resetTargets(),t.targets().fold(u(""),(e=>"caption"===J(e.element)?"tableprops deletetable":"cell row column | advtablesort | tableprops deletetable")))});const m=Jo(Ht(e));0!==m.length&&e.queryCommandSupported("mceTableToggleClass")&&e.ui.registry.addNestedMenuItem("tableclass",{icon:"table-classes",text:"Table styles",getSubmenuItems:()=>Go(e,m,"tableclass",(t=>e.execCommand("mceTableToggleClass",!1,t))),onSetup:t.onSetupTable});const d=Jo(qt(e));0!==d.length&&e.queryCommandSupported("mceTableCellToggleClass")&&e.ui.registry.addNestedMenuItem("tablecellclass",{icon:"table-cell-classes",text:"Cell styles",getSubmenuItems:()=>Go(e,d,"tablecellclass",(t=>e.execCommand("mceTableCellToggleClass",!1,t))),onSetup:t.onSetupCellOrRow}),e.queryCommandSupported("mceTableApplyCellStyle")&&(e.ui.registry.addNestedMenuItem("tablecellvalign",{icon:"vertical-align",text:"Vertical align",getSubmenuItems:()=>Go(e,No,"tablecellverticalalign",Ko(e,"vertical-align")),onSetup:t.onSetupCellOrRow}),e.ui.registry.addNestedMenuItem("tablecellborderwidth",{icon:"border-width",text:"Border width",getSubmenuItems:()=>Go(e,Nt(e),"tablecellborderwidth",Ko(e,"border-width")),onSetup:t.onSetupCellOrRow}),e.ui.registry.addNestedMenuItem("tablecellborderstyle",{icon:"border-style",text:"Border style",getSubmenuItems:()=>Go(e,It(e),"tablecellborderstyle",Ko(e,"border-style")),onSetup:t.onSetupCellOrRow}),e.ui.registry.addNestedMenuItem("tablecellbackgroundcolor",{icon:"cell-background-color",text:"Background color",getSubmenuItems:()=>Xo(e,Vt(e),"background-color"),onSetup:t.onSetupCellOrRow}),e.ui.registry.addNestedMenuItem("tablecellbordercolor",{icon:"cell-border-color",text:"Border color",getSubmenuItems:()=>Xo(e,$t(e),"border-color"),onSetup:t.onSetupCellOrRow})),n("tablecaption",{icon:"table-caption",text:"Table caption",command:"mceTableToggleCaption",onSetup:t.onSetupTableWithCaption}),n("tablerowheader",{text:"Row header",icon:"table-top-header",command:"mceTableRowType",onAction:Yo(e),onSetup:t.onSetupTableRowHeaders}),n("tablecolheader",{text:"Column header",icon:"table-left-header",command:"mceTableColType",onAction:Zo(e),onSetup:t.onSetupTableRowHeaders})})(e,t),((e,t)=>{e.ui.registry.addMenuButton("table",{tooltip:"Table",icon:"table",onSetup:Ql(e),fetch:e=>e("inserttable | cell row column | advtablesort | tableprops deletetable")});const o=t=>()=>e.execCommand(t),l=(t,l)=>{e.queryCommandSupported(l.command)&&e.ui.registry.addButton(t,{...l,onAction:i(l.onAction)?l.onAction:o(l.command)})},n=(t,l)=>{e.queryCommandSupported(l.command)&&e.ui.registry.addToggleButton(t,{...l,onAction:i(l.onAction)?l.onAction:o(l.command)})};l("tableprops",{tooltip:"Table properties",command:"mceTableProps",icon:"table",onSetup:t.onSetupTable}),l("tabledelete",{tooltip:"Delete table",command:"mceTableDelete",icon:"table-delete-table",onSetup:t.onSetupTable}),l("tablecellprops",{tooltip:"Cell properties",command:"mceTableCellProps",icon:"table-cell-properties",onSetup:t.onSetupCellOrRow}),l("tablemergecells",{tooltip:"Merge cells",command:"mceTableMergeCells",icon:"table-merge-cells",onSetup:t.onSetupMergeable}),l("tablesplitcells",{tooltip:"Split cell",command:"mceTableSplitCells",icon:"table-split-cells",onSetup:t.onSetupUnmergeable}),l("tableinsertrowbefore",{tooltip:"Insert row before",command:"mceTableInsertRowBefore",icon:"table-insert-row-above",onSetup:t.onSetupCellOrRow}),l("tableinsertrowafter",{tooltip:"Insert row after",command:"mceTableInsertRowAfter",icon:"table-insert-row-after",onSetup:t.onSetupCellOrRow}),l("tabledeleterow",{tooltip:"Delete row",command:"mceTableDeleteRow",icon:"table-delete-row",onSetup:t.onSetupCellOrRow}),l("tablerowprops",{tooltip:"Row properties",command:"mceTableRowProps",icon:"table-row-properties",onSetup:t.onSetupCellOrRow}),l("tableinsertcolbefore",{tooltip:"Insert column before",command:"mceTableInsertColBefore",icon:"table-insert-column-before",onSetup:t.onSetupColumn("onFirst")}),l("tableinsertcolafter",{tooltip:"Insert column after",command:"mceTableInsertColAfter",icon:"table-insert-column-after",onSetup:t.onSetupColumn("onLast")}),l("tabledeletecol",{tooltip:"Delete column",command:"mceTableDeleteCol",icon:"table-delete-column",onSetup:t.onSetupColumn("onAny")}),l("tablecutrow",{tooltip:"Cut row",command:"mceTableCutRow",icon:"cut-row",onSetup:t.onSetupCellOrRow}),l("tablecopyrow",{tooltip:"Copy row",command:"mceTableCopyRow",icon:"duplicate-row",onSetup:t.onSetupCellOrRow}),l("tablepasterowbefore",{tooltip:"Paste row before",command:"mceTablePasteRowBefore",icon:"paste-row-before",onSetup:t.onSetupPasteable(Kl)}),l("tablepasterowafter",{tooltip:"Paste row after",command:"mceTablePasteRowAfter",icon:"paste-row-after",onSetup:t.onSetupPasteable(Kl)}),l("tablecutcol",{tooltip:"Cut column",command:"mceTableCutCol",icon:"cut-column",onSetup:t.onSetupColumn("onAny")}),l("tablecopycol",{tooltip:"Copy column",command:"mceTableCopyCol",icon:"duplicate-column",onSetup:t.onSetupColumn("onAny")}),l("tablepastecolbefore",{tooltip:"Paste column before",command:"mceTablePasteColBefore",icon:"paste-column-before",onSetup:t.onSetupPasteableColumn(Jl,"onFirst")}),l("tablepastecolafter",{tooltip:"Paste column after",command:"mceTablePasteColAfter",icon:"paste-column-after",onSetup:t.onSetupPasteableColumn(Jl,"onLast")}),l("tableinsertdialog",{tooltip:"Insert table",command:"mceInsertTableDialog",icon:"table",onSetup:Ql(e)});const r=Jo(Ht(e));0!==r.length&&e.queryCommandSupported("mceTableToggleClass")&&e.ui.registry.addMenuButton("tableclass",{icon:"table-classes",tooltip:"Table styles",fetch:Qo(e,r,"tableclass",(t=>e.execCommand("mceTableToggleClass",!1,t))),onSetup:t.onSetupTable});const a=Jo(qt(e));0!==a.length&&e.queryCommandSupported("mceTableCellToggleClass")&&e.ui.registry.addMenuButton("tablecellclass",{icon:"table-cell-classes",tooltip:"Cell styles",fetch:Qo(e,a,"tablecellclass",(t=>e.execCommand("mceTableCellToggleClass",!1,t))),onSetup:t.onSetupCellOrRow}),e.queryCommandSupported("mceTableApplyCellStyle")&&(e.ui.registry.addMenuButton("tablecellvalign",{icon:"vertical-align",tooltip:"Vertical align",fetch:Qo(e,No,"tablecellverticalalign",Ko(e,"vertical-align")),onSetup:t.onSetupCellOrRow}),e.ui.registry.addMenuButton("tablecellborderwidth",{icon:"border-width",tooltip:"Border width",fetch:Qo(e,Nt(e),"tablecellborderwidth",Ko(e,"border-width")),onSetup:t.onSetupCellOrRow}),e.ui.registry.addMenuButton("tablecellborderstyle",{icon:"border-style",tooltip:"Border style",fetch:Qo(e,It(e),"tablecellborderstyle",Ko(e,"border-style")),onSetup:t.onSetupCellOrRow}),e.ui.registry.addMenuButton("tablecellbackgroundcolor",{icon:"cell-background-color",tooltip:"Background color",fetch:t=>t(Xo(e,Vt(e),"background-color")),onSetup:t.onSetupCellOrRow}),e.ui.registry.addMenuButton("tablecellbordercolor",{icon:"cell-border-color",tooltip:"Border color",fetch:t=>t(Xo(e,$t(e),"border-color")),onSetup:t.onSetupCellOrRow})),n("tablecaption",{tooltip:"Table caption",icon:"table-caption",command:"mceTableToggleCaption",onSetup:t.onSetupTableWithCaption}),n("tablerowheader",{tooltip:"Row header",icon:"table-top-header",command:"mceTableRowType",onAction:Yo(e),onSetup:t.onSetupTableRowHeaders}),n("tablecolheader",{tooltip:"Column header",icon:"table-left-header",command:"mceTableColType",onAction:Zo(e),onSetup:t.onSetupTableColumnHeaders})})(e,t),(e=>{const t=t=>e.dom.is(t,"table")&&e.getBody().contains(t)&&e.dom.isEditable(t.parentNode),o=jt(e);o.length>0&&e.ui.registry.addContextToolbar("table",{predicate:t,items:o,scope:"node",position:"node"})})(e)};e.add("table",Yl)}();
+/**
+ * TinyMCE version 6.8.3 (2024-02-08)
+ */
+
+(function () {
+    'use strict';
+
+    var global$3 = tinymce.util.Tools.resolve('tinymce.PluginManager');
+
+    const hasProto = (v, constructor, predicate) => {
+      var _a;
+      if (predicate(v, constructor.prototype)) {
+        return true;
+      } else {
+        return ((_a = v.constructor) === null || _a === void 0 ? void 0 : _a.name) === constructor.name;
+      }
+    };
+    const typeOf = x => {
+      const t = typeof x;
+      if (x === null) {
+        return 'null';
+      } else if (t === 'object' && Array.isArray(x)) {
+        return 'array';
+      } else if (t === 'object' && hasProto(x, String, (o, proto) => proto.isPrototypeOf(o))) {
+        return 'string';
+      } else {
+        return t;
+      }
+    };
+    const isType$1 = type => value => typeOf(value) === type;
+    const isSimpleType = type => value => typeof value === type;
+    const eq$1 = t => a => t === a;
+    const isString = isType$1('string');
+    const isArray = isType$1('array');
+    const isBoolean = isSimpleType('boolean');
+    const isUndefined = eq$1(undefined);
+    const isNullable = a => a === null || a === undefined;
+    const isNonNullable = a => !isNullable(a);
+    const isFunction = isSimpleType('function');
+    const isNumber = isSimpleType('number');
+
+    const noop = () => {
+    };
+    const compose1 = (fbc, fab) => a => fbc(fab(a));
+    const constant = value => {
+      return () => {
+        return value;
+      };
+    };
+    const identity = x => {
+      return x;
+    };
+    const tripleEquals = (a, b) => {
+      return a === b;
+    };
+    function curry(fn, ...initialArgs) {
+      return (...restArgs) => {
+        const all = initialArgs.concat(restArgs);
+        return fn.apply(null, all);
+      };
+    }
+    const call = f => {
+      f();
+    };
+    const never = constant(false);
+    const always = constant(true);
+
+    class Optional {
+      constructor(tag, value) {
+        this.tag = tag;
+        this.value = value;
+      }
+      static some(value) {
+        return new Optional(true, value);
+      }
+      static none() {
+        return Optional.singletonNone;
+      }
+      fold(onNone, onSome) {
+        if (this.tag) {
+          return onSome(this.value);
+        } else {
+          return onNone();
+        }
+      }
+      isSome() {
+        return this.tag;
+      }
+      isNone() {
+        return !this.tag;
+      }
+      map(mapper) {
+        if (this.tag) {
+          return Optional.some(mapper(this.value));
+        } else {
+          return Optional.none();
+        }
+      }
+      bind(binder) {
+        if (this.tag) {
+          return binder(this.value);
+        } else {
+          return Optional.none();
+        }
+      }
+      exists(predicate) {
+        return this.tag && predicate(this.value);
+      }
+      forall(predicate) {
+        return !this.tag || predicate(this.value);
+      }
+      filter(predicate) {
+        if (!this.tag || predicate(this.value)) {
+          return this;
+        } else {
+          return Optional.none();
+        }
+      }
+      getOr(replacement) {
+        return this.tag ? this.value : replacement;
+      }
+      or(replacement) {
+        return this.tag ? this : replacement;
+      }
+      getOrThunk(thunk) {
+        return this.tag ? this.value : thunk();
+      }
+      orThunk(thunk) {
+        return this.tag ? this : thunk();
+      }
+      getOrDie(message) {
+        if (!this.tag) {
+          throw new Error(message !== null && message !== void 0 ? message : 'Called getOrDie on None');
+        } else {
+          return this.value;
+        }
+      }
+      static from(value) {
+        return isNonNullable(value) ? Optional.some(value) : Optional.none();
+      }
+      getOrNull() {
+        return this.tag ? this.value : null;
+      }
+      getOrUndefined() {
+        return this.value;
+      }
+      each(worker) {
+        if (this.tag) {
+          worker(this.value);
+        }
+      }
+      toArray() {
+        return this.tag ? [this.value] : [];
+      }
+      toString() {
+        return this.tag ? `some(${ this.value })` : 'none()';
+      }
+    }
+    Optional.singletonNone = new Optional(false);
+
+    const keys = Object.keys;
+    const hasOwnProperty = Object.hasOwnProperty;
+    const each$1 = (obj, f) => {
+      const props = keys(obj);
+      for (let k = 0, len = props.length; k < len; k++) {
+        const i = props[k];
+        const x = obj[i];
+        f(x, i);
+      }
+    };
+    const objAcc = r => (x, i) => {
+      r[i] = x;
+    };
+    const internalFilter = (obj, pred, onTrue, onFalse) => {
+      each$1(obj, (x, i) => {
+        (pred(x, i) ? onTrue : onFalse)(x, i);
+      });
+    };
+    const filter$1 = (obj, pred) => {
+      const t = {};
+      internalFilter(obj, pred, objAcc(t), noop);
+      return t;
+    };
+    const mapToArray = (obj, f) => {
+      const r = [];
+      each$1(obj, (value, name) => {
+        r.push(f(value, name));
+      });
+      return r;
+    };
+    const values = obj => {
+      return mapToArray(obj, identity);
+    };
+    const size = obj => {
+      return keys(obj).length;
+    };
+    const get$4 = (obj, key) => {
+      return has(obj, key) ? Optional.from(obj[key]) : Optional.none();
+    };
+    const has = (obj, key) => hasOwnProperty.call(obj, key);
+    const hasNonNullableKey = (obj, key) => has(obj, key) && obj[key] !== undefined && obj[key] !== null;
+    const isEmpty$1 = r => {
+      for (const x in r) {
+        if (hasOwnProperty.call(r, x)) {
+          return false;
+        }
+      }
+      return true;
+    };
+
+    const nativeIndexOf = Array.prototype.indexOf;
+    const nativePush = Array.prototype.push;
+    const rawIndexOf = (ts, t) => nativeIndexOf.call(ts, t);
+    const contains = (xs, x) => rawIndexOf(xs, x) > -1;
+    const exists = (xs, pred) => {
+      for (let i = 0, len = xs.length; i < len; i++) {
+        const x = xs[i];
+        if (pred(x, i)) {
+          return true;
+        }
+      }
+      return false;
+    };
+    const range = (num, f) => {
+      const r = [];
+      for (let i = 0; i < num; i++) {
+        r.push(f(i));
+      }
+      return r;
+    };
+    const map = (xs, f) => {
+      const len = xs.length;
+      const r = new Array(len);
+      for (let i = 0; i < len; i++) {
+        const x = xs[i];
+        r[i] = f(x, i);
+      }
+      return r;
+    };
+    const each = (xs, f) => {
+      for (let i = 0, len = xs.length; i < len; i++) {
+        const x = xs[i];
+        f(x, i);
+      }
+    };
+    const eachr = (xs, f) => {
+      for (let i = xs.length - 1; i >= 0; i--) {
+        const x = xs[i];
+        f(x, i);
+      }
+    };
+    const partition = (xs, pred) => {
+      const pass = [];
+      const fail = [];
+      for (let i = 0, len = xs.length; i < len; i++) {
+        const x = xs[i];
+        const arr = pred(x, i) ? pass : fail;
+        arr.push(x);
+      }
+      return {
+        pass,
+        fail
+      };
+    };
+    const filter = (xs, pred) => {
+      const r = [];
+      for (let i = 0, len = xs.length; i < len; i++) {
+        const x = xs[i];
+        if (pred(x, i)) {
+          r.push(x);
+        }
+      }
+      return r;
+    };
+    const foldr = (xs, f, acc) => {
+      eachr(xs, (x, i) => {
+        acc = f(acc, x, i);
+      });
+      return acc;
+    };
+    const foldl = (xs, f, acc) => {
+      each(xs, (x, i) => {
+        acc = f(acc, x, i);
+      });
+      return acc;
+    };
+    const findUntil = (xs, pred, until) => {
+      for (let i = 0, len = xs.length; i < len; i++) {
+        const x = xs[i];
+        if (pred(x, i)) {
+          return Optional.some(x);
+        } else if (until(x, i)) {
+          break;
+        }
+      }
+      return Optional.none();
+    };
+    const find = (xs, pred) => {
+      return findUntil(xs, pred, never);
+    };
+    const flatten$1 = xs => {
+      const r = [];
+      for (let i = 0, len = xs.length; i < len; ++i) {
+        if (!isArray(xs[i])) {
+          throw new Error('Arr.flatten item ' + i + ' was not an array, input: ' + xs);
+        }
+        nativePush.apply(r, xs[i]);
+      }
+      return r;
+    };
+    const bind = (xs, f) => flatten$1(map(xs, f));
+    const forall = (xs, pred) => {
+      for (let i = 0, len = xs.length; i < len; ++i) {
+        const x = xs[i];
+        if (pred(x, i) !== true) {
+          return false;
+        }
+      }
+      return true;
+    };
+    const mapToObject = (xs, f) => {
+      const r = {};
+      for (let i = 0, len = xs.length; i < len; i++) {
+        const x = xs[i];
+        r[String(x)] = f(x, i);
+      }
+      return r;
+    };
+    const get$3 = (xs, i) => i >= 0 && i < xs.length ? Optional.some(xs[i]) : Optional.none();
+    const head = xs => get$3(xs, 0);
+    const last = xs => get$3(xs, xs.length - 1);
+    const findMap = (arr, f) => {
+      for (let i = 0; i < arr.length; i++) {
+        const r = f(arr[i], i);
+        if (r.isSome()) {
+          return r;
+        }
+      }
+      return Optional.none();
+    };
+
+    const COMMENT = 8;
+    const DOCUMENT = 9;
+    const DOCUMENT_FRAGMENT = 11;
+    const ELEMENT = 1;
+    const TEXT = 3;
+
+    const fromHtml = (html, scope) => {
+      const doc = scope || document;
+      const div = doc.createElement('div');
+      div.innerHTML = html;
+      if (!div.hasChildNodes() || div.childNodes.length > 1) {
+        const message = 'HTML does not have a single root node';
+        console.error(message, html);
+        throw new Error(message);
+      }
+      return fromDom$1(div.childNodes[0]);
+    };
+    const fromTag = (tag, scope) => {
+      const doc = scope || document;
+      const node = doc.createElement(tag);
+      return fromDom$1(node);
+    };
+    const fromText = (text, scope) => {
+      const doc = scope || document;
+      const node = doc.createTextNode(text);
+      return fromDom$1(node);
+    };
+    const fromDom$1 = node => {
+      if (node === null || node === undefined) {
+        throw new Error('Node cannot be null or undefined');
+      }
+      return { dom: node };
+    };
+    const fromPoint = (docElm, x, y) => Optional.from(docElm.dom.elementFromPoint(x, y)).map(fromDom$1);
+    const SugarElement = {
+      fromHtml,
+      fromTag,
+      fromText,
+      fromDom: fromDom$1,
+      fromPoint
+    };
+
+    const is$2 = (element, selector) => {
+      const dom = element.dom;
+      if (dom.nodeType !== ELEMENT) {
+        return false;
+      } else {
+        const elem = dom;
+        if (elem.matches !== undefined) {
+          return elem.matches(selector);
+        } else if (elem.msMatchesSelector !== undefined) {
+          return elem.msMatchesSelector(selector);
+        } else if (elem.webkitMatchesSelector !== undefined) {
+          return elem.webkitMatchesSelector(selector);
+        } else if (elem.mozMatchesSelector !== undefined) {
+          return elem.mozMatchesSelector(selector);
+        } else {
+          throw new Error('Browser lacks native selectors');
+        }
+      }
+    };
+    const bypassSelector = dom => dom.nodeType !== ELEMENT && dom.nodeType !== DOCUMENT && dom.nodeType !== DOCUMENT_FRAGMENT || dom.childElementCount === 0;
+    const all$1 = (selector, scope) => {
+      const base = scope === undefined ? document : scope.dom;
+      return bypassSelector(base) ? [] : map(base.querySelectorAll(selector), SugarElement.fromDom);
+    };
+    const one = (selector, scope) => {
+      const base = scope === undefined ? document : scope.dom;
+      return bypassSelector(base) ? Optional.none() : Optional.from(base.querySelector(selector)).map(SugarElement.fromDom);
+    };
+
+    const eq = (e1, e2) => e1.dom === e2.dom;
+    const is$1 = is$2;
+
+    typeof window !== 'undefined' ? window : Function('return this;')();
+
+    const name = element => {
+      const r = element.dom.nodeName;
+      return r.toLowerCase();
+    };
+    const type = element => element.dom.nodeType;
+    const isType = t => element => type(element) === t;
+    const isComment = element => type(element) === COMMENT || name(element) === '#comment';
+    const isElement = isType(ELEMENT);
+    const isText = isType(TEXT);
+    const isDocument = isType(DOCUMENT);
+    const isDocumentFragment = isType(DOCUMENT_FRAGMENT);
+    const isTag = tag => e => isElement(e) && name(e) === tag;
+
+    const owner = element => SugarElement.fromDom(element.dom.ownerDocument);
+    const documentOrOwner = dos => isDocument(dos) ? dos : owner(dos);
+    const parent = element => Optional.from(element.dom.parentNode).map(SugarElement.fromDom);
+    const parents = (element, isRoot) => {
+      const stop = isFunction(isRoot) ? isRoot : never;
+      let dom = element.dom;
+      const ret = [];
+      while (dom.parentNode !== null && dom.parentNode !== undefined) {
+        const rawParent = dom.parentNode;
+        const p = SugarElement.fromDom(rawParent);
+        ret.push(p);
+        if (stop(p) === true) {
+          break;
+        } else {
+          dom = rawParent;
+        }
+      }
+      return ret;
+    };
+    const prevSibling = element => Optional.from(element.dom.previousSibling).map(SugarElement.fromDom);
+    const nextSibling = element => Optional.from(element.dom.nextSibling).map(SugarElement.fromDom);
+    const children$3 = element => map(element.dom.childNodes, SugarElement.fromDom);
+    const child$3 = (element, index) => {
+      const cs = element.dom.childNodes;
+      return Optional.from(cs[index]).map(SugarElement.fromDom);
+    };
+    const firstChild = element => child$3(element, 0);
+
+    const isShadowRoot = dos => isDocumentFragment(dos) && isNonNullable(dos.dom.host);
+    const supported = isFunction(Element.prototype.attachShadow) && isFunction(Node.prototype.getRootNode);
+    const getRootNode = supported ? e => SugarElement.fromDom(e.dom.getRootNode()) : documentOrOwner;
+    const getShadowRoot = e => {
+      const r = getRootNode(e);
+      return isShadowRoot(r) ? Optional.some(r) : Optional.none();
+    };
+    const getShadowHost = e => SugarElement.fromDom(e.dom.host);
+
+    const inBody = element => {
+      const dom = isText(element) ? element.dom.parentNode : element.dom;
+      if (dom === undefined || dom === null || dom.ownerDocument === null) {
+        return false;
+      }
+      const doc = dom.ownerDocument;
+      return getShadowRoot(SugarElement.fromDom(dom)).fold(() => doc.body.contains(dom), compose1(inBody, getShadowHost));
+    };
+
+    var ClosestOrAncestor = (is, ancestor, scope, a, isRoot) => {
+      if (is(scope, a)) {
+        return Optional.some(scope);
+      } else if (isFunction(isRoot) && isRoot(scope)) {
+        return Optional.none();
+      } else {
+        return ancestor(scope, a, isRoot);
+      }
+    };
+
+    const ancestor$1 = (scope, predicate, isRoot) => {
+      let element = scope.dom;
+      const stop = isFunction(isRoot) ? isRoot : never;
+      while (element.parentNode) {
+        element = element.parentNode;
+        const el = SugarElement.fromDom(element);
+        if (predicate(el)) {
+          return Optional.some(el);
+        } else if (stop(el)) {
+          break;
+        }
+      }
+      return Optional.none();
+    };
+    const closest$2 = (scope, predicate, isRoot) => {
+      const is = (s, test) => test(s);
+      return ClosestOrAncestor(is, ancestor$1, scope, predicate, isRoot);
+    };
+    const child$2 = (scope, predicate) => {
+      const pred = node => predicate(SugarElement.fromDom(node));
+      const result = find(scope.dom.childNodes, pred);
+      return result.map(SugarElement.fromDom);
+    };
+
+    const ancestor = (scope, selector, isRoot) => ancestor$1(scope, e => is$2(e, selector), isRoot);
+    const child$1 = (scope, selector) => child$2(scope, e => is$2(e, selector));
+    const descendant = (scope, selector) => one(selector, scope);
+    const closest$1 = (scope, selector, isRoot) => {
+      const is = (element, selector) => is$2(element, selector);
+      return ClosestOrAncestor(is, ancestor, scope, selector, isRoot);
+    };
+
+    const closest = target => closest$1(target, '[contenteditable]');
+    const isEditable = (element, assumeEditable = false) => {
+      if (inBody(element)) {
+        return element.dom.isContentEditable;
+      } else {
+        return closest(element).fold(constant(assumeEditable), editable => getRaw$1(editable) === 'true');
+      }
+    };
+    const getRaw$1 = element => element.dom.contentEditable;
+
+    const getNodeName = elm => elm.nodeName.toLowerCase();
+    const getBody = editor => SugarElement.fromDom(editor.getBody());
+    const getIsRoot = editor => element => eq(element, getBody(editor));
+    const removePxSuffix = size => size ? size.replace(/px$/, '') : '';
+    const addPxSuffix = size => /^\d+(\.\d+)?$/.test(size) ? size + 'px' : size;
+    const getSelectionStart = editor => SugarElement.fromDom(editor.selection.getStart());
+    const getSelectionEnd = editor => SugarElement.fromDom(editor.selection.getEnd());
+    const isInEditableContext = cell => closest$2(cell, isTag('table')).forall(isEditable);
+
+    const children$2 = (scope, predicate) => filter(children$3(scope), predicate);
+    const descendants$1 = (scope, predicate) => {
+      let result = [];
+      each(children$3(scope), x => {
+        if (predicate(x)) {
+          result = result.concat([x]);
+        }
+        result = result.concat(descendants$1(x, predicate));
+      });
+      return result;
+    };
+
+    const children$1 = (scope, selector) => children$2(scope, e => is$2(e, selector));
+    const descendants = (scope, selector) => all$1(selector, scope);
+
+    const rawSet = (dom, key, value) => {
+      if (isString(value) || isBoolean(value) || isNumber(value)) {
+        dom.setAttribute(key, value + '');
+      } else {
+        console.error('Invalid call to Attribute.set. Key ', key, ':: Value ', value, ':: Element ', dom);
+        throw new Error('Attribute value was not simple');
+      }
+    };
+    const set$2 = (element, key, value) => {
+      rawSet(element.dom, key, value);
+    };
+    const setAll = (element, attrs) => {
+      const dom = element.dom;
+      each$1(attrs, (v, k) => {
+        rawSet(dom, k, v);
+      });
+    };
+    const get$2 = (element, key) => {
+      const v = element.dom.getAttribute(key);
+      return v === null ? undefined : v;
+    };
+    const getOpt = (element, key) => Optional.from(get$2(element, key));
+    const remove$2 = (element, key) => {
+      element.dom.removeAttribute(key);
+    };
+    const clone = element => foldl(element.dom.attributes, (acc, attr) => {
+      acc[attr.name] = attr.value;
+      return acc;
+    }, {});
+
+    const is = (lhs, rhs, comparator = tripleEquals) => lhs.exists(left => comparator(left, rhs));
+    const cat = arr => {
+      const r = [];
+      const push = x => {
+        r.push(x);
+      };
+      for (let i = 0; i < arr.length; i++) {
+        arr[i].each(push);
+      }
+      return r;
+    };
+    const lift2 = (oa, ob, f) => oa.isSome() && ob.isSome() ? Optional.some(f(oa.getOrDie(), ob.getOrDie())) : Optional.none();
+    const flatten = oot => oot.bind(identity);
+    const someIf = (b, a) => b ? Optional.some(a) : Optional.none();
+
+    const removeFromStart = (str, numChars) => {
+      return str.substring(numChars);
+    };
+
+    const checkRange = (str, substr, start) => substr === '' || str.length >= substr.length && str.substr(start, start + substr.length) === substr;
+    const removeLeading = (str, prefix) => {
+      return startsWith(str, prefix) ? removeFromStart(str, prefix.length) : str;
+    };
+    const startsWith = (str, prefix) => {
+      return checkRange(str, prefix, 0);
+    };
+    const blank = r => s => s.replace(r, '');
+    const trim = blank(/^\s+|\s+$/g);
+    const isNotEmpty = s => s.length > 0;
+    const isEmpty = s => !isNotEmpty(s);
+    const toInt = (value, radix = 10) => {
+      const num = parseInt(value, radix);
+      return isNaN(num) ? Optional.none() : Optional.some(num);
+    };
+    const toFloat = value => {
+      const num = parseFloat(value);
+      return isNaN(num) ? Optional.none() : Optional.some(num);
+    };
+
+    const isSupported = dom => dom.style !== undefined && isFunction(dom.style.getPropertyValue);
+
+    const internalSet = (dom, property, value) => {
+      if (!isString(value)) {
+        console.error('Invalid call to CSS.set. Property ', property, ':: Value ', value, ':: Element ', dom);
+        throw new Error('CSS value must be a string: ' + value);
+      }
+      if (isSupported(dom)) {
+        dom.style.setProperty(property, value);
+      }
+    };
+    const internalRemove = (dom, property) => {
+      if (isSupported(dom)) {
+        dom.style.removeProperty(property);
+      }
+    };
+    const set$1 = (element, property, value) => {
+      const dom = element.dom;
+      internalSet(dom, property, value);
+    };
+    const get$1 = (element, property) => {
+      const dom = element.dom;
+      const styles = window.getComputedStyle(dom);
+      const r = styles.getPropertyValue(property);
+      return r === '' && !inBody(element) ? getUnsafeProperty(dom, property) : r;
+    };
+    const getUnsafeProperty = (dom, property) => isSupported(dom) ? dom.style.getPropertyValue(property) : '';
+    const getRaw = (element, property) => {
+      const dom = element.dom;
+      const raw = getUnsafeProperty(dom, property);
+      return Optional.from(raw).filter(r => r.length > 0);
+    };
+    const remove$1 = (element, property) => {
+      const dom = element.dom;
+      internalRemove(dom, property);
+      if (is(getOpt(element, 'style').map(trim), '')) {
+        remove$2(element, 'style');
+      }
+    };
+
+    const getAttrValue = (cell, name, fallback = 0) => getOpt(cell, name).map(value => parseInt(value, 10)).getOr(fallback);
+
+    const firstLayer = (scope, selector) => {
+      return filterFirstLayer(scope, selector, always);
+    };
+    const filterFirstLayer = (scope, selector, predicate) => {
+      return bind(children$3(scope), x => {
+        if (is$2(x, selector)) {
+          return predicate(x) ? [x] : [];
+        } else {
+          return filterFirstLayer(x, selector, predicate);
+        }
+      });
+    };
+
+    const validSectionList = [
+      'tfoot',
+      'thead',
+      'tbody',
+      'colgroup'
+    ];
+    const isValidSection = parentName => contains(validSectionList, parentName);
+    const grid = (rows, columns) => ({
+      rows,
+      columns
+    });
+    const detail = (element, rowspan, colspan) => ({
+      element,
+      rowspan,
+      colspan
+    });
+    const extended = (element, rowspan, colspan, row, column, isLocked) => ({
+      element,
+      rowspan,
+      colspan,
+      row,
+      column,
+      isLocked
+    });
+    const rowdetail = (element, cells, section) => ({
+      element,
+      cells,
+      section
+    });
+    const bounds = (startRow, startCol, finishRow, finishCol) => ({
+      startRow,
+      startCol,
+      finishRow,
+      finishCol
+    });
+    const columnext = (element, colspan, column) => ({
+      element,
+      colspan,
+      column
+    });
+    const colgroup = (element, columns) => ({
+      element,
+      columns
+    });
+
+    const lookup = (tags, element, isRoot = never) => {
+      if (isRoot(element)) {
+        return Optional.none();
+      }
+      if (contains(tags, name(element))) {
+        return Optional.some(element);
+      }
+      const isRootOrUpperTable = elm => is$2(elm, 'table') || isRoot(elm);
+      return ancestor(element, tags.join(','), isRootOrUpperTable);
+    };
+    const cell = (element, isRoot) => lookup([
+      'td',
+      'th'
+    ], element, isRoot);
+    const cells = ancestor => firstLayer(ancestor, 'th,td');
+    const columns = ancestor => {
+      if (is$2(ancestor, 'colgroup')) {
+        return children$1(ancestor, 'col');
+      } else {
+        return bind(columnGroups(ancestor), columnGroup => children$1(columnGroup, 'col'));
+      }
+    };
+    const table = (element, isRoot) => closest$1(element, 'table', isRoot);
+    const rows = ancestor => firstLayer(ancestor, 'tr');
+    const columnGroups = ancestor => table(ancestor).fold(constant([]), table => children$1(table, 'colgroup'));
+
+    const fromRowsOrColGroups = (elems, getSection) => map(elems, row => {
+      if (name(row) === 'colgroup') {
+        const cells = map(columns(row), column => {
+          const colspan = getAttrValue(column, 'span', 1);
+          return detail(column, 1, colspan);
+        });
+        return rowdetail(row, cells, 'colgroup');
+      } else {
+        const cells$1 = map(cells(row), cell => {
+          const rowspan = getAttrValue(cell, 'rowspan', 1);
+          const colspan = getAttrValue(cell, 'colspan', 1);
+          return detail(cell, rowspan, colspan);
+        });
+        return rowdetail(row, cells$1, getSection(row));
+      }
+    });
+    const getParentSection = group => parent(group).map(parent => {
+      const parentName = name(parent);
+      return isValidSection(parentName) ? parentName : 'tbody';
+    }).getOr('tbody');
+    const fromTable$1 = table => {
+      const rows$1 = rows(table);
+      const columnGroups$1 = columnGroups(table);
+      const elems = [
+        ...columnGroups$1,
+        ...rows$1
+      ];
+      return fromRowsOrColGroups(elems, getParentSection);
+    };
+
+    const LOCKED_COL_ATTR = 'data-snooker-locked-cols';
+    const getLockedColumnsFromTable = table => getOpt(table, LOCKED_COL_ATTR).bind(lockedColStr => Optional.from(lockedColStr.match(/\d+/g))).map(lockedCols => mapToObject(lockedCols, always));
+
+    const key = (row, column) => {
+      return row + ',' + column;
+    };
+    const getAt = (warehouse, row, column) => Optional.from(warehouse.access[key(row, column)]);
+    const findItem = (warehouse, item, comparator) => {
+      const filtered = filterItems(warehouse, detail => {
+        return comparator(item, detail.element);
+      });
+      return filtered.length > 0 ? Optional.some(filtered[0]) : Optional.none();
+    };
+    const filterItems = (warehouse, predicate) => {
+      const all = bind(warehouse.all, r => {
+        return r.cells;
+      });
+      return filter(all, predicate);
+    };
+    const generateColumns = rowData => {
+      const columnsGroup = {};
+      let index = 0;
+      each(rowData.cells, column => {
+        const colspan = column.colspan;
+        range(colspan, columnIndex => {
+          const colIndex = index + columnIndex;
+          columnsGroup[colIndex] = columnext(column.element, colspan, colIndex);
+        });
+        index += colspan;
+      });
+      return columnsGroup;
+    };
+    const generate$1 = list => {
+      const access = {};
+      const cells = [];
+      const tableOpt = head(list).map(rowData => rowData.element).bind(table);
+      const lockedColumns = tableOpt.bind(getLockedColumnsFromTable).getOr({});
+      let maxRows = 0;
+      let maxColumns = 0;
+      let rowCount = 0;
+      const {
+        pass: colgroupRows,
+        fail: rows
+      } = partition(list, rowData => rowData.section === 'colgroup');
+      each(rows, rowData => {
+        const currentRow = [];
+        each(rowData.cells, rowCell => {
+          let start = 0;
+          while (access[key(rowCount, start)] !== undefined) {
+            start++;
+          }
+          const isLocked = hasNonNullableKey(lockedColumns, start.toString());
+          const current = extended(rowCell.element, rowCell.rowspan, rowCell.colspan, rowCount, start, isLocked);
+          for (let occupiedColumnPosition = 0; occupiedColumnPosition < rowCell.colspan; occupiedColumnPosition++) {
+            for (let occupiedRowPosition = 0; occupiedRowPosition < rowCell.rowspan; occupiedRowPosition++) {
+              const rowPosition = rowCount + occupiedRowPosition;
+              const columnPosition = start + occupiedColumnPosition;
+              const newpos = key(rowPosition, columnPosition);
+              access[newpos] = current;
+              maxColumns = Math.max(maxColumns, columnPosition + 1);
+            }
+          }
+          currentRow.push(current);
+        });
+        maxRows++;
+        cells.push(rowdetail(rowData.element, currentRow, rowData.section));
+        rowCount++;
+      });
+      const {columns, colgroups} = last(colgroupRows).map(rowData => {
+        const columns = generateColumns(rowData);
+        const colgroup$1 = colgroup(rowData.element, values(columns));
+        return {
+          colgroups: [colgroup$1],
+          columns
+        };
+      }).getOrThunk(() => ({
+        colgroups: [],
+        columns: {}
+      }));
+      const grid$1 = grid(maxRows, maxColumns);
+      return {
+        grid: grid$1,
+        access,
+        all: cells,
+        columns,
+        colgroups
+      };
+    };
+    const fromTable = table => {
+      const list = fromTable$1(table);
+      return generate$1(list);
+    };
+    const justCells = warehouse => bind(warehouse.all, w => w.cells);
+    const justColumns = warehouse => values(warehouse.columns);
+    const hasColumns = warehouse => keys(warehouse.columns).length > 0;
+    const getColumnAt = (warehouse, columnIndex) => Optional.from(warehouse.columns[columnIndex]);
+    const Warehouse = {
+      fromTable,
+      generate: generate$1,
+      getAt,
+      findItem,
+      filterItems,
+      justCells,
+      justColumns,
+      hasColumns,
+      getColumnAt
+    };
+
+    var global$2 = tinymce.util.Tools.resolve('tinymce.util.Tools');
+
+    const getTDTHOverallStyle = (dom, elm, name) => {
+      const cells = dom.select('td,th', elm);
+      let firstChildStyle;
+      for (let i = 0; i < cells.length; i++) {
+        const currentStyle = dom.getStyle(cells[i], name);
+        if (isUndefined(firstChildStyle)) {
+          firstChildStyle = currentStyle;
+        }
+        if (firstChildStyle !== currentStyle) {
+          return '';
+        }
+      }
+      return firstChildStyle;
+    };
+    const setAlign = (editor, elm, name) => {
+      global$2.each('left center right'.split(' '), align => {
+        if (align !== name) {
+          editor.formatter.remove('align' + align, {}, elm);
+        }
+      });
+      if (name) {
+        editor.formatter.apply('align' + name, {}, elm);
+      }
+    };
+    const setVAlign = (editor, elm, name) => {
+      global$2.each('top middle bottom'.split(' '), align => {
+        if (align !== name) {
+          editor.formatter.remove('valign' + align, {}, elm);
+        }
+      });
+      if (name) {
+        editor.formatter.apply('valign' + name, {}, elm);
+      }
+    };
+
+    const fireTableModified = (editor, table, data) => {
+      editor.dispatch('TableModified', {
+        ...data,
+        table
+      });
+    };
+
+    const toNumber = (px, fallback) => toFloat(px).getOr(fallback);
+    const getProp = (element, name, fallback) => toNumber(get$1(element, name), fallback);
+    const calcContentBoxSize = (element, size, upper, lower) => {
+      const paddingUpper = getProp(element, `padding-${ upper }`, 0);
+      const paddingLower = getProp(element, `padding-${ lower }`, 0);
+      const borderUpper = getProp(element, `border-${ upper }-width`, 0);
+      const borderLower = getProp(element, `border-${ lower }-width`, 0);
+      return size - paddingUpper - paddingLower - borderUpper - borderLower;
+    };
+    const getCalculatedWidth = (element, boxSizing) => {
+      const dom = element.dom;
+      const width = dom.getBoundingClientRect().width || dom.offsetWidth;
+      return boxSizing === 'border-box' ? width : calcContentBoxSize(element, width, 'left', 'right');
+    };
+    const getInnerWidth = element => getCalculatedWidth(element, 'content-box');
+
+    const getInner = getInnerWidth;
+
+    var global$1 = tinymce.util.Tools.resolve('tinymce.Env');
+
+    const defaultTableToolbar = 'tableprops tabledelete | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol';
+    const defaultCellBorderWidths = range(5, i => {
+      const size = `${ i + 1 }px`;
+      return {
+        title: size,
+        value: size
+      };
+    });
+    const defaultCellBorderStyles = map([
+      'Solid',
+      'Dotted',
+      'Dashed',
+      'Double',
+      'Groove',
+      'Ridge',
+      'Inset',
+      'Outset',
+      'None',
+      'Hidden'
+    ], type => {
+      return {
+        title: type,
+        value: type.toLowerCase()
+      };
+    });
+    const defaultWidth = '100%';
+    const getPixelForcedWidth = editor => {
+      var _a;
+      const dom = editor.dom;
+      const parentBlock = (_a = dom.getParent(editor.selection.getStart(), dom.isBlock)) !== null && _a !== void 0 ? _a : editor.getBody();
+      return getInner(SugarElement.fromDom(parentBlock)) + 'px';
+    };
+    const determineDefaultStyles = (editor, defaultStyles) => {
+      if (isResponsiveForced(editor) || !shouldStyleWithCss(editor)) {
+        return defaultStyles;
+      } else if (isPixelsForced(editor)) {
+        return {
+          ...defaultStyles,
+          width: getPixelForcedWidth(editor)
+        };
+      } else {
+        return {
+          ...defaultStyles,
+          width: defaultWidth
+        };
+      }
+    };
+    const determineDefaultAttributes = (editor, defaultAttributes) => {
+      if (isResponsiveForced(editor) || shouldStyleWithCss(editor)) {
+        return defaultAttributes;
+      } else if (isPixelsForced(editor)) {
+        return {
+          ...defaultAttributes,
+          width: getPixelForcedWidth(editor)
+        };
+      } else {
+        return {
+          ...defaultAttributes,
+          width: defaultWidth
+        };
+      }
+    };
+    const option = name => editor => editor.options.get(name);
+    const register = editor => {
+      const registerOption = editor.options.register;
+      registerOption('table_border_widths', {
+        processor: 'object[]',
+        default: defaultCellBorderWidths
+      });
+      registerOption('table_border_styles', {
+        processor: 'object[]',
+        default: defaultCellBorderStyles
+      });
+      registerOption('table_cell_advtab', {
+        processor: 'boolean',
+        default: true
+      });
+      registerOption('table_row_advtab', {
+        processor: 'boolean',
+        default: true
+      });
+      registerOption('table_advtab', {
+        processor: 'boolean',
+        default: true
+      });
+      registerOption('table_appearance_options', {
+        processor: 'boolean',
+        default: true
+      });
+      registerOption('table_grid', {
+        processor: 'boolean',
+        default: !global$1.deviceType.isTouch()
+      });
+      registerOption('table_cell_class_list', {
+        processor: 'object[]',
+        default: []
+      });
+      registerOption('table_row_class_list', {
+        processor: 'object[]',
+        default: []
+      });
+      registerOption('table_class_list', {
+        processor: 'object[]',
+        default: []
+      });
+      registerOption('table_toolbar', {
+        processor: 'string',
+        default: defaultTableToolbar
+      });
+      registerOption('table_background_color_map', {
+        processor: 'object[]',
+        default: []
+      });
+      registerOption('table_border_color_map', {
+        processor: 'object[]',
+        default: []
+      });
+    };
+    const getTableSizingMode = option('table_sizing_mode');
+    const getTableBorderWidths = option('table_border_widths');
+    const getTableBorderStyles = option('table_border_styles');
+    const hasAdvancedCellTab = option('table_cell_advtab');
+    const hasAdvancedRowTab = option('table_row_advtab');
+    const hasAdvancedTableTab = option('table_advtab');
+    const hasAppearanceOptions = option('table_appearance_options');
+    const hasTableGrid = option('table_grid');
+    const shouldStyleWithCss = option('table_style_by_css');
+    const getCellClassList = option('table_cell_class_list');
+    const getRowClassList = option('table_row_class_list');
+    const getTableClassList = option('table_class_list');
+    const getToolbar = option('table_toolbar');
+    const getTableBackgroundColorMap = option('table_background_color_map');
+    const getTableBorderColorMap = option('table_border_color_map');
+    const isPixelsForced = editor => getTableSizingMode(editor) === 'fixed';
+    const isResponsiveForced = editor => getTableSizingMode(editor) === 'responsive';
+    const getDefaultStyles = editor => {
+      const options = editor.options;
+      const defaultStyles = options.get('table_default_styles');
+      return options.isSet('table_default_styles') ? defaultStyles : determineDefaultStyles(editor, defaultStyles);
+    };
+    const getDefaultAttributes = editor => {
+      const options = editor.options;
+      const defaultAttributes = options.get('table_default_attributes');
+      return options.isSet('table_default_attributes') ? defaultAttributes : determineDefaultAttributes(editor, defaultAttributes);
+    };
+
+    const isWithin = (bounds, detail) => {
+      return detail.column >= bounds.startCol && detail.column + detail.colspan - 1 <= bounds.finishCol && detail.row >= bounds.startRow && detail.row + detail.rowspan - 1 <= bounds.finishRow;
+    };
+    const isRectangular = (warehouse, bounds) => {
+      let isRect = true;
+      const detailIsWithin = curry(isWithin, bounds);
+      for (let i = bounds.startRow; i <= bounds.finishRow; i++) {
+        for (let j = bounds.startCol; j <= bounds.finishCol; j++) {
+          isRect = isRect && Warehouse.getAt(warehouse, i, j).exists(detailIsWithin);
+        }
+      }
+      return isRect ? Optional.some(bounds) : Optional.none();
+    };
+
+    const getBounds = (detailA, detailB) => {
+      return bounds(Math.min(detailA.row, detailB.row), Math.min(detailA.column, detailB.column), Math.max(detailA.row + detailA.rowspan - 1, detailB.row + detailB.rowspan - 1), Math.max(detailA.column + detailA.colspan - 1, detailB.column + detailB.colspan - 1));
+    };
+    const getAnyBox = (warehouse, startCell, finishCell) => {
+      const startCoords = Warehouse.findItem(warehouse, startCell, eq);
+      const finishCoords = Warehouse.findItem(warehouse, finishCell, eq);
+      return startCoords.bind(sc => {
+        return finishCoords.map(fc => {
+          return getBounds(sc, fc);
+        });
+      });
+    };
+    const getBox$1 = (warehouse, startCell, finishCell) => {
+      return getAnyBox(warehouse, startCell, finishCell).bind(bounds => {
+        return isRectangular(warehouse, bounds);
+      });
+    };
+
+    const getBox = (table, first, last) => {
+      const warehouse = getWarehouse(table);
+      return getBox$1(warehouse, first, last);
+    };
+    const getWarehouse = Warehouse.fromTable;
+
+    const before = (marker, element) => {
+      const parent$1 = parent(marker);
+      parent$1.each(v => {
+        v.dom.insertBefore(element.dom, marker.dom);
+      });
+    };
+    const after$1 = (marker, element) => {
+      const sibling = nextSibling(marker);
+      sibling.fold(() => {
+        const parent$1 = parent(marker);
+        parent$1.each(v => {
+          append$1(v, element);
+        });
+      }, v => {
+        before(v, element);
+      });
+    };
+    const prepend = (parent, element) => {
+      const firstChild$1 = firstChild(parent);
+      firstChild$1.fold(() => {
+        append$1(parent, element);
+      }, v => {
+        parent.dom.insertBefore(element.dom, v.dom);
+      });
+    };
+    const append$1 = (parent, element) => {
+      parent.dom.appendChild(element.dom);
+    };
+    const wrap = (element, wrapper) => {
+      before(element, wrapper);
+      append$1(wrapper, element);
+    };
+
+    const after = (marker, elements) => {
+      each(elements, (x, i) => {
+        const e = i === 0 ? marker : elements[i - 1];
+        after$1(e, x);
+      });
+    };
+    const append = (parent, elements) => {
+      each(elements, x => {
+        append$1(parent, x);
+      });
+    };
+
+    const remove = element => {
+      const dom = element.dom;
+      if (dom.parentNode !== null) {
+        dom.parentNode.removeChild(dom);
+      }
+    };
+    const unwrap = wrapper => {
+      const children = children$3(wrapper);
+      if (children.length > 0) {
+        after(wrapper, children);
+      }
+      remove(wrapper);
+    };
+
+    const NodeValue = (is, name) => {
+      const get = element => {
+        if (!is(element)) {
+          throw new Error('Can only get ' + name + ' value of a ' + name + ' node');
+        }
+        return getOption(element).getOr('');
+      };
+      const getOption = element => is(element) ? Optional.from(element.dom.nodeValue) : Optional.none();
+      const set = (element, value) => {
+        if (!is(element)) {
+          throw new Error('Can only set raw ' + name + ' value of a ' + name + ' node');
+        }
+        element.dom.nodeValue = value;
+      };
+      return {
+        get,
+        getOption,
+        set
+      };
+    };
+
+    const api = NodeValue(isText, 'text');
+    const get = element => api.get(element);
+    const set = (element, value) => api.set(element, value);
+
+    var TagBoundaries = [
+      'body',
+      'p',
+      'div',
+      'article',
+      'aside',
+      'figcaption',
+      'figure',
+      'footer',
+      'header',
+      'nav',
+      'section',
+      'ol',
+      'ul',
+      'li',
+      'table',
+      'thead',
+      'tbody',
+      'tfoot',
+      'caption',
+      'tr',
+      'td',
+      'th',
+      'h1',
+      'h2',
+      'h3',
+      'h4',
+      'h5',
+      'h6',
+      'blockquote',
+      'pre',
+      'address'
+    ];
+
+    var DomUniverse = () => {
+      const clone$1 = element => {
+        return SugarElement.fromDom(element.dom.cloneNode(false));
+      };
+      const document = element => documentOrOwner(element).dom;
+      const isBoundary = element => {
+        if (!isElement(element)) {
+          return false;
+        }
+        if (name(element) === 'body') {
+          return true;
+        }
+        return contains(TagBoundaries, name(element));
+      };
+      const isEmptyTag = element => {
+        if (!isElement(element)) {
+          return false;
+        }
+        return contains([
+          'br',
+          'img',
+          'hr',
+          'input'
+        ], name(element));
+      };
+      const isNonEditable = element => isElement(element) && get$2(element, 'contenteditable') === 'false';
+      const comparePosition = (element, other) => {
+        return element.dom.compareDocumentPosition(other.dom);
+      };
+      const copyAttributesTo = (source, destination) => {
+        const as = clone(source);
+        setAll(destination, as);
+      };
+      const isSpecial = element => {
+        const tag = name(element);
+        return contains([
+          'script',
+          'noscript',
+          'iframe',
+          'noframes',
+          'noembed',
+          'title',
+          'style',
+          'textarea',
+          'xmp'
+        ], tag);
+      };
+      const getLanguage = element => isElement(element) ? getOpt(element, 'lang') : Optional.none();
+      return {
+        up: constant({
+          selector: ancestor,
+          closest: closest$1,
+          predicate: ancestor$1,
+          all: parents
+        }),
+        down: constant({
+          selector: descendants,
+          predicate: descendants$1
+        }),
+        styles: constant({
+          get: get$1,
+          getRaw: getRaw,
+          set: set$1,
+          remove: remove$1
+        }),
+        attrs: constant({
+          get: get$2,
+          set: set$2,
+          remove: remove$2,
+          copyTo: copyAttributesTo
+        }),
+        insert: constant({
+          before: before,
+          after: after$1,
+          afterAll: after,
+          append: append$1,
+          appendAll: append,
+          prepend: prepend,
+          wrap: wrap
+        }),
+        remove: constant({
+          unwrap: unwrap,
+          remove: remove
+        }),
+        create: constant({
+          nu: SugarElement.fromTag,
+          clone: clone$1,
+          text: SugarElement.fromText
+        }),
+        query: constant({
+          comparePosition,
+          prevSibling: prevSibling,
+          nextSibling: nextSibling
+        }),
+        property: constant({
+          children: children$3,
+          name: name,
+          parent: parent,
+          document,
+          isText: isText,
+          isComment: isComment,
+          isElement: isElement,
+          isSpecial,
+          getLanguage,
+          getText: get,
+          setText: set,
+          isBoundary,
+          isEmptyTag,
+          isNonEditable
+        }),
+        eq: eq,
+        is: is$1
+      };
+    };
+
+    const all = (universe, look, elements, f) => {
+      const head = elements[0];
+      const tail = elements.slice(1);
+      return f(universe, look, head, tail);
+    };
+    const oneAll = (universe, look, elements) => {
+      return elements.length > 0 ? all(universe, look, elements, unsafeOne) : Optional.none();
+    };
+    const unsafeOne = (universe, look, head, tail) => {
+      const start = look(universe, head);
+      return foldr(tail, (b, a) => {
+        const current = look(universe, a);
+        return commonElement(universe, b, current);
+      }, start);
+    };
+    const commonElement = (universe, start, end) => {
+      return start.bind(s => {
+        return end.filter(curry(universe.eq, s));
+      });
+    };
+
+    const sharedOne$1 = oneAll;
+
+    const universe = DomUniverse();
+    const sharedOne = (look, elements) => {
+      return sharedOne$1(universe, (_universe, element) => {
+        return look(element);
+      }, elements);
+    };
+
+    const lookupTable = container => {
+      return ancestor(container, 'table');
+    };
+    const retrieve$1 = (container, selector) => {
+      const sels = descendants(container, selector);
+      return sels.length > 0 ? Optional.some(sels) : Optional.none();
+    };
+    const getEdges = (container, firstSelectedSelector, lastSelectedSelector) => {
+      return descendant(container, firstSelectedSelector).bind(first => {
+        return descendant(container, lastSelectedSelector).bind(last => {
+          return sharedOne(lookupTable, [
+            first,
+            last
+          ]).map(table => {
+            return {
+              first,
+              last,
+              table
+            };
+          });
+        });
+      });
+    };
+
+    const retrieve = (container, selector) => {
+      return retrieve$1(container, selector);
+    };
+    const retrieveBox = (container, firstSelectedSelector, lastSelectedSelector) => {
+      return getEdges(container, firstSelectedSelector, lastSelectedSelector).bind(edges => {
+        const isRoot = ancestor => {
+          return eq(container, ancestor);
+        };
+        const sectionSelector = 'thead,tfoot,tbody,table';
+        const firstAncestor = ancestor(edges.first, sectionSelector, isRoot);
+        const lastAncestor = ancestor(edges.last, sectionSelector, isRoot);
+        return firstAncestor.bind(fA => {
+          return lastAncestor.bind(lA => {
+            return eq(fA, lA) ? getBox(edges.table, edges.first, edges.last) : Optional.none();
+          });
+        });
+      });
+    };
+
+    const fromDom = nodes => map(nodes, SugarElement.fromDom);
+
+    const strSelected = 'data-mce-selected';
+    const strSelectedSelector = 'td[' + strSelected + '],th[' + strSelected + ']';
+    const strFirstSelected = 'data-mce-first-selected';
+    const strFirstSelectedSelector = 'td[' + strFirstSelected + '],th[' + strFirstSelected + ']';
+    const strLastSelected = 'data-mce-last-selected';
+    const strLastSelectedSelector = 'td[' + strLastSelected + '],th[' + strLastSelected + ']';
+    const ephemera = {
+      selected: strSelected,
+      selectedSelector: strSelectedSelector,
+      firstSelected: strFirstSelected,
+      firstSelectedSelector: strFirstSelectedSelector,
+      lastSelected: strLastSelected,
+      lastSelectedSelector: strLastSelectedSelector
+    };
+
+    const getSelectionCellFallback = element => table(element).bind(table => retrieve(table, ephemera.firstSelectedSelector)).fold(constant(element), cells => cells[0]);
+    const getSelectionFromSelector = selector => (initCell, isRoot) => {
+      const cellName = name(initCell);
+      const cell = cellName === 'col' || cellName === 'colgroup' ? getSelectionCellFallback(initCell) : initCell;
+      return closest$1(cell, selector, isRoot);
+    };
+    const getSelectionCellOrCaption = getSelectionFromSelector('th,td,caption');
+    const getSelectionCell = getSelectionFromSelector('th,td');
+    const getCellsFromSelection = editor => fromDom(editor.model.table.getSelectedCells());
+    const getRowsFromSelection = (selected, selector) => {
+      const cellOpt = getSelectionCell(selected);
+      const rowsOpt = cellOpt.bind(cell => table(cell)).map(table => rows(table));
+      return lift2(cellOpt, rowsOpt, (cell, rows) => filter(rows, row => exists(fromDom(row.dom.cells), rowCell => get$2(rowCell, selector) === '1' || eq(rowCell, cell)))).getOr([]);
+    };
+
+    const verticalAlignValues = [
+      {
+        text: 'None',
+        value: ''
+      },
+      {
+        text: 'Top',
+        value: 'top'
+      },
+      {
+        text: 'Middle',
+        value: 'middle'
+      },
+      {
+        text: 'Bottom',
+        value: 'bottom'
+      }
+    ];
+
+    const hexColour = value => ({ value: normalizeHex(value) });
+    const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+    const longformRegex = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i;
+    const isHexString = hex => shorthandRegex.test(hex) || longformRegex.test(hex);
+    const normalizeHex = hex => removeLeading(hex, '#').toUpperCase();
+    const fromString$1 = hex => isHexString(hex) ? Optional.some({ value: normalizeHex(hex) }) : Optional.none();
+    const toHex = component => {
+      const hex = component.toString(16);
+      return (hex.length === 1 ? '0' + hex : hex).toUpperCase();
+    };
+    const fromRgba = rgbaColour => {
+      const value = toHex(rgbaColour.red) + toHex(rgbaColour.green) + toHex(rgbaColour.blue);
+      return hexColour(value);
+    };
+
+    const rgbRegex = /^\s*rgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)\s*$/i;
+    const rgbaRegex = /^\s*rgba\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d?(?:\.\d+)?)\s*\)\s*$/i;
+    const rgbaColour = (red, green, blue, alpha) => ({
+      red,
+      green,
+      blue,
+      alpha
+    });
+    const fromStringValues = (red, green, blue, alpha) => {
+      const r = parseInt(red, 10);
+      const g = parseInt(green, 10);
+      const b = parseInt(blue, 10);
+      const a = parseFloat(alpha);
+      return rgbaColour(r, g, b, a);
+    };
+    const fromString = rgbaString => {
+      if (rgbaString === 'transparent') {
+        return Optional.some(rgbaColour(0, 0, 0, 0));
+      }
+      const rgbMatch = rgbRegex.exec(rgbaString);
+      if (rgbMatch !== null) {
+        return Optional.some(fromStringValues(rgbMatch[1], rgbMatch[2], rgbMatch[3], '1'));
+      }
+      const rgbaMatch = rgbaRegex.exec(rgbaString);
+      if (rgbaMatch !== null) {
+        return Optional.some(fromStringValues(rgbaMatch[1], rgbaMatch[2], rgbaMatch[3], rgbaMatch[4]));
+      }
+      return Optional.none();
+    };
+
+    const anyToHex = color => fromString$1(color).orThunk(() => fromString(color).map(fromRgba)).getOrThunk(() => {
+      const canvas = document.createElement('canvas');
+      canvas.height = 1;
+      canvas.width = 1;
+      const canvasContext = canvas.getContext('2d');
+      canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+      canvasContext.fillStyle = '#FFFFFF';
+      canvasContext.fillStyle = color;
+      canvasContext.fillRect(0, 0, 1, 1);
+      const rgba = canvasContext.getImageData(0, 0, 1, 1).data;
+      const r = rgba[0];
+      const g = rgba[1];
+      const b = rgba[2];
+      const a = rgba[3];
+      return fromRgba(rgbaColour(r, g, b, a));
+    });
+    const rgbaToHexString = color => fromString(color).map(fromRgba).map(h => '#' + h.value).getOr(color);
+
+    const Cell = initial => {
+      let value = initial;
+      const get = () => {
+        return value;
+      };
+      const set = v => {
+        value = v;
+      };
+      return {
+        get,
+        set
+      };
+    };
+
+    const singleton = doRevoke => {
+      const subject = Cell(Optional.none());
+      const revoke = () => subject.get().each(doRevoke);
+      const clear = () => {
+        revoke();
+        subject.set(Optional.none());
+      };
+      const isSet = () => subject.get().isSome();
+      const get = () => subject.get();
+      const set = s => {
+        revoke();
+        subject.set(Optional.some(s));
+      };
+      return {
+        clear,
+        isSet,
+        get,
+        set
+      };
+    };
+    const unbindable = () => singleton(s => s.unbind());
+
+    const onSetupToggle = (editor, formatName, formatValue) => {
+      return api => {
+        const boundCallback = unbindable();
+        const isNone = isEmpty(formatValue);
+        const init = () => {
+          const selectedCells = getCellsFromSelection(editor);
+          const checkNode = cell => editor.formatter.match(formatName, { value: formatValue }, cell.dom, isNone);
+          if (isNone) {
+            api.setActive(!exists(selectedCells, checkNode));
+            boundCallback.set(editor.formatter.formatChanged(formatName, match => api.setActive(!match), true));
+          } else {
+            api.setActive(forall(selectedCells, checkNode));
+            boundCallback.set(editor.formatter.formatChanged(formatName, api.setActive, false, { value: formatValue }));
+          }
+        };
+        editor.initialized ? init() : editor.on('init', init);
+        return boundCallback.clear;
+      };
+    };
+    const isListGroup = item => hasNonNullableKey(item, 'menu');
+    const buildListItems = items => map(items, item => {
+      const text = item.text || item.title || '';
+      if (isListGroup(item)) {
+        return {
+          text,
+          items: buildListItems(item.menu)
+        };
+      } else {
+        return {
+          text,
+          value: item.value
+        };
+      }
+    });
+    const buildMenuItems = (editor, items, format, onAction) => map(items, item => {
+      const text = item.text || item.title;
+      if (isListGroup(item)) {
+        return {
+          type: 'nestedmenuitem',
+          text,
+          getSubmenuItems: () => buildMenuItems(editor, item.menu, format, onAction)
+        };
+      } else {
+        return {
+          text,
+          type: 'togglemenuitem',
+          onAction: () => onAction(item.value),
+          onSetup: onSetupToggle(editor, format, item.value)
+        };
+      }
+    });
+    const applyTableCellStyle = (editor, style) => value => {
+      editor.execCommand('mceTableApplyCellStyle', false, { [style]: value });
+    };
+    const filterNoneItem = list => bind(list, item => {
+      if (isListGroup(item)) {
+        return [{
+            ...item,
+            menu: filterNoneItem(item.menu)
+          }];
+      } else {
+        return isNotEmpty(item.value) ? [item] : [];
+      }
+    });
+    const generateMenuItemsCallback = (editor, items, format, onAction) => callback => callback(buildMenuItems(editor, items, format, onAction));
+    const buildColorMenu = (editor, colorList, style) => {
+      const colorMap = map(colorList, entry => ({
+        text: entry.title,
+        value: '#' + anyToHex(entry.value).value,
+        type: 'choiceitem'
+      }));
+      return [{
+          type: 'fancymenuitem',
+          fancytype: 'colorswatch',
+          initData: {
+            colors: colorMap.length > 0 ? colorMap : undefined,
+            allowCustomColors: false
+          },
+          onAction: data => {
+            const value = data.value === 'remove' ? '' : data.value;
+            editor.execCommand('mceTableApplyCellStyle', false, { [style]: value });
+          }
+        }];
+    };
+    const changeRowHeader = editor => () => {
+      const currentType = editor.queryCommandValue('mceTableRowType');
+      const newType = currentType === 'header' ? 'body' : 'header';
+      editor.execCommand('mceTableRowType', false, { type: newType });
+    };
+    const changeColumnHeader = editor => () => {
+      const currentType = editor.queryCommandValue('mceTableColType');
+      const newType = currentType === 'th' ? 'td' : 'th';
+      editor.execCommand('mceTableColType', false, { type: newType });
+    };
+
+    const getClassList$1 = editor => {
+      const classes = buildListItems(getCellClassList(editor));
+      if (classes.length > 0) {
+        return Optional.some({
+          name: 'class',
+          type: 'listbox',
+          label: 'Class',
+          items: classes
+        });
+      }
+      return Optional.none();
+    };
+    const children = [
+      {
+        name: 'width',
+        type: 'input',
+        label: 'Width'
+      },
+      {
+        name: 'height',
+        type: 'input',
+        label: 'Height'
+      },
+      {
+        name: 'celltype',
+        type: 'listbox',
+        label: 'Cell type',
+        items: [
+          {
+            text: 'Cell',
+            value: 'td'
+          },
+          {
+            text: 'Header cell',
+            value: 'th'
+          }
+        ]
+      },
+      {
+        name: 'scope',
+        type: 'listbox',
+        label: 'Scope',
+        items: [
+          {
+            text: 'None',
+            value: ''
+          },
+          {
+            text: 'Row',
+            value: 'row'
+          },
+          {
+            text: 'Column',
+            value: 'col'
+          },
+          {
+            text: 'Row group',
+            value: 'rowgroup'
+          },
+          {
+            text: 'Column group',
+            value: 'colgroup'
+          }
+        ]
+      },
+      {
+        name: 'halign',
+        type: 'listbox',
+        label: 'Horizontal align',
+        items: [
+          {
+            text: 'None',
+            value: ''
+          },
+          {
+            text: 'Left',
+            value: 'left'
+          },
+          {
+            text: 'Center',
+            value: 'center'
+          },
+          {
+            text: 'Right',
+            value: 'right'
+          }
+        ]
+      },
+      {
+        name: 'valign',
+        type: 'listbox',
+        label: 'Vertical align',
+        items: verticalAlignValues
+      }
+    ];
+    const getItems$2 = editor => children.concat(getClassList$1(editor).toArray());
+
+    const getAdvancedTab = (editor, dialogName) => {
+      const emptyBorderStyle = [{
+          text: 'Select...',
+          value: ''
+        }];
+      const advTabItems = [
+        {
+          name: 'borderstyle',
+          type: 'listbox',
+          label: 'Border style',
+          items: emptyBorderStyle.concat(buildListItems(getTableBorderStyles(editor)))
+        },
+        {
+          name: 'bordercolor',
+          type: 'colorinput',
+          label: 'Border color'
+        },
+        {
+          name: 'backgroundcolor',
+          type: 'colorinput',
+          label: 'Background color'
+        }
+      ];
+      const borderWidth = {
+        name: 'borderwidth',
+        type: 'input',
+        label: 'Border width'
+      };
+      const items = dialogName === 'cell' ? [borderWidth].concat(advTabItems) : advTabItems;
+      return {
+        title: 'Advanced',
+        name: 'advanced',
+        items
+      };
+    };
+
+    const normal = (editor, element) => {
+      const dom = editor.dom;
+      const setAttrib = (attr, value) => {
+        dom.setAttrib(element, attr, value);
+      };
+      const setStyle = (prop, value) => {
+        dom.setStyle(element, prop, value);
+      };
+      const setFormat = (formatName, value) => {
+        if (value === '') {
+          editor.formatter.remove(formatName, { value: null }, element, true);
+        } else {
+          editor.formatter.apply(formatName, { value }, element);
+        }
+      };
+      return {
+        setAttrib,
+        setStyle,
+        setFormat
+      };
+    };
+    const DomModifier = { normal };
+
+    const isHeaderCell = isTag('th');
+    const getRowHeaderType = (isHeaderRow, isHeaderCells) => {
+      if (isHeaderRow && isHeaderCells) {
+        return 'sectionCells';
+      } else if (isHeaderRow) {
+        return 'section';
+      } else {
+        return 'cells';
+      }
+    };
+    const getRowType$1 = row => {
+      const isHeaderRow = row.section === 'thead';
+      const isHeaderCells = is(findCommonCellType(row.cells), 'th');
+      if (row.section === 'tfoot') {
+        return { type: 'footer' };
+      } else if (isHeaderRow || isHeaderCells) {
+        return {
+          type: 'header',
+          subType: getRowHeaderType(isHeaderRow, isHeaderCells)
+        };
+      } else {
+        return { type: 'body' };
+      }
+    };
+    const findCommonCellType = cells => {
+      const headerCells = filter(cells, cell => isHeaderCell(cell.element));
+      if (headerCells.length === 0) {
+        return Optional.some('td');
+      } else if (headerCells.length === cells.length) {
+        return Optional.some('th');
+      } else {
+        return Optional.none();
+      }
+    };
+    const findCommonRowType = rows => {
+      const rowTypes = map(rows, row => getRowType$1(row).type);
+      const hasHeader = contains(rowTypes, 'header');
+      const hasFooter = contains(rowTypes, 'footer');
+      if (!hasHeader && !hasFooter) {
+        return Optional.some('body');
+      } else {
+        const hasBody = contains(rowTypes, 'body');
+        if (hasHeader && !hasBody && !hasFooter) {
+          return Optional.some('header');
+        } else if (!hasHeader && !hasBody && hasFooter) {
+          return Optional.some('footer');
+        } else {
+          return Optional.none();
+        }
+      }
+    };
+
+    const cached = f => {
+      let called = false;
+      let r;
+      return (...args) => {
+        if (!called) {
+          called = true;
+          r = f.apply(null, args);
+        }
+        return r;
+      };
+    };
+
+    const findInWarehouse = (warehouse, element) => findMap(warehouse.all, r => find(r.cells, e => eq(element, e.element)));
+    const extractCells = (warehouse, target, predicate) => {
+      const details = map(target.selection, cell$1 => {
+        return cell(cell$1).bind(lc => findInWarehouse(warehouse, lc)).filter(predicate);
+      });
+      const cells = cat(details);
+      return someIf(cells.length > 0, cells);
+    };
+    const onMergable = (_warehouse, target) => target.mergable;
+    const onUnmergable = (_warehouse, target) => target.unmergable;
+    const onCells = (warehouse, target) => extractCells(warehouse, target, always);
+    const isUnlockedTableCell = (warehouse, cell) => findInWarehouse(warehouse, cell).exists(detail => !detail.isLocked);
+    const allUnlocked = (warehouse, cells) => forall(cells, cell => isUnlockedTableCell(warehouse, cell));
+    const onUnlockedMergable = (warehouse, target) => onMergable(warehouse, target).filter(mergeable => allUnlocked(warehouse, mergeable.cells));
+    const onUnlockedUnmergable = (warehouse, target) => onUnmergable(warehouse, target).filter(cells => allUnlocked(warehouse, cells));
+
+    const generate = cases => {
+      if (!isArray(cases)) {
+        throw new Error('cases must be an array');
+      }
+      if (cases.length === 0) {
+        throw new Error('there must be at least one case');
+      }
+      const constructors = [];
+      const adt = {};
+      each(cases, (acase, count) => {
+        const keys$1 = keys(acase);
+        if (keys$1.length !== 1) {
+          throw new Error('one and only one name per case');
+        }
+        const key = keys$1[0];
+        const value = acase[key];
+        if (adt[key] !== undefined) {
+          throw new Error('duplicate key detected:' + key);
+        } else if (key === 'cata') {
+          throw new Error('cannot have a case named cata (sorry)');
+        } else if (!isArray(value)) {
+          throw new Error('case arguments must be an array');
+        }
+        constructors.push(key);
+        adt[key] = (...args) => {
+          const argLength = args.length;
+          if (argLength !== value.length) {
+            throw new Error('Wrong number of arguments to case ' + key + '. Expected ' + value.length + ' (' + value + '), got ' + argLength);
+          }
+          const match = branches => {
+            const branchKeys = keys(branches);
+            if (constructors.length !== branchKeys.length) {
+              throw new Error('Wrong number of arguments to match. Expected: ' + constructors.join(',') + '\nActual: ' + branchKeys.join(','));
+            }
+            const allReqd = forall(constructors, reqKey => {
+              return contains(branchKeys, reqKey);
+            });
+            if (!allReqd) {
+              throw new Error('Not all branches were specified when using match. Specified: ' + branchKeys.join(', ') + '\nRequired: ' + constructors.join(', '));
+            }
+            return branches[key].apply(null, args);
+          };
+          return {
+            fold: (...foldArgs) => {
+              if (foldArgs.length !== cases.length) {
+                throw new Error('Wrong number of arguments to fold. Expected ' + cases.length + ', got ' + foldArgs.length);
+              }
+              const target = foldArgs[count];
+              return target.apply(null, args);
+            },
+            match,
+            log: label => {
+              console.log(label, {
+                constructors,
+                constructor: key,
+                params: args
+              });
+            }
+          };
+        };
+      });
+      return adt;
+    };
+    const Adt = { generate };
+
+    const adt = Adt.generate([
+      { none: [] },
+      { only: ['index'] },
+      {
+        left: [
+          'index',
+          'next'
+        ]
+      },
+      {
+        middle: [
+          'prev',
+          'index',
+          'next'
+        ]
+      },
+      {
+        right: [
+          'prev',
+          'index'
+        ]
+      }
+    ]);
+    ({ ...adt });
+
+    const opGetRowsType = (table, target) => {
+      const house = Warehouse.fromTable(table);
+      const details = onCells(house, target);
+      return details.bind(selectedCells => {
+        const lastSelectedCell = selectedCells[selectedCells.length - 1];
+        const minRowRange = selectedCells[0].row;
+        const maxRowRange = lastSelectedCell.row + lastSelectedCell.rowspan;
+        const selectedRows = house.all.slice(minRowRange, maxRowRange);
+        return findCommonRowType(selectedRows);
+      }).getOr('');
+    };
+    const getRowsType = opGetRowsType;
+
+    const rgbToHex = value => startsWith(value, 'rgb') ? rgbaToHexString(value) : value;
+    const extractAdvancedStyles = elm => {
+      const element = SugarElement.fromDom(elm);
+      return {
+        borderwidth: getRaw(element, 'border-width').getOr(''),
+        borderstyle: getRaw(element, 'border-style').getOr(''),
+        bordercolor: getRaw(element, 'border-color').map(rgbToHex).getOr(''),
+        backgroundcolor: getRaw(element, 'background-color').map(rgbToHex).getOr('')
+      };
+    };
+    const getSharedValues = data => {
+      const baseData = data[0];
+      const comparisonData = data.slice(1);
+      each(comparisonData, items => {
+        each(keys(baseData), key => {
+          each$1(items, (itemValue, itemKey) => {
+            const comparisonValue = baseData[key];
+            if (comparisonValue !== '' && key === itemKey) {
+              if (comparisonValue !== itemValue) {
+                baseData[key] = '';
+              }
+            }
+          });
+        });
+      });
+      return baseData;
+    };
+    const getAlignment = (formats, formatName, editor, elm) => find(formats, name => !isUndefined(editor.formatter.matchNode(elm, formatName + name))).getOr('');
+    const getHAlignment = curry(getAlignment, [
+      'left',
+      'center',
+      'right'
+    ], 'align');
+    const getVAlignment = curry(getAlignment, [
+      'top',
+      'middle',
+      'bottom'
+    ], 'valign');
+    const extractDataFromSettings = (editor, hasAdvTableTab) => {
+      const style = getDefaultStyles(editor);
+      const attrs = getDefaultAttributes(editor);
+      const extractAdvancedStyleData = () => ({
+        borderstyle: get$4(style, 'border-style').getOr(''),
+        bordercolor: rgbToHex(get$4(style, 'border-color').getOr('')),
+        backgroundcolor: rgbToHex(get$4(style, 'background-color').getOr(''))
+      });
+      const defaultData = {
+        height: '',
+        width: '100%',
+        cellspacing: '',
+        cellpadding: '',
+        caption: false,
+        class: '',
+        align: '',
+        border: ''
+      };
+      const getBorder = () => {
+        const borderWidth = style['border-width'];
+        if (shouldStyleWithCss(editor) && borderWidth) {
+          return { border: borderWidth };
+        }
+        return get$4(attrs, 'border').fold(() => ({}), border => ({ border }));
+      };
+      const advStyle = hasAdvTableTab ? extractAdvancedStyleData() : {};
+      const getCellPaddingCellSpacing = () => {
+        const spacing = get$4(style, 'border-spacing').or(get$4(attrs, 'cellspacing')).fold(() => ({}), cellspacing => ({ cellspacing }));
+        const padding = get$4(style, 'border-padding').or(get$4(attrs, 'cellpadding')).fold(() => ({}), cellpadding => ({ cellpadding }));
+        return {
+          ...spacing,
+          ...padding
+        };
+      };
+      const data = {
+        ...defaultData,
+        ...style,
+        ...attrs,
+        ...advStyle,
+        ...getBorder(),
+        ...getCellPaddingCellSpacing()
+      };
+      return data;
+    };
+    const getRowType = elm => table(SugarElement.fromDom(elm)).map(table => {
+      const target = { selection: fromDom(elm.cells) };
+      return getRowsType(table, target);
+    }).getOr('');
+    const extractDataFromTableElement = (editor, elm, hasAdvTableTab) => {
+      const getBorder = (dom, elm) => {
+        const optBorderWidth = getRaw(SugarElement.fromDom(elm), 'border-width');
+        if (shouldStyleWithCss(editor) && optBorderWidth.isSome()) {
+          return optBorderWidth.getOr('');
+        }
+        return dom.getAttrib(elm, 'border') || getTDTHOverallStyle(editor.dom, elm, 'border-width') || getTDTHOverallStyle(editor.dom, elm, 'border') || '';
+      };
+      const dom = editor.dom;
+      const cellspacing = shouldStyleWithCss(editor) ? dom.getStyle(elm, 'border-spacing') || dom.getAttrib(elm, 'cellspacing') : dom.getAttrib(elm, 'cellspacing') || dom.getStyle(elm, 'border-spacing');
+      const cellpadding = shouldStyleWithCss(editor) ? getTDTHOverallStyle(dom, elm, 'padding') || dom.getAttrib(elm, 'cellpadding') : dom.getAttrib(elm, 'cellpadding') || getTDTHOverallStyle(dom, elm, 'padding');
+      return {
+        width: dom.getStyle(elm, 'width') || dom.getAttrib(elm, 'width'),
+        height: dom.getStyle(elm, 'height') || dom.getAttrib(elm, 'height'),
+        cellspacing: cellspacing !== null && cellspacing !== void 0 ? cellspacing : '',
+        cellpadding: cellpadding !== null && cellpadding !== void 0 ? cellpadding : '',
+        border: getBorder(dom, elm),
+        caption: !!dom.select('caption', elm)[0],
+        class: dom.getAttrib(elm, 'class', ''),
+        align: getHAlignment(editor, elm),
+        ...hasAdvTableTab ? extractAdvancedStyles(elm) : {}
+      };
+    };
+    const extractDataFromRowElement = (editor, elm, hasAdvancedRowTab) => {
+      const dom = editor.dom;
+      return {
+        height: dom.getStyle(elm, 'height') || dom.getAttrib(elm, 'height'),
+        class: dom.getAttrib(elm, 'class', ''),
+        type: getRowType(elm),
+        align: getHAlignment(editor, elm),
+        ...hasAdvancedRowTab ? extractAdvancedStyles(elm) : {}
+      };
+    };
+    const extractDataFromCellElement = (editor, cell, hasAdvancedCellTab, column) => {
+      const dom = editor.dom;
+      const colElm = column.getOr(cell);
+      const getStyle = (element, style) => dom.getStyle(element, style) || dom.getAttrib(element, style);
+      return {
+        width: getStyle(colElm, 'width'),
+        height: getStyle(cell, 'height'),
+        scope: dom.getAttrib(cell, 'scope'),
+        celltype: getNodeName(cell),
+        class: dom.getAttrib(cell, 'class', ''),
+        halign: getHAlignment(editor, cell),
+        valign: getVAlignment(editor, cell),
+        ...hasAdvancedCellTab ? extractAdvancedStyles(cell) : {}
+      };
+    };
+
+    const getSelectedCells = (table, cells) => {
+      const warehouse = Warehouse.fromTable(table);
+      const allCells = Warehouse.justCells(warehouse);
+      const filtered = filter(allCells, cellA => exists(cells, cellB => eq(cellA.element, cellB)));
+      return map(filtered, cell => ({
+        element: cell.element.dom,
+        column: Warehouse.getColumnAt(warehouse, cell.column).map(col => col.element.dom)
+      }));
+    };
+    const updateSimpleProps$1 = (modifier, colModifier, data, shouldUpdate) => {
+      if (shouldUpdate('scope')) {
+        modifier.setAttrib('scope', data.scope);
+      }
+      if (shouldUpdate('class')) {
+        modifier.setAttrib('class', data.class);
+      }
+      if (shouldUpdate('height')) {
+        modifier.setStyle('height', addPxSuffix(data.height));
+      }
+      if (shouldUpdate('width')) {
+        colModifier.setStyle('width', addPxSuffix(data.width));
+      }
+    };
+    const updateAdvancedProps$1 = (modifier, data, shouldUpdate) => {
+      if (shouldUpdate('backgroundcolor')) {
+        modifier.setFormat('tablecellbackgroundcolor', data.backgroundcolor);
+      }
+      if (shouldUpdate('bordercolor')) {
+        modifier.setFormat('tablecellbordercolor', data.bordercolor);
+      }
+      if (shouldUpdate('borderstyle')) {
+        modifier.setFormat('tablecellborderstyle', data.borderstyle);
+      }
+      if (shouldUpdate('borderwidth')) {
+        modifier.setFormat('tablecellborderwidth', addPxSuffix(data.borderwidth));
+      }
+    };
+    const applyStyleData$1 = (editor, cells, data, wasChanged) => {
+      const isSingleCell = cells.length === 1;
+      each(cells, item => {
+        const cellElm = item.element;
+        const shouldOverrideCurrentValue = isSingleCell ? always : wasChanged;
+        const modifier = DomModifier.normal(editor, cellElm);
+        const colModifier = item.column.map(col => DomModifier.normal(editor, col)).getOr(modifier);
+        updateSimpleProps$1(modifier, colModifier, data, shouldOverrideCurrentValue);
+        if (hasAdvancedCellTab(editor)) {
+          updateAdvancedProps$1(modifier, data, shouldOverrideCurrentValue);
+        }
+        if (wasChanged('halign')) {
+          setAlign(editor, cellElm, data.halign);
+        }
+        if (wasChanged('valign')) {
+          setVAlign(editor, cellElm, data.valign);
+        }
+      });
+    };
+    const applyStructureData$1 = (editor, data) => {
+      editor.execCommand('mceTableCellType', false, {
+        type: data.celltype,
+        no_events: true
+      });
+    };
+    const applyCellData = (editor, cells, oldData, data) => {
+      const modifiedData = filter$1(data, (value, key) => oldData[key] !== value);
+      if (size(modifiedData) > 0 && cells.length >= 1) {
+        table(cells[0]).each(table => {
+          const selectedCells = getSelectedCells(table, cells);
+          const styleModified = size(filter$1(modifiedData, (_value, key) => key !== 'scope' && key !== 'celltype')) > 0;
+          const structureModified = has(modifiedData, 'celltype');
+          if (styleModified || has(modifiedData, 'scope')) {
+            applyStyleData$1(editor, selectedCells, data, curry(has, modifiedData));
+          }
+          if (structureModified) {
+            applyStructureData$1(editor, data);
+          }
+          fireTableModified(editor, table.dom, {
+            structure: structureModified,
+            style: styleModified
+          });
+        });
+      }
+    };
+    const onSubmitCellForm = (editor, cells, oldData, api) => {
+      const data = api.getData();
+      api.close();
+      editor.undoManager.transact(() => {
+        applyCellData(editor, cells, oldData, data);
+        editor.focus();
+      });
+    };
+    const getData$1 = (editor, cells) => {
+      const cellsData = table(cells[0]).map(table => map(getSelectedCells(table, cells), item => extractDataFromCellElement(editor, item.element, hasAdvancedCellTab(editor), item.column)));
+      return getSharedValues(cellsData.getOrDie());
+    };
+    const open$2 = editor => {
+      const cells = getCellsFromSelection(editor);
+      if (cells.length === 0) {
+        return;
+      }
+      const data = getData$1(editor, cells);
+      const dialogTabPanel = {
+        type: 'tabpanel',
+        tabs: [
+          {
+            title: 'General',
+            name: 'general',
+            items: getItems$2(editor)
+          },
+          getAdvancedTab(editor, 'cell')
+        ]
+      };
+      const dialogPanel = {
+        type: 'panel',
+        items: [{
+            type: 'grid',
+            columns: 2,
+            items: getItems$2(editor)
+          }]
+      };
+      editor.windowManager.open({
+        title: 'Cell Properties',
+        size: 'normal',
+        body: hasAdvancedCellTab(editor) ? dialogTabPanel : dialogPanel,
+        buttons: [
+          {
+            type: 'cancel',
+            name: 'cancel',
+            text: 'Cancel'
+          },
+          {
+            type: 'submit',
+            name: 'save',
+            text: 'Save',
+            primary: true
+          }
+        ],
+        initialData: data,
+        onSubmit: curry(onSubmitCellForm, editor, cells, data)
+      });
+    };
+
+    const getClassList = editor => {
+      const classes = buildListItems(getRowClassList(editor));
+      if (classes.length > 0) {
+        return Optional.some({
+          name: 'class',
+          type: 'listbox',
+          label: 'Class',
+          items: classes
+        });
+      }
+      return Optional.none();
+    };
+    const formChildren = [
+      {
+        type: 'listbox',
+        name: 'type',
+        label: 'Row type',
+        items: [
+          {
+            text: 'Header',
+            value: 'header'
+          },
+          {
+            text: 'Body',
+            value: 'body'
+          },
+          {
+            text: 'Footer',
+            value: 'footer'
+          }
+        ]
+      },
+      {
+        type: 'listbox',
+        name: 'align',
+        label: 'Alignment',
+        items: [
+          {
+            text: 'None',
+            value: ''
+          },
+          {
+            text: 'Left',
+            value: 'left'
+          },
+          {
+            text: 'Center',
+            value: 'center'
+          },
+          {
+            text: 'Right',
+            value: 'right'
+          }
+        ]
+      },
+      {
+        label: 'Height',
+        name: 'height',
+        type: 'input'
+      }
+    ];
+    const getItems$1 = editor => formChildren.concat(getClassList(editor).toArray());
+
+    const updateSimpleProps = (modifier, data, shouldUpdate) => {
+      if (shouldUpdate('class')) {
+        modifier.setAttrib('class', data.class);
+      }
+      if (shouldUpdate('height')) {
+        modifier.setStyle('height', addPxSuffix(data.height));
+      }
+    };
+    const updateAdvancedProps = (modifier, data, shouldUpdate) => {
+      if (shouldUpdate('backgroundcolor')) {
+        modifier.setStyle('background-color', data.backgroundcolor);
+      }
+      if (shouldUpdate('bordercolor')) {
+        modifier.setStyle('border-color', data.bordercolor);
+      }
+      if (shouldUpdate('borderstyle')) {
+        modifier.setStyle('border-style', data.borderstyle);
+      }
+    };
+    const applyStyleData = (editor, rows, data, wasChanged) => {
+      const isSingleRow = rows.length === 1;
+      const shouldOverrideCurrentValue = isSingleRow ? always : wasChanged;
+      each(rows, rowElm => {
+        const modifier = DomModifier.normal(editor, rowElm);
+        updateSimpleProps(modifier, data, shouldOverrideCurrentValue);
+        if (hasAdvancedRowTab(editor)) {
+          updateAdvancedProps(modifier, data, shouldOverrideCurrentValue);
+        }
+        if (wasChanged('align')) {
+          setAlign(editor, rowElm, data.align);
+        }
+      });
+    };
+    const applyStructureData = (editor, data) => {
+      editor.execCommand('mceTableRowType', false, {
+        type: data.type,
+        no_events: true
+      });
+    };
+    const applyRowData = (editor, rows, oldData, data) => {
+      const modifiedData = filter$1(data, (value, key) => oldData[key] !== value);
+      if (size(modifiedData) > 0) {
+        const typeModified = has(modifiedData, 'type');
+        const styleModified = typeModified ? size(modifiedData) > 1 : true;
+        if (styleModified) {
+          applyStyleData(editor, rows, data, curry(has, modifiedData));
+        }
+        if (typeModified) {
+          applyStructureData(editor, data);
+        }
+        table(SugarElement.fromDom(rows[0])).each(table => fireTableModified(editor, table.dom, {
+          structure: typeModified,
+          style: styleModified
+        }));
+      }
+    };
+    const onSubmitRowForm = (editor, rows, oldData, api) => {
+      const data = api.getData();
+      api.close();
+      editor.undoManager.transact(() => {
+        applyRowData(editor, rows, oldData, data);
+        editor.focus();
+      });
+    };
+    const open$1 = editor => {
+      const rows = getRowsFromSelection(getSelectionStart(editor), ephemera.selected);
+      if (rows.length === 0) {
+        return;
+      }
+      const rowsData = map(rows, rowElm => extractDataFromRowElement(editor, rowElm.dom, hasAdvancedRowTab(editor)));
+      const data = getSharedValues(rowsData);
+      const dialogTabPanel = {
+        type: 'tabpanel',
+        tabs: [
+          {
+            title: 'General',
+            name: 'general',
+            items: getItems$1(editor)
+          },
+          getAdvancedTab(editor, 'row')
+        ]
+      };
+      const dialogPanel = {
+        type: 'panel',
+        items: [{
+            type: 'grid',
+            columns: 2,
+            items: getItems$1(editor)
+          }]
+      };
+      editor.windowManager.open({
+        title: 'Row Properties',
+        size: 'normal',
+        body: hasAdvancedRowTab(editor) ? dialogTabPanel : dialogPanel,
+        buttons: [
+          {
+            type: 'cancel',
+            name: 'cancel',
+            text: 'Cancel'
+          },
+          {
+            type: 'submit',
+            name: 'save',
+            text: 'Save',
+            primary: true
+          }
+        ],
+        initialData: data,
+        onSubmit: curry(onSubmitRowForm, editor, map(rows, r => r.dom), data)
+      });
+    };
+
+    const getItems = (editor, classes, insertNewTable) => {
+      const rowColCountItems = !insertNewTable ? [] : [
+        {
+          type: 'input',
+          name: 'cols',
+          label: 'Cols',
+          inputMode: 'numeric'
+        },
+        {
+          type: 'input',
+          name: 'rows',
+          label: 'Rows',
+          inputMode: 'numeric'
+        }
+      ];
+      const alwaysItems = [
+        {
+          type: 'input',
+          name: 'width',
+          label: 'Width'
+        },
+        {
+          type: 'input',
+          name: 'height',
+          label: 'Height'
+        }
+      ];
+      const appearanceItems = hasAppearanceOptions(editor) ? [
+        {
+          type: 'input',
+          name: 'cellspacing',
+          label: 'Cell spacing',
+          inputMode: 'numeric'
+        },
+        {
+          type: 'input',
+          name: 'cellpadding',
+          label: 'Cell padding',
+          inputMode: 'numeric'
+        },
+        {
+          type: 'input',
+          name: 'border',
+          label: 'Border width'
+        },
+        {
+          type: 'label',
+          label: 'Caption',
+          items: [{
+              type: 'checkbox',
+              name: 'caption',
+              label: 'Show caption'
+            }]
+        }
+      ] : [];
+      const alignmentItem = [{
+          type: 'listbox',
+          name: 'align',
+          label: 'Alignment',
+          items: [
+            {
+              text: 'None',
+              value: ''
+            },
+            {
+              text: 'Left',
+              value: 'left'
+            },
+            {
+              text: 'Center',
+              value: 'center'
+            },
+            {
+              text: 'Right',
+              value: 'right'
+            }
+          ]
+        }];
+      const classListItem = classes.length > 0 ? [{
+          type: 'listbox',
+          name: 'class',
+          label: 'Class',
+          items: classes
+        }] : [];
+      return rowColCountItems.concat(alwaysItems).concat(appearanceItems).concat(alignmentItem).concat(classListItem);
+    };
+
+    const styleTDTH = (dom, elm, name, value) => {
+      if (elm.tagName === 'TD' || elm.tagName === 'TH') {
+        if (isString(name) && isNonNullable(value)) {
+          dom.setStyle(elm, name, value);
+        } else {
+          dom.setStyles(elm, name);
+        }
+      } else {
+        if (elm.children) {
+          for (let i = 0; i < elm.children.length; i++) {
+            styleTDTH(dom, elm.children[i], name, value);
+          }
+        }
+      }
+    };
+    const applyDataToElement = (editor, tableElm, data, shouldApplyOnCell) => {
+      const dom = editor.dom;
+      const attrs = {};
+      const styles = {};
+      const shouldStyleWithCss$1 = shouldStyleWithCss(editor);
+      const hasAdvancedTableTab$1 = hasAdvancedTableTab(editor);
+      if (!isUndefined(data.class)) {
+        attrs.class = data.class;
+      }
+      styles.height = addPxSuffix(data.height);
+      if (shouldStyleWithCss$1) {
+        styles.width = addPxSuffix(data.width);
+      } else if (dom.getAttrib(tableElm, 'width')) {
+        attrs.width = removePxSuffix(data.width);
+      }
+      if (shouldStyleWithCss$1) {
+        styles['border-width'] = addPxSuffix(data.border);
+        styles['border-spacing'] = addPxSuffix(data.cellspacing);
+      } else {
+        attrs.border = data.border;
+        attrs.cellpadding = data.cellpadding;
+        attrs.cellspacing = data.cellspacing;
+      }
+      if (shouldStyleWithCss$1 && tableElm.children) {
+        const cellStyles = {};
+        if (shouldApplyOnCell.border) {
+          cellStyles['border-width'] = addPxSuffix(data.border);
+        }
+        if (shouldApplyOnCell.cellpadding) {
+          cellStyles.padding = addPxSuffix(data.cellpadding);
+        }
+        if (hasAdvancedTableTab$1 && shouldApplyOnCell.bordercolor) {
+          cellStyles['border-color'] = data.bordercolor;
+        }
+        if (!isEmpty$1(cellStyles)) {
+          for (let i = 0; i < tableElm.children.length; i++) {
+            styleTDTH(dom, tableElm.children[i], cellStyles);
+          }
+        }
+      }
+      if (hasAdvancedTableTab$1) {
+        const advData = data;
+        styles['background-color'] = advData.backgroundcolor;
+        styles['border-color'] = advData.bordercolor;
+        styles['border-style'] = advData.borderstyle;
+      }
+      dom.setStyles(tableElm, {
+        ...getDefaultStyles(editor),
+        ...styles
+      });
+      dom.setAttribs(tableElm, {
+        ...getDefaultAttributes(editor),
+        ...attrs
+      });
+    };
+    const onSubmitTableForm = (editor, tableElm, oldData, api) => {
+      const dom = editor.dom;
+      const data = api.getData();
+      const modifiedData = filter$1(data, (value, key) => oldData[key] !== value);
+      api.close();
+      if (data.class === '') {
+        delete data.class;
+      }
+      editor.undoManager.transact(() => {
+        if (!tableElm) {
+          const cols = toInt(data.cols).getOr(1);
+          const rows = toInt(data.rows).getOr(1);
+          editor.execCommand('mceInsertTable', false, {
+            rows,
+            columns: cols
+          });
+          tableElm = getSelectionCell(getSelectionStart(editor), getIsRoot(editor)).bind(cell => table(cell, getIsRoot(editor))).map(table => table.dom).getOrDie();
+        }
+        if (size(modifiedData) > 0) {
+          const applicableCellProperties = {
+            border: has(modifiedData, 'border'),
+            bordercolor: has(modifiedData, 'bordercolor'),
+            cellpadding: has(modifiedData, 'cellpadding')
+          };
+          applyDataToElement(editor, tableElm, data, applicableCellProperties);
+          const captionElm = dom.select('caption', tableElm)[0];
+          if (captionElm && !data.caption || !captionElm && data.caption) {
+            editor.execCommand('mceTableToggleCaption');
+          }
+          setAlign(editor, tableElm, data.align);
+        }
+        editor.focus();
+        editor.addVisual();
+        if (size(modifiedData) > 0) {
+          const captionModified = has(modifiedData, 'caption');
+          const styleModified = captionModified ? size(modifiedData) > 1 : true;
+          fireTableModified(editor, tableElm, {
+            structure: captionModified,
+            style: styleModified
+          });
+        }
+      });
+    };
+    const open = (editor, insertNewTable) => {
+      const dom = editor.dom;
+      let tableElm;
+      let data = extractDataFromSettings(editor, hasAdvancedTableTab(editor));
+      if (insertNewTable) {
+        data.cols = '1';
+        data.rows = '1';
+        if (hasAdvancedTableTab(editor)) {
+          data.borderstyle = '';
+          data.bordercolor = '';
+          data.backgroundcolor = '';
+        }
+      } else {
+        tableElm = dom.getParent(editor.selection.getStart(), 'table', editor.getBody());
+        if (tableElm) {
+          data = extractDataFromTableElement(editor, tableElm, hasAdvancedTableTab(editor));
+        } else {
+          if (hasAdvancedTableTab(editor)) {
+            data.borderstyle = '';
+            data.bordercolor = '';
+            data.backgroundcolor = '';
+          }
+        }
+      }
+      const classes = buildListItems(getTableClassList(editor));
+      if (classes.length > 0) {
+        if (data.class) {
+          data.class = data.class.replace(/\s*mce\-item\-table\s*/g, '');
+        }
+      }
+      const generalPanel = {
+        type: 'grid',
+        columns: 2,
+        items: getItems(editor, classes, insertNewTable)
+      };
+      const nonAdvancedForm = () => ({
+        type: 'panel',
+        items: [generalPanel]
+      });
+      const advancedForm = () => ({
+        type: 'tabpanel',
+        tabs: [
+          {
+            title: 'General',
+            name: 'general',
+            items: [generalPanel]
+          },
+          getAdvancedTab(editor, 'table')
+        ]
+      });
+      const dialogBody = hasAdvancedTableTab(editor) ? advancedForm() : nonAdvancedForm();
+      editor.windowManager.open({
+        title: 'Table Properties',
+        size: 'normal',
+        body: dialogBody,
+        onSubmit: curry(onSubmitTableForm, editor, tableElm, data),
+        buttons: [
+          {
+            type: 'cancel',
+            name: 'cancel',
+            text: 'Cancel'
+          },
+          {
+            type: 'submit',
+            name: 'save',
+            text: 'Save',
+            primary: true
+          }
+        ],
+        initialData: data
+      });
+    };
+
+    const registerCommands = editor => {
+      const runAction = f => {
+        if (isInEditableContext(getSelectionStart(editor))) {
+          f();
+        }
+      };
+      each$1({
+        mceTableProps: curry(open, editor, false),
+        mceTableRowProps: curry(open$1, editor),
+        mceTableCellProps: curry(open$2, editor),
+        mceInsertTableDialog: curry(open, editor, true)
+      }, (func, name) => editor.addCommand(name, () => runAction(func)));
+    };
+
+    const child = (scope, selector) => child$1(scope, selector).isSome();
+
+    const selection = identity;
+    const unmergable = selectedCells => {
+      const hasSpan = (elem, type) => getOpt(elem, type).exists(span => parseInt(span, 10) > 1);
+      const hasRowOrColSpan = elem => hasSpan(elem, 'rowspan') || hasSpan(elem, 'colspan');
+      return selectedCells.length > 0 && forall(selectedCells, hasRowOrColSpan) ? Optional.some(selectedCells) : Optional.none();
+    };
+    const mergable = (table, selectedCells, ephemera) => {
+      if (selectedCells.length <= 1) {
+        return Optional.none();
+      } else {
+        return retrieveBox(table, ephemera.firstSelectedSelector, ephemera.lastSelectedSelector).map(bounds => ({
+          bounds,
+          cells: selectedCells
+        }));
+      }
+    };
+
+    const noMenu = cell => ({
+      element: cell,
+      mergable: Optional.none(),
+      unmergable: Optional.none(),
+      selection: [cell]
+    });
+    const forMenu = (selectedCells, table, cell) => ({
+      element: cell,
+      mergable: mergable(table, selectedCells, ephemera),
+      unmergable: unmergable(selectedCells),
+      selection: selection(selectedCells)
+    });
+
+    const getSelectionTargets = editor => {
+      const targets = Cell(Optional.none());
+      const changeHandlers = Cell([]);
+      let selectionDetails = Optional.none();
+      const isCaption = isTag('caption');
+      const isDisabledForSelection = key => selectionDetails.forall(details => !details[key]);
+      const getStart = () => getSelectionCellOrCaption(getSelectionStart(editor), getIsRoot(editor));
+      const getEnd = () => getSelectionCellOrCaption(getSelectionEnd(editor), getIsRoot(editor));
+      const findTargets = () => getStart().bind(startCellOrCaption => flatten(lift2(table(startCellOrCaption), getEnd().bind(table), (startTable, endTable) => {
+        if (eq(startTable, endTable)) {
+          if (isCaption(startCellOrCaption)) {
+            return Optional.some(noMenu(startCellOrCaption));
+          } else {
+            return Optional.some(forMenu(getCellsFromSelection(editor), startTable, startCellOrCaption));
+          }
+        }
+        return Optional.none();
+      })));
+      const getExtractedDetails = targets => {
+        const tableOpt = table(targets.element);
+        return tableOpt.map(table => {
+          const warehouse = Warehouse.fromTable(table);
+          const selectedCells = onCells(warehouse, targets).getOr([]);
+          const locked = foldl(selectedCells, (acc, cell) => {
+            if (cell.isLocked) {
+              acc.onAny = true;
+              if (cell.column === 0) {
+                acc.onFirst = true;
+              } else if (cell.column + cell.colspan >= warehouse.grid.columns) {
+                acc.onLast = true;
+              }
+            }
+            return acc;
+          }, {
+            onAny: false,
+            onFirst: false,
+            onLast: false
+          });
+          return {
+            mergeable: onUnlockedMergable(warehouse, targets).isSome(),
+            unmergeable: onUnlockedUnmergable(warehouse, targets).isSome(),
+            locked
+          };
+        });
+      };
+      const resetTargets = () => {
+        targets.set(cached(findTargets)());
+        selectionDetails = targets.get().bind(getExtractedDetails);
+        each(changeHandlers.get(), call);
+      };
+      const setupHandler = handler => {
+        handler();
+        changeHandlers.set(changeHandlers.get().concat([handler]));
+        return () => {
+          changeHandlers.set(filter(changeHandlers.get(), h => h !== handler));
+        };
+      };
+      const onSetup = (api, isDisabled) => setupHandler(() => targets.get().fold(() => {
+        api.setEnabled(false);
+      }, targets => {
+        api.setEnabled(!isDisabled(targets) && editor.selection.isEditable());
+      }));
+      const onSetupWithToggle = (api, isDisabled, isActive) => setupHandler(() => targets.get().fold(() => {
+        api.setEnabled(false);
+        api.setActive(false);
+      }, targets => {
+        api.setEnabled(!isDisabled(targets) && editor.selection.isEditable());
+        api.setActive(isActive(targets));
+      }));
+      const isDisabledFromLocked = lockedDisable => selectionDetails.exists(details => details.locked[lockedDisable]);
+      const onSetupTable = api => onSetup(api, _ => false);
+      const onSetupCellOrRow = api => onSetup(api, targets => isCaption(targets.element));
+      const onSetupColumn = lockedDisable => api => onSetup(api, targets => isCaption(targets.element) || isDisabledFromLocked(lockedDisable));
+      const onSetupPasteable = getClipboardData => api => onSetup(api, targets => isCaption(targets.element) || getClipboardData().isNone());
+      const onSetupPasteableColumn = (getClipboardData, lockedDisable) => api => onSetup(api, targets => isCaption(targets.element) || getClipboardData().isNone() || isDisabledFromLocked(lockedDisable));
+      const onSetupMergeable = api => onSetup(api, _targets => isDisabledForSelection('mergeable'));
+      const onSetupUnmergeable = api => onSetup(api, _targets => isDisabledForSelection('unmergeable'));
+      const onSetupTableWithCaption = api => {
+        return onSetupWithToggle(api, never, targets => {
+          const tableOpt = table(targets.element, getIsRoot(editor));
+          return tableOpt.exists(table => child(table, 'caption'));
+        });
+      };
+      const onSetupTableHeaders = (command, headerType) => api => {
+        return onSetupWithToggle(api, targets => isCaption(targets.element), () => editor.queryCommandValue(command) === headerType);
+      };
+      const onSetupTableRowHeaders = onSetupTableHeaders('mceTableRowType', 'header');
+      const onSetupTableColumnHeaders = onSetupTableHeaders('mceTableColType', 'th');
+      editor.on('NodeChange ExecCommand TableSelectorChange', resetTargets);
+      return {
+        onSetupTable,
+        onSetupCellOrRow,
+        onSetupColumn,
+        onSetupPasteable,
+        onSetupPasteableColumn,
+        onSetupMergeable,
+        onSetupUnmergeable,
+        resetTargets,
+        onSetupTableWithCaption,
+        onSetupTableRowHeaders,
+        onSetupTableColumnHeaders,
+        targets: targets.get
+      };
+    };
+
+    var global = tinymce.util.Tools.resolve('tinymce.FakeClipboard');
+
+    const tableTypeBase = 'x-tinymce/dom-table-';
+    const tableTypeRow = tableTypeBase + 'rows';
+    const tableTypeColumn = tableTypeBase + 'columns';
+    const getData = type => {
+      var _a;
+      const items = (_a = global.read()) !== null && _a !== void 0 ? _a : [];
+      return findMap(items, item => Optional.from(item.getType(type)));
+    };
+    const getRows = () => getData(tableTypeRow);
+    const getColumns = () => getData(tableTypeColumn);
+
+    const onSetupEditable$1 = editor => api => {
+      const nodeChanged = () => {
+        api.setEnabled(editor.selection.isEditable());
+      };
+      editor.on('NodeChange', nodeChanged);
+      nodeChanged();
+      return () => {
+        editor.off('NodeChange', nodeChanged);
+      };
+    };
+    const addButtons = (editor, selectionTargets) => {
+      editor.ui.registry.addMenuButton('table', {
+        tooltip: 'Table',
+        icon: 'table',
+        onSetup: onSetupEditable$1(editor),
+        fetch: callback => callback('inserttable | cell row column | advtablesort | tableprops deletetable')
+      });
+      const cmd = command => () => editor.execCommand(command);
+      const addButtonIfRegistered = (name, spec) => {
+        if (editor.queryCommandSupported(spec.command)) {
+          editor.ui.registry.addButton(name, {
+            ...spec,
+            onAction: isFunction(spec.onAction) ? spec.onAction : cmd(spec.command)
+          });
+        }
+      };
+      const addToggleButtonIfRegistered = (name, spec) => {
+        if (editor.queryCommandSupported(spec.command)) {
+          editor.ui.registry.addToggleButton(name, {
+            ...spec,
+            onAction: isFunction(spec.onAction) ? spec.onAction : cmd(spec.command)
+          });
+        }
+      };
+      addButtonIfRegistered('tableprops', {
+        tooltip: 'Table properties',
+        command: 'mceTableProps',
+        icon: 'table',
+        onSetup: selectionTargets.onSetupTable
+      });
+      addButtonIfRegistered('tabledelete', {
+        tooltip: 'Delete table',
+        command: 'mceTableDelete',
+        icon: 'table-delete-table',
+        onSetup: selectionTargets.onSetupTable
+      });
+      addButtonIfRegistered('tablecellprops', {
+        tooltip: 'Cell properties',
+        command: 'mceTableCellProps',
+        icon: 'table-cell-properties',
+        onSetup: selectionTargets.onSetupCellOrRow
+      });
+      addButtonIfRegistered('tablemergecells', {
+        tooltip: 'Merge cells',
+        command: 'mceTableMergeCells',
+        icon: 'table-merge-cells',
+        onSetup: selectionTargets.onSetupMergeable
+      });
+      addButtonIfRegistered('tablesplitcells', {
+        tooltip: 'Split cell',
+        command: 'mceTableSplitCells',
+        icon: 'table-split-cells',
+        onSetup: selectionTargets.onSetupUnmergeable
+      });
+      addButtonIfRegistered('tableinsertrowbefore', {
+        tooltip: 'Insert row before',
+        command: 'mceTableInsertRowBefore',
+        icon: 'table-insert-row-above',
+        onSetup: selectionTargets.onSetupCellOrRow
+      });
+      addButtonIfRegistered('tableinsertrowafter', {
+        tooltip: 'Insert row after',
+        command: 'mceTableInsertRowAfter',
+        icon: 'table-insert-row-after',
+        onSetup: selectionTargets.onSetupCellOrRow
+      });
+      addButtonIfRegistered('tabledeleterow', {
+        tooltip: 'Delete row',
+        command: 'mceTableDeleteRow',
+        icon: 'table-delete-row',
+        onSetup: selectionTargets.onSetupCellOrRow
+      });
+      addButtonIfRegistered('tablerowprops', {
+        tooltip: 'Row properties',
+        command: 'mceTableRowProps',
+        icon: 'table-row-properties',
+        onSetup: selectionTargets.onSetupCellOrRow
+      });
+      addButtonIfRegistered('tableinsertcolbefore', {
+        tooltip: 'Insert column before',
+        command: 'mceTableInsertColBefore',
+        icon: 'table-insert-column-before',
+        onSetup: selectionTargets.onSetupColumn('onFirst')
+      });
+      addButtonIfRegistered('tableinsertcolafter', {
+        tooltip: 'Insert column after',
+        command: 'mceTableInsertColAfter',
+        icon: 'table-insert-column-after',
+        onSetup: selectionTargets.onSetupColumn('onLast')
+      });
+      addButtonIfRegistered('tabledeletecol', {
+        tooltip: 'Delete column',
+        command: 'mceTableDeleteCol',
+        icon: 'table-delete-column',
+        onSetup: selectionTargets.onSetupColumn('onAny')
+      });
+      addButtonIfRegistered('tablecutrow', {
+        tooltip: 'Cut row',
+        command: 'mceTableCutRow',
+        icon: 'cut-row',
+        onSetup: selectionTargets.onSetupCellOrRow
+      });
+      addButtonIfRegistered('tablecopyrow', {
+        tooltip: 'Copy row',
+        command: 'mceTableCopyRow',
+        icon: 'duplicate-row',
+        onSetup: selectionTargets.onSetupCellOrRow
+      });
+      addButtonIfRegistered('tablepasterowbefore', {
+        tooltip: 'Paste row before',
+        command: 'mceTablePasteRowBefore',
+        icon: 'paste-row-before',
+        onSetup: selectionTargets.onSetupPasteable(getRows)
+      });
+      addButtonIfRegistered('tablepasterowafter', {
+        tooltip: 'Paste row after',
+        command: 'mceTablePasteRowAfter',
+        icon: 'paste-row-after',
+        onSetup: selectionTargets.onSetupPasteable(getRows)
+      });
+      addButtonIfRegistered('tablecutcol', {
+        tooltip: 'Cut column',
+        command: 'mceTableCutCol',
+        icon: 'cut-column',
+        onSetup: selectionTargets.onSetupColumn('onAny')
+      });
+      addButtonIfRegistered('tablecopycol', {
+        tooltip: 'Copy column',
+        command: 'mceTableCopyCol',
+        icon: 'duplicate-column',
+        onSetup: selectionTargets.onSetupColumn('onAny')
+      });
+      addButtonIfRegistered('tablepastecolbefore', {
+        tooltip: 'Paste column before',
+        command: 'mceTablePasteColBefore',
+        icon: 'paste-column-before',
+        onSetup: selectionTargets.onSetupPasteableColumn(getColumns, 'onFirst')
+      });
+      addButtonIfRegistered('tablepastecolafter', {
+        tooltip: 'Paste column after',
+        command: 'mceTablePasteColAfter',
+        icon: 'paste-column-after',
+        onSetup: selectionTargets.onSetupPasteableColumn(getColumns, 'onLast')
+      });
+      addButtonIfRegistered('tableinsertdialog', {
+        tooltip: 'Insert table',
+        command: 'mceInsertTableDialog',
+        icon: 'table',
+        onSetup: onSetupEditable$1(editor)
+      });
+      const tableClassList = filterNoneItem(getTableClassList(editor));
+      if (tableClassList.length !== 0 && editor.queryCommandSupported('mceTableToggleClass')) {
+        editor.ui.registry.addMenuButton('tableclass', {
+          icon: 'table-classes',
+          tooltip: 'Table styles',
+          fetch: generateMenuItemsCallback(editor, tableClassList, 'tableclass', value => editor.execCommand('mceTableToggleClass', false, value)),
+          onSetup: selectionTargets.onSetupTable
+        });
+      }
+      const tableCellClassList = filterNoneItem(getCellClassList(editor));
+      if (tableCellClassList.length !== 0 && editor.queryCommandSupported('mceTableCellToggleClass')) {
+        editor.ui.registry.addMenuButton('tablecellclass', {
+          icon: 'table-cell-classes',
+          tooltip: 'Cell styles',
+          fetch: generateMenuItemsCallback(editor, tableCellClassList, 'tablecellclass', value => editor.execCommand('mceTableCellToggleClass', false, value)),
+          onSetup: selectionTargets.onSetupCellOrRow
+        });
+      }
+      if (editor.queryCommandSupported('mceTableApplyCellStyle')) {
+        editor.ui.registry.addMenuButton('tablecellvalign', {
+          icon: 'vertical-align',
+          tooltip: 'Vertical align',
+          fetch: generateMenuItemsCallback(editor, verticalAlignValues, 'tablecellverticalalign', applyTableCellStyle(editor, 'vertical-align')),
+          onSetup: selectionTargets.onSetupCellOrRow
+        });
+        editor.ui.registry.addMenuButton('tablecellborderwidth', {
+          icon: 'border-width',
+          tooltip: 'Border width',
+          fetch: generateMenuItemsCallback(editor, getTableBorderWidths(editor), 'tablecellborderwidth', applyTableCellStyle(editor, 'border-width')),
+          onSetup: selectionTargets.onSetupCellOrRow
+        });
+        editor.ui.registry.addMenuButton('tablecellborderstyle', {
+          icon: 'border-style',
+          tooltip: 'Border style',
+          fetch: generateMenuItemsCallback(editor, getTableBorderStyles(editor), 'tablecellborderstyle', applyTableCellStyle(editor, 'border-style')),
+          onSetup: selectionTargets.onSetupCellOrRow
+        });
+        editor.ui.registry.addMenuButton('tablecellbackgroundcolor', {
+          icon: 'cell-background-color',
+          tooltip: 'Background color',
+          fetch: callback => callback(buildColorMenu(editor, getTableBackgroundColorMap(editor), 'background-color')),
+          onSetup: selectionTargets.onSetupCellOrRow
+        });
+        editor.ui.registry.addMenuButton('tablecellbordercolor', {
+          icon: 'cell-border-color',
+          tooltip: 'Border color',
+          fetch: callback => callback(buildColorMenu(editor, getTableBorderColorMap(editor), 'border-color')),
+          onSetup: selectionTargets.onSetupCellOrRow
+        });
+      }
+      addToggleButtonIfRegistered('tablecaption', {
+        tooltip: 'Table caption',
+        icon: 'table-caption',
+        command: 'mceTableToggleCaption',
+        onSetup: selectionTargets.onSetupTableWithCaption
+      });
+      addToggleButtonIfRegistered('tablerowheader', {
+        tooltip: 'Row header',
+        icon: 'table-top-header',
+        command: 'mceTableRowType',
+        onAction: changeRowHeader(editor),
+        onSetup: selectionTargets.onSetupTableRowHeaders
+      });
+      addToggleButtonIfRegistered('tablecolheader', {
+        tooltip: 'Column header',
+        icon: 'table-left-header',
+        command: 'mceTableColType',
+        onAction: changeColumnHeader(editor),
+        onSetup: selectionTargets.onSetupTableColumnHeaders
+      });
+    };
+    const addToolbars = editor => {
+      const isEditableTable = table => editor.dom.is(table, 'table') && editor.getBody().contains(table) && editor.dom.isEditable(table.parentNode);
+      const toolbar = getToolbar(editor);
+      if (toolbar.length > 0) {
+        editor.ui.registry.addContextToolbar('table', {
+          predicate: isEditableTable,
+          items: toolbar,
+          scope: 'node',
+          position: 'node'
+        });
+      }
+    };
+
+    const onSetupEditable = editor => api => {
+      const nodeChanged = () => {
+        api.setEnabled(editor.selection.isEditable());
+      };
+      editor.on('NodeChange', nodeChanged);
+      nodeChanged();
+      return () => {
+        editor.off('NodeChange', nodeChanged);
+      };
+    };
+    const addMenuItems = (editor, selectionTargets) => {
+      const cmd = command => () => editor.execCommand(command);
+      const addMenuIfRegistered = (name, spec) => {
+        if (editor.queryCommandSupported(spec.command)) {
+          editor.ui.registry.addMenuItem(name, {
+            ...spec,
+            onAction: isFunction(spec.onAction) ? spec.onAction : cmd(spec.command)
+          });
+          return true;
+        } else {
+          return false;
+        }
+      };
+      const addToggleMenuIfRegistered = (name, spec) => {
+        if (editor.queryCommandSupported(spec.command)) {
+          editor.ui.registry.addToggleMenuItem(name, {
+            ...spec,
+            onAction: isFunction(spec.onAction) ? spec.onAction : cmd(spec.command)
+          });
+        }
+      };
+      const insertTableAction = data => {
+        editor.execCommand('mceInsertTable', false, {
+          rows: data.numRows,
+          columns: data.numColumns
+        });
+      };
+      const hasRowMenuItems = [
+        addMenuIfRegistered('tableinsertrowbefore', {
+          text: 'Insert row before',
+          icon: 'table-insert-row-above',
+          command: 'mceTableInsertRowBefore',
+          onSetup: selectionTargets.onSetupCellOrRow
+        }),
+        addMenuIfRegistered('tableinsertrowafter', {
+          text: 'Insert row after',
+          icon: 'table-insert-row-after',
+          command: 'mceTableInsertRowAfter',
+          onSetup: selectionTargets.onSetupCellOrRow
+        }),
+        addMenuIfRegistered('tabledeleterow', {
+          text: 'Delete row',
+          icon: 'table-delete-row',
+          command: 'mceTableDeleteRow',
+          onSetup: selectionTargets.onSetupCellOrRow
+        }),
+        addMenuIfRegistered('tablerowprops', {
+          text: 'Row properties',
+          icon: 'table-row-properties',
+          command: 'mceTableRowProps',
+          onSetup: selectionTargets.onSetupCellOrRow
+        }),
+        addMenuIfRegistered('tablecutrow', {
+          text: 'Cut row',
+          icon: 'cut-row',
+          command: 'mceTableCutRow',
+          onSetup: selectionTargets.onSetupCellOrRow
+        }),
+        addMenuIfRegistered('tablecopyrow', {
+          text: 'Copy row',
+          icon: 'duplicate-row',
+          command: 'mceTableCopyRow',
+          onSetup: selectionTargets.onSetupCellOrRow
+        }),
+        addMenuIfRegistered('tablepasterowbefore', {
+          text: 'Paste row before',
+          icon: 'paste-row-before',
+          command: 'mceTablePasteRowBefore',
+          onSetup: selectionTargets.onSetupPasteable(getRows)
+        }),
+        addMenuIfRegistered('tablepasterowafter', {
+          text: 'Paste row after',
+          icon: 'paste-row-after',
+          command: 'mceTablePasteRowAfter',
+          onSetup: selectionTargets.onSetupPasteable(getRows)
+        })
+      ];
+      const hasColumnMenuItems = [
+        addMenuIfRegistered('tableinsertcolumnbefore', {
+          text: 'Insert column before',
+          icon: 'table-insert-column-before',
+          command: 'mceTableInsertColBefore',
+          onSetup: selectionTargets.onSetupColumn('onFirst')
+        }),
+        addMenuIfRegistered('tableinsertcolumnafter', {
+          text: 'Insert column after',
+          icon: 'table-insert-column-after',
+          command: 'mceTableInsertColAfter',
+          onSetup: selectionTargets.onSetupColumn('onLast')
+        }),
+        addMenuIfRegistered('tabledeletecolumn', {
+          text: 'Delete column',
+          icon: 'table-delete-column',
+          command: 'mceTableDeleteCol',
+          onSetup: selectionTargets.onSetupColumn('onAny')
+        }),
+        addMenuIfRegistered('tablecutcolumn', {
+          text: 'Cut column',
+          icon: 'cut-column',
+          command: 'mceTableCutCol',
+          onSetup: selectionTargets.onSetupColumn('onAny')
+        }),
+        addMenuIfRegistered('tablecopycolumn', {
+          text: 'Copy column',
+          icon: 'duplicate-column',
+          command: 'mceTableCopyCol',
+          onSetup: selectionTargets.onSetupColumn('onAny')
+        }),
+        addMenuIfRegistered('tablepastecolumnbefore', {
+          text: 'Paste column before',
+          icon: 'paste-column-before',
+          command: 'mceTablePasteColBefore',
+          onSetup: selectionTargets.onSetupPasteableColumn(getColumns, 'onFirst')
+        }),
+        addMenuIfRegistered('tablepastecolumnafter', {
+          text: 'Paste column after',
+          icon: 'paste-column-after',
+          command: 'mceTablePasteColAfter',
+          onSetup: selectionTargets.onSetupPasteableColumn(getColumns, 'onLast')
+        })
+      ];
+      const hasCellMenuItems = [
+        addMenuIfRegistered('tablecellprops', {
+          text: 'Cell properties',
+          icon: 'table-cell-properties',
+          command: 'mceTableCellProps',
+          onSetup: selectionTargets.onSetupCellOrRow
+        }),
+        addMenuIfRegistered('tablemergecells', {
+          text: 'Merge cells',
+          icon: 'table-merge-cells',
+          command: 'mceTableMergeCells',
+          onSetup: selectionTargets.onSetupMergeable
+        }),
+        addMenuIfRegistered('tablesplitcells', {
+          text: 'Split cell',
+          icon: 'table-split-cells',
+          command: 'mceTableSplitCells',
+          onSetup: selectionTargets.onSetupUnmergeable
+        })
+      ];
+      if (!hasTableGrid(editor)) {
+        editor.ui.registry.addMenuItem('inserttable', {
+          text: 'Table',
+          icon: 'table',
+          onAction: cmd('mceInsertTableDialog'),
+          onSetup: onSetupEditable(editor)
+        });
+      } else {
+        editor.ui.registry.addNestedMenuItem('inserttable', {
+          text: 'Table',
+          icon: 'table',
+          getSubmenuItems: () => [{
+              type: 'fancymenuitem',
+              fancytype: 'inserttable',
+              onAction: insertTableAction
+            }],
+          onSetup: onSetupEditable(editor)
+        });
+      }
+      editor.ui.registry.addMenuItem('inserttabledialog', {
+        text: 'Insert table',
+        icon: 'table',
+        onAction: cmd('mceInsertTableDialog'),
+        onSetup: onSetupEditable(editor)
+      });
+      addMenuIfRegistered('tableprops', {
+        text: 'Table properties',
+        onSetup: selectionTargets.onSetupTable,
+        command: 'mceTableProps'
+      });
+      addMenuIfRegistered('deletetable', {
+        text: 'Delete table',
+        icon: 'table-delete-table',
+        onSetup: selectionTargets.onSetupTable,
+        command: 'mceTableDelete'
+      });
+      if (contains(hasRowMenuItems, true)) {
+        editor.ui.registry.addNestedMenuItem('row', {
+          type: 'nestedmenuitem',
+          text: 'Row',
+          getSubmenuItems: constant('tableinsertrowbefore tableinsertrowafter tabledeleterow tablerowprops | tablecutrow tablecopyrow tablepasterowbefore tablepasterowafter')
+        });
+      }
+      if (contains(hasColumnMenuItems, true)) {
+        editor.ui.registry.addNestedMenuItem('column', {
+          type: 'nestedmenuitem',
+          text: 'Column',
+          getSubmenuItems: constant('tableinsertcolumnbefore tableinsertcolumnafter tabledeletecolumn | tablecutcolumn tablecopycolumn tablepastecolumnbefore tablepastecolumnafter')
+        });
+      }
+      if (contains(hasCellMenuItems, true)) {
+        editor.ui.registry.addNestedMenuItem('cell', {
+          type: 'nestedmenuitem',
+          text: 'Cell',
+          getSubmenuItems: constant('tablecellprops tablemergecells tablesplitcells')
+        });
+      }
+      editor.ui.registry.addContextMenu('table', {
+        update: () => {
+          selectionTargets.resetTargets();
+          return selectionTargets.targets().fold(constant(''), targets => {
+            if (name(targets.element) === 'caption') {
+              return 'tableprops deletetable';
+            } else {
+              return 'cell row column | advtablesort | tableprops deletetable';
+            }
+          });
+        }
+      });
+      const tableClassList = filterNoneItem(getTableClassList(editor));
+      if (tableClassList.length !== 0 && editor.queryCommandSupported('mceTableToggleClass')) {
+        editor.ui.registry.addNestedMenuItem('tableclass', {
+          icon: 'table-classes',
+          text: 'Table styles',
+          getSubmenuItems: () => buildMenuItems(editor, tableClassList, 'tableclass', value => editor.execCommand('mceTableToggleClass', false, value)),
+          onSetup: selectionTargets.onSetupTable
+        });
+      }
+      const tableCellClassList = filterNoneItem(getCellClassList(editor));
+      if (tableCellClassList.length !== 0 && editor.queryCommandSupported('mceTableCellToggleClass')) {
+        editor.ui.registry.addNestedMenuItem('tablecellclass', {
+          icon: 'table-cell-classes',
+          text: 'Cell styles',
+          getSubmenuItems: () => buildMenuItems(editor, tableCellClassList, 'tablecellclass', value => editor.execCommand('mceTableCellToggleClass', false, value)),
+          onSetup: selectionTargets.onSetupCellOrRow
+        });
+      }
+      if (editor.queryCommandSupported('mceTableApplyCellStyle')) {
+        editor.ui.registry.addNestedMenuItem('tablecellvalign', {
+          icon: 'vertical-align',
+          text: 'Vertical align',
+          getSubmenuItems: () => buildMenuItems(editor, verticalAlignValues, 'tablecellverticalalign', applyTableCellStyle(editor, 'vertical-align')),
+          onSetup: selectionTargets.onSetupCellOrRow
+        });
+        editor.ui.registry.addNestedMenuItem('tablecellborderwidth', {
+          icon: 'border-width',
+          text: 'Border width',
+          getSubmenuItems: () => buildMenuItems(editor, getTableBorderWidths(editor), 'tablecellborderwidth', applyTableCellStyle(editor, 'border-width')),
+          onSetup: selectionTargets.onSetupCellOrRow
+        });
+        editor.ui.registry.addNestedMenuItem('tablecellborderstyle', {
+          icon: 'border-style',
+          text: 'Border style',
+          getSubmenuItems: () => buildMenuItems(editor, getTableBorderStyles(editor), 'tablecellborderstyle', applyTableCellStyle(editor, 'border-style')),
+          onSetup: selectionTargets.onSetupCellOrRow
+        });
+        editor.ui.registry.addNestedMenuItem('tablecellbackgroundcolor', {
+          icon: 'cell-background-color',
+          text: 'Background color',
+          getSubmenuItems: () => buildColorMenu(editor, getTableBackgroundColorMap(editor), 'background-color'),
+          onSetup: selectionTargets.onSetupCellOrRow
+        });
+        editor.ui.registry.addNestedMenuItem('tablecellbordercolor', {
+          icon: 'cell-border-color',
+          text: 'Border color',
+          getSubmenuItems: () => buildColorMenu(editor, getTableBorderColorMap(editor), 'border-color'),
+          onSetup: selectionTargets.onSetupCellOrRow
+        });
+      }
+      addToggleMenuIfRegistered('tablecaption', {
+        icon: 'table-caption',
+        text: 'Table caption',
+        command: 'mceTableToggleCaption',
+        onSetup: selectionTargets.onSetupTableWithCaption
+      });
+      addToggleMenuIfRegistered('tablerowheader', {
+        text: 'Row header',
+        icon: 'table-top-header',
+        command: 'mceTableRowType',
+        onAction: changeRowHeader(editor),
+        onSetup: selectionTargets.onSetupTableRowHeaders
+      });
+      addToggleMenuIfRegistered('tablecolheader', {
+        text: 'Column header',
+        icon: 'table-left-header',
+        command: 'mceTableColType',
+        onAction: changeColumnHeader(editor),
+        onSetup: selectionTargets.onSetupTableRowHeaders
+      });
+    };
+
+    const Plugin = editor => {
+      const selectionTargets = getSelectionTargets(editor);
+      register(editor);
+      registerCommands(editor);
+      addMenuItems(editor, selectionTargets);
+      addButtons(editor, selectionTargets);
+      addToolbars(editor);
+    };
+    var Plugin$1 = () => {
+      global$3.add('table', Plugin);
+    };
+
+    Plugin$1();
+
+})();
