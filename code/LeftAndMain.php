@@ -1538,7 +1538,7 @@ class LeftAndMain extends Controller implements PermissionProvider
      * @param array $data
      * @return string
      */
-    private function prepareDataForPjax(array $data): string
+    protected function prepareDataForPjax(array $data): string
     {
         return '<script type="application/json">' . json_encode($data) . '</script>';
     }
